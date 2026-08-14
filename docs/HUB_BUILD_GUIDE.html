@@ -1,0 +1,434 @@
+<title>SmartBall — Building the Sensor Hub</title>
+<style>
+  :root {
+    --bg: #0e1622;
+    --panel: #152232;
+    --panel2: #1b2b3d;
+    --ink: #e7eef6;
+    --muted: #93a4b8;
+    --line: #2b3d52;
+    --pwr: #ff6b5c;
+    --gnd: #8aa0b6;
+    --sig: #38d6c4;
+    --res: #f6c453;
+    --sensor: #dfe8f2;
+    --copper: #c98a5a;
+    --sans: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  .wrap {
+    max-width: 900px; margin: 0 auto; padding: 40px 22px 80px;
+    background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.55;
+  }
+  header.head { border-bottom: 1px solid var(--line); padding-bottom: 22px; margin-bottom: 26px; }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sig); margin: 0 0 10px; }
+  h1 { font-size: clamp(26px, 4.5vw, 36px); line-height: 1.1; margin: 0 0 12px; text-wrap: balance; font-weight: 650; }
+  .sub { color: var(--muted); max-width: 64ch; margin: 0; }
+
+  h2 { font-size: 21px; margin: 44px 0 4px; font-weight: 630; }
+  .method-tag { font-family: var(--mono); font-size: 12px; letter-spacing:.1em; text-transform:uppercase; }
+  .lead { color: var(--muted); margin: 4px 0 20px; max-width: 66ch; }
+
+  .callout { background: linear-gradient(180deg, var(--panel2), var(--panel)); border: 1px solid var(--line); border-left: 3px solid var(--sig); border-radius: 12px; padding: 16px 20px; margin: 20px 0; }
+  .callout p { margin: 0 0 8px; } .callout p:last-child { margin: 0; }
+  .callout b { color: var(--ink); }
+  .term { color: var(--sig); font-weight: 600; }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0 8px; }
+  @media (max-width: 620px) { .compare { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .card h3 { margin: 0 0 6px; font-size: 15px; }
+  .card p { margin: 0; color: var(--muted); font-size: 13.5px; }
+  .card .pick { color: var(--sig); font-family: var(--mono); font-size: 11.5px; letter-spacing:.08em; text-transform: uppercase; }
+
+  .step { display: grid; grid-template-columns: 300px 1fr; gap: 20px; align-items: center;
+          border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin: 14px 0; background: var(--panel); }
+  @media (max-width: 680px) { .step { grid-template-columns: 1fr; } }
+  .step .svgbox { overflow-x: auto; }
+  .step svg { display: block; width: 100%; height: auto; min-width: 260px; }
+  .step-num { font-family: var(--mono); font-size: 12px; color: var(--sig); letter-spacing:.1em; }
+  .step h4 { margin: 4px 0 6px; font-size: 16px; }
+  .step p { margin: 0; color: var(--cbd, #b6c3d2); font-size: 14px; }
+  .step p .hi { color: var(--ink); font-weight: 600; }
+  code { font-family: var(--mono); background: var(--panel2); padding: 1px 6px; border-radius: 5px; font-size: .9em; color: var(--sig); }
+  svg text { font-family: var(--mono); }
+  .legend { display:flex; flex-wrap:wrap; gap:8px 18px; margin: 8px 2px 0; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .legend span { display:inline-flex; align-items:center; gap:7px; }
+  .sw { width: 18px; height: 4px; border-radius: 2px; display:inline-block; }
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">SmartBall · Build Reference</p>
+    <h1>Building the sensor hub — two ways</h1>
+    <p class="sub">The breadboard's job — joining one 3.3V pin to four sensors and returning four resistors to one ground — has to become permanent and tiny to fit the ball. Here's each method, step by step. You have heat-shrink and a soldering iron, which is all either one needs.</p>
+  </header>
+
+  <div class="callout">
+    <p><b>Breadboard vs. perfboard — they're different objects.</b></p>
+    <p><span class="term">Breadboard</span> — the white block with spring clips. Solderless, reusable, a rehearsal tool. <b>Never cut it, never put it in the ball.</b></p>
+    <p><span class="term">Perfboard</span> (a.k.a. protoboard / stripboard) — a rigid board with a grid of copper-ringed holes you <b>solder</b> into. Permanent. About $0.50 a piece. <b>This</b> is what you cut small and embed. You are <b>not</b> cutting a breadboard — these are two different parts.</p>
+    <p><span class="term">Point-to-point</span> — no board at all; parts soldered directly to each other and insulated with heat-shrink. Use this if you don't have perfboard.</p>
+  </div>
+
+  <div class="compare">
+    <div class="card">
+      <p class="pick">Method A</p>
+      <h3>Perfboard hub</h3>
+      <p>Sturdier and tidier — best for a ball that gets thrown. Needs a scrap of perfboard.</p>
+    </div>
+    <div class="card">
+      <p class="pick">Method B</p>
+      <h3>Point-to-point</h3>
+      <p>Zero extra parts, just wire + solder + heat-shrink. Smaller but more fragile and fiddlier.</p>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><i class="sw" style="background:#ff6b5c"></i> 3.3V</span>
+    <span><i class="sw" style="background:#8aa0b6"></i> GND</span>
+    <span><i class="sw" style="background:#38d6c4"></i> ADC A0–A3</span>
+    <span><i class="sw" style="background:#f6c453"></i> 10kΩ</span>
+    <span><i class="sw" style="background:#c98a5a"></i> solder / copper</span>
+  </div>
+
+  <!-- ================= METHOD A ================= -->
+  <h2>Method A · <span class="method-tag" style="color:var(--sig)">Perfboard hub</span></h2>
+  <p class="lead">You're rebuilding the breadboard's two rails as two soldered rows, with the four resistors standing between them.</p>
+
+  <div class="step">
+    <div class="svgbox">
+      <svg viewBox="0 0 300 170" role="img" aria-label="A hand knife scoring a perfboard and snapping off a small piece.">
+        <rect x="20" y="30" width="180" height="110" rx="4" fill="#20502f" stroke="#2f6b41"/>
+        <g fill="#0e1622"><!-- holes -->
+          <circle cx="40" cy="50" r="3"/><circle cx="65" cy="50" r="3"/><circle cx="90" cy="50" r="3"/><circle cx="115" cy="50" r="3"/><circle cx="140" cy="50" r="3"/><circle cx="165" cy="50" r="3"/><circle cx="185" cy="50" r="3"/>
+          <circle cx="40" cy="75" r="3"/><circle cx="65" cy="75" r="3"/><circle cx="90" cy="75" r="3"/><circle cx="115" cy="75" r="3"/><circle cx="140" cy="75" r="3"/><circle cx="165" cy="75" r="3"/><circle cx="185" cy="75" r="3"/>
+          <circle cx="40" cy="100" r="3"/><circle cx="65" cy="100" r="3"/><circle cx="90" cy="100" r="3"/><circle cx="115" cy="100" r="3"/><circle cx="140" cy="100" r="3"/><circle cx="165" cy="100" r="3"/><circle cx="185" cy="100" r="3"/>
+          <circle cx="40" cy="120" r="3"/><circle cx="65" cy="120" r="3"/><circle cx="90" cy="120" r="3"/><circle cx="115" cy="120" r="3"/><circle cx="140" cy="120" r="3"/><circle cx="165" cy="120" r="3"/><circle cx="185" cy="120" r="3"/>
+        </g>
+        <!-- score line -->
+        <line x1="102" y1="24" x2="102" y2="146" stroke="#ff6b5c" stroke-width="2" stroke-dasharray="5 4"/>
+        <text x="118" y="20" fill="#ff8a7e" font-size="11">score &amp; snap</text>
+        <!-- ruler dims -->
+        <text x="55" y="162" fill="#93a4b8" font-size="10">~8 × 12 holes ≈ 10 × 15 mm</text>
+      </svg>
+    </div>
+    <div>
+      <p class="step-num">STEP 1</p>
+      <h4>Cut a small piece of perfboard</h4>
+      <p>Score deeply along one row of holes with a hobby knife (both sides), then <span class="hi">snap it</span> over a table edge. Aim for about <span class="hi">8 × 12 holes (~10 × 15 mm)</span>. Sand the rough edge. <span class="hi">This is a perfboard, not your breadboard.</span></p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="svgbox">
+      <svg viewBox="0 0 300 170" role="img" aria-label="Perfboard with the top row marked as 3.3V rail and bottom row as GND rail.">
+        <rect x="20" y="25" width="260" height="120" rx="5" fill="#152232" stroke="#33506e"/>
+        <!-- holes 6x4 -->
+        <g fill="#24384d">
+          <circle cx="45" cy="45" r="3.4"/><circle cx="90" cy="45" r="3.4"/><circle cx="135" cy="45" r="3.4"/><circle cx="180" cy="45" r="3.4"/><circle cx="225" cy="45" r="3.4"/><circle cx="255" cy="45" r="3.4"/>
+          <circle cx="45" cy="80" r="3.4"/><circle cx="90" cy="80" r="3.4"/><circle cx="135" cy="80" r="3.4"/><circle cx="180" cy="80" r="3.4"/><circle cx="225" cy="80" r="3.4"/><circle cx="255" cy="80" r="3.4"/>
+          <circle cx="45" cy="110" r="3.4"/><circle cx="90" cy="110" r="3.4"/><circle cx="135" cy="110" r="3.4"/><circle cx="180" cy="110" r="3.4"/><circle cx="225" cy="110" r="3.4"/><circle cx="255" cy="110" r="3.4"/>
+          <circle cx="45" cy="128" r="3.4"/><circle cx="90" cy="128" r="3.4"/><circle cx="135" cy="128" r="3.4"/><circle cx="180" cy="128" r="3.4"/><circle cx="225" cy="128" r="3.4"/><circle cx="255" cy="128" r="3.4"/>
+        </g>
+        <rect x="30" y="38" width="240" height="14" rx="7" fill="#ff6b5c" opacity="0.22" stroke="#ff6b5c"/>
+        <rect x="30" y="121" width="240" height="14" rx="7" fill="#8aa0b6" opacity="0.22" stroke="#8aa0b6"/>
+        <text x="150" y="18" fill="#ff8a7e" font-size="11" text-anchor="middle">top row = 3.3V rail</text>
+        <text x="150" y="158" fill="#a6b8cc" font-size="11" text-anchor="middle">bottom row = GND rail</text>
+      </svg>
+    </div>
+    <div>
+      <p class="step-num">STEP 2</p>
+      <h4>Assign your two rails</h4>
+      <p>Decide the <span class="hi" style="color:var(--pwr)">top row = 3.3V</span> and the <span class="hi" style="color:var(--gnd)">bottom row = GND</span>. The middle rows hold the four ADC nodes. (If you happened to get <span class="hi">stripboard</span>, each row is already electrically connected — even easier.)</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="svgbox">
+      <svg viewBox="0 0 300 170" role="img" aria-label="Four resistors soldered vertically, each from a middle node down to the GND rail.">
+        <rect x="20" y="25" width="260" height="120" rx="5" fill="#152232" stroke="#33506e"/>
+        <rect x="30" y="38" width="240" height="12" rx="6" fill="#ff6b5c" opacity="0.22" stroke="#ff6b5c"/>
+        <rect x="30" y="123" width="240" height="12" rx="6" fill="#8aa0b6" opacity="0.22" stroke="#8aa0b6"/>
+        <!-- 4 resistors at x=70,120,170,220 -->
+        <g>
+          <!-- node dots (top leg) at y=70; gnd leg at y=129 -->
+          <g>
+            <circle cx="70" cy="70" r="4" fill="#38d6c4"/>
+            <rect x="60" y="82" width="20" height="34" rx="4" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/>
+            <line x1="70" y1="74" x2="70" y2="82" stroke="#c98a5a" stroke-width="2"/>
+            <line x1="70" y1="116" x2="70" y2="129" stroke="#c98a5a" stroke-width="2"/>
+          </g>
+          <g>
+            <circle cx="130" cy="70" r="4" fill="#38d6c4"/>
+            <rect x="120" y="82" width="20" height="34" rx="4" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/>
+            <line x1="130" y1="74" x2="130" y2="82" stroke="#c98a5a" stroke-width="2"/>
+            <line x1="130" y1="116" x2="130" y2="129" stroke="#c98a5a" stroke-width="2"/>
+          </g>
+          <g>
+            <circle cx="190" cy="70" r="4" fill="#38d6c4"/>
+            <rect x="180" y="82" width="20" height="34" rx="4" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/>
+            <line x1="190" y1="74" x2="190" y2="82" stroke="#c98a5a" stroke-width="2"/>
+            <line x1="190" y1="116" x2="190" y2="129" stroke="#c98a5a" stroke-width="2"/>
+          </g>
+          <g>
+            <circle cx="250" cy="70" r="4" fill="#38d6c4"/>
+            <rect x="240" y="82" width="20" height="34" rx="4" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/>
+            <line x1="250" y1="74" x2="250" y2="82" stroke="#c98a5a" stroke-width="2"/>
+            <line x1="250" y1="116" x2="250" y2="129" stroke="#c98a5a" stroke-width="2"/>
+          </g>
+        </g>
+        <text x="150" y="162" fill="#f6c453" font-size="11" text-anchor="middle">4 × 10kΩ — node (top) → GND rail (bottom)</text>
+      </svg>
+    </div>
+    <div>
+      <p class="step-num">STEP 3</p>
+      <h4>Solder the four resistors</h4>
+      <p>Stand each 10 kΩ vertically: <span class="hi">top leg = an ADC node</span>, <span class="hi">bottom leg into the GND rail</span>. Space them one column apart. Bend the legs to hold them, solder, trim the excess. <span class="hi">These are the parts you're waiting on</span> — everything else you can pre-build.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="svgbox">
+      <svg viewBox="0 0 300 170" role="img" aria-label="Bare wires soldered along the top and bottom rows to connect all holes into rails.">
+        <rect x="20" y="25" width="260" height="120" rx="5" fill="#152232" stroke="#33506e"/>
+        <!-- rail wires -->
+        <line x1="45" y1="44" x2="255" y2="44" stroke="#ff6b5c" stroke-width="3"/>
+        <line x1="45" y1="129" x2="255" y2="129" stroke="#8aa0b6" stroke-width="3"/>
+        <!-- solder blobs -->
+        <g fill="#c98a5a">
+          <circle cx="70" cy="44" r="3.5"/><circle cx="130" cy="44" r="3.5"/><circle cx="190" cy="44" r="3.5"/><circle cx="250" cy="44" r="3.5"/><circle cx="45" cy="44" r="3.5"/>
+          <circle cx="70" cy="129" r="3.5"/><circle cx="130" cy="129" r="3.5"/><circle cx="190" cy="129" r="3.5"/><circle cx="250" cy="129" r="3.5"/><circle cx="45" cy="129" r="3.5"/>
+        </g>
+        <!-- faded resistors -->
+        <g opacity="0.5">
+          <rect x="60" y="70" width="20" height="34" rx="4" fill="#1b2b3d" stroke="#f6c453"/>
+          <rect x="120" y="70" width="20" height="34" rx="4" fill="#1b2b3d" stroke="#f6c453"/>
+          <rect x="180" y="70" width="20" height="34" rx="4" fill="#1b2b3d" stroke="#f6c453"/>
+          <rect x="240" y="70" width="20" height="34" rx="4" fill="#1b2b3d" stroke="#f6c453"/>
+        </g>
+        <text x="150" y="16" fill="#ff8a7e" font-size="11" text-anchor="middle">bare wire bridges every hole in the row</text>
+      </svg>
+    </div>
+    <div>
+      <p class="step-num">STEP 4</p>
+      <h4>Turn the two rows into rails</h4>
+      <p>Lay a stripped bare wire along the <span class="hi" style="color:var(--pwr)">top row</span> and solder it to each hole — now every top hole is one connected 3.3V rail. Do the same on the <span class="hi" style="color:var(--gnd)">bottom row</span> for GND (it also catches every resistor's bottom leg). <span class="hi">Skip this step if you used stripboard.</span></p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="svgbox">
+      <svg viewBox="0 0 300 180" role="img" aria-label="XIAO wired to the hub: 3V3 to top rail, GND to bottom rail, A0 to A3 to the four nodes.">
+        <!-- hub -->
+        <rect x="120" y="20" width="165" height="120" rx="5" fill="#152232" stroke="#33506e"/>
+        <line x1="132" y1="38" x2="275" y2="38" stroke="#ff6b5c" stroke-width="3"/>
+        <line x1="132" y1="124" x2="275" y2="124" stroke="#8aa0b6" stroke-width="3"/>
+        <g><!-- resistors + nodes -->
+          <circle cx="150" cy="64" r="4" fill="#38d6c4"/><rect x="140" y="76" width="20" height="30" rx="4" fill="#1b2b3d" stroke="#f6c453"/><line x1="150" y1="106" x2="150" y2="124" stroke="#c98a5a" stroke-width="2"/><line x1="150" y1="68" x2="150" y2="76" stroke="#c98a5a" stroke-width="2"/>
+          <circle cx="190" cy="64" r="4" fill="#38d6c4"/><rect x="180" y="76" width="20" height="30" rx="4" fill="#1b2b3d" stroke="#f6c453"/><line x1="190" y1="106" x2="190" y2="124" stroke="#c98a5a" stroke-width="2"/><line x1="190" y1="68" x2="190" y2="76" stroke="#c98a5a" stroke-width="2"/>
+          <circle cx="230" cy="64" r="4" fill="#38d6c4"/><rect x="220" y="76" width="20" height="30" rx="4" fill="#1b2b3d" stroke="#f6c453"/><line x1="230" y1="106" x2="230" y2="124" stroke="#c98a5a" stroke-width="2"/><line x1="230" y1="68" x2="230" y2="76" stroke="#c98a5a" stroke-width="2"/>
+          <circle cx="268" cy="64" r="4" fill="#38d6c4"/><rect x="258" y="76" width="20" height="30" rx="4" fill="#1b2b3d" stroke="#f6c453"/><line x1="268" y1="106" x2="268" y2="124" stroke="#c98a5a" stroke-width="2"/><line x1="268" y1="68" x2="268" y2="76" stroke="#c98a5a" stroke-width="2"/>
+        </g>
+        <!-- XIAO -->
+        <rect x="18" y="45" width="70" height="95" rx="9" fill="#1b2b3d" stroke="#33506e"/>
+        <text x="53" y="96" fill="#e7eef6" font-size="11" text-anchor="middle" font-weight="700">XIAO</text>
+        <!-- wires -->
+        <path d="M88 58 H108 V38 H132" fill="none" stroke="#ff6b5c" stroke-width="2.5"/>
+        <path d="M88 128 H100 V124 H132" fill="none" stroke="#8aa0b6" stroke-width="2.5"/>
+        <path d="M88 74 C 112 74, 126 64, 150 64" fill="none" stroke="#38d6c4" stroke-width="2"/>
+        <path d="M88 88 C 120 88, 160 64, 190 64" fill="none" stroke="#38d6c4" stroke-width="2"/>
+        <path d="M88 102 C 130 102, 200 64, 230 64" fill="none" stroke="#38d6c4" stroke-width="2"/>
+        <path d="M88 116 C 150 116, 240 64, 268 64" fill="none" stroke="#38d6c4" stroke-width="2"/>
+        <text x="95" y="55" fill="#ff8a7e" font-size="9">3V3</text>
+        <text x="150" y="160" fill="#38d6c4" font-size="10" text-anchor="middle">A0  A1  A2  A3  → nodes</text>
+      </svg>
+    </div>
+    <div>
+      <p class="step-num">STEP 5</p>
+      <h4>Wire the XIAO to the hub</h4>
+      <p><span class="hi" style="color:var(--pwr)">3V3 → top rail</span> (one wire). <span class="hi" style="color:var(--gnd)">GND → bottom rail</span> (one wire). Then <span class="hi" style="color:var(--sig)">A0, A1, A2, A3</span> each to one node (the top leg of a resistor). That's the <span class="hi">"one pin feeds all four"</span> made real — a single 3V3 wire lands on a rail the whole row shares.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="svgbox">
+      <svg viewBox="0 0 300 175" role="img" aria-label="Four sensor harnesses connecting: red wire to the top rail, ADC wire to each node.">
+        <rect x="60" y="20" width="220" height="115" rx="5" fill="#152232" stroke="#33506e"/>
+        <line x1="72" y1="36" x2="270" y2="36" stroke="#ff6b5c" stroke-width="3"/>
+        <line x1="72" y1="120" x2="270" y2="120" stroke="#8aa0b6" stroke-width="3"/>
+        <g>
+          <circle cx="100" cy="62" r="4" fill="#38d6c4"/><rect x="90" y="74" width="20" height="30" rx="4" fill="#1b2b3d" stroke="#f6c453"/><line x1="100" y1="104" x2="100" y2="120" stroke="#c98a5a" stroke-width="2"/>
+          <circle cx="150" cy="62" r="4" fill="#38d6c4"/><rect x="140" y="74" width="20" height="30" rx="4" fill="#1b2b3d" stroke="#f6c453"/><line x1="150" y1="104" x2="150" y2="120" stroke="#c98a5a" stroke-width="2"/>
+          <circle cx="200" cy="62" r="4" fill="#38d6c4"/><rect x="190" y="74" width="20" height="30" rx="4" fill="#1b2b3d" stroke="#f6c453"/><line x1="200" y1="104" x2="200" y2="120" stroke="#c98a5a" stroke-width="2"/>
+          <circle cx="250" cy="62" r="4" fill="#38d6c4"/><rect x="240" y="74" width="20" height="30" rx="4" fill="#1b2b3d" stroke="#f6c453"/><line x1="250" y1="104" x2="250" y2="120" stroke="#c98a5a" stroke-width="2"/>
+        </g>
+        <!-- sensor harness wires coming from left -->
+        <g stroke-width="2.5" fill="none">
+          <path d="M20 50 H50 V36 H72" stroke="#ff6b5c"/>
+          <path d="M20 62 H100" stroke="#38d6c4"/>
+        </g>
+        <circle cx="14" cy="56" r="9" fill="#dfe8f2" stroke="#9fb2c6"/>
+        <text x="14" y="80" fill="#93a4b8" font-size="9" text-anchor="middle">S1</text>
+        <text x="150" y="160" fill="#93a4b8" font-size="10" text-anchor="middle">each sensor: red → rail · teal → its node</text>
+      </svg>
+    </div>
+    <div>
+      <p class="step-num">STEP 6</p>
+      <h4>Attach the four sensor harnesses &amp; test</h4>
+      <p>Each sensor's <span class="hi" style="color:var(--pwr)">red wire → the 3.3V rail</span>; its <span class="hi" style="color:var(--sig)">ADC wire → its node</span> (same point as that resistor's top leg and the ADC pin wire). Then <span class="hi">run the logger, press each pad, confirm the right channel moves</span> — only then embed and pot.</p>
+    </div>
+  </div>
+
+  <!-- ================= METHOD B ================= -->
+  <h2>Method B · <span class="method-tag" style="color:var(--sig)">Point-to-point</span></h2>
+  <p class="lead">No board. You build the two rails as two wire junctions and let each resistor float in mid-air ("dead-bug"), insulating every joint with heat-shrink.</p>
+
+  <div class="step">
+    <div class="svgbox">
+      <svg viewBox="0 0 300 150" role="img" aria-label="Five wires twisted into one soldered junction forming the 3.3V bus.">
+        <!-- junction -->
+        <circle cx="160" cy="75" r="9" fill="#c98a5a"/>
+        <g stroke="#ff6b5c" stroke-width="3" fill="none">
+          <path d="M160 75 L60 40"/><path d="M160 75 L60 70"/><path d="M160 75 L60 100"/><path d="M160 75 L70 120"/>
+        </g>
+        <path d="M160 75 H260" stroke="#ff6b5c" stroke-width="3" fill="none"/>
+        <text x="48" y="34" fill="#93a4b8" font-size="10" text-anchor="end">S1</text>
+        <text x="48" y="74" fill="#93a4b8" font-size="10" text-anchor="end">S2</text>
+        <text x="48" y="104" fill="#93a4b8" font-size="10" text-anchor="end">S3·S4</text>
+        <text x="265" y="79" fill="#ff8a7e" font-size="10">XIAO 3V3</text>
+        <!-- heat shrink -->
+        <rect x="185" y="66" width="34" height="18" rx="4" fill="none" stroke="#38d6c4" stroke-dasharray="4 3"/>
+        <text x="202" y="104" fill="#38d6c4" font-size="9" text-anchor="middle">heat-shrink</text>
+      </svg>
+    </div>
+    <div>
+      <p class="step-num">STEP 1</p>
+      <h4>Build the 3.3V bus (one junction)</h4>
+      <p>Gather the <span class="hi">four sensor red wires + the XIAO 3V3 wire</span>, twist them together, and solder into <span class="hi">one joint</span>. Slide a piece of heat-shrink over it and shrink. That single blob <span class="hi">is</span> your shared power rail.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="svgbox">
+      <svg viewBox="0 0 300 150" role="img" aria-label="A second junction for GND joining the XIAO ground and the four resistor legs.">
+        <circle cx="160" cy="75" r="9" fill="#c98a5a"/>
+        <g stroke="#8aa0b6" stroke-width="3" fill="none">
+          <path d="M160 75 L60 40"/><path d="M160 75 L60 70"/><path d="M160 75 L60 100"/><path d="M160 75 L70 118"/>
+          <path d="M160 75 H255"/>
+        </g>
+        <text x="48" y="44" fill="#f6c453" font-size="10" text-anchor="end">R1 leg</text>
+        <text x="48" y="74" fill="#f6c453" font-size="10" text-anchor="end">R2 leg</text>
+        <text x="48" y="104" fill="#f6c453" font-size="10" text-anchor="end">R3·R4</text>
+        <text x="260" y="79" fill="#a6b8cc" font-size="10">XIAO GND</text>
+        <rect x="185" y="66" width="34" height="18" rx="4" fill="none" stroke="#38d6c4" stroke-dasharray="4 3"/>
+      </svg>
+    </div>
+    <div>
+      <p class="step-num">STEP 2</p>
+      <h4>Build the GND bus (second junction)</h4>
+      <p>Same idea for ground: the <span class="hi">XIAO GND wire</span> plus the <span class="hi">bottom leg of all four resistors</span> meet in one soldered joint, heat-shrunk. (If four legs is too crowded, chain them: R1→R2→R3→R4→GND.)</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="svgbox">
+      <svg viewBox="0 0 300 165" role="img" aria-label="One channel node: sensor ADC wire, XIAO A0 wire, and resistor top leg soldered together; resistor other leg to GND bus.">
+        <!-- node -->
+        <circle cx="150" cy="60" r="8" fill="#38d6c4"/>
+        <path d="M150 60 L60 35" stroke="#38d6c4" stroke-width="3" fill="none"/>
+        <path d="M150 60 L60 85" stroke="#38d6c4" stroke-width="3" fill="none"/>
+        <text x="48" y="38" fill="#93a4b8" font-size="10" text-anchor="end">sensor ADC</text>
+        <text x="48" y="89" fill="#93a4b8" font-size="10" text-anchor="end">XIAO A0</text>
+        <!-- resistor down -->
+        <line x1="150" y1="68" x2="150" y2="86" stroke="#c98a5a" stroke-width="2"/>
+        <rect x="140" y="86" width="20" height="36" rx="4" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/>
+        <text x="176" y="108" fill="#f6c453" font-size="10">10kΩ</text>
+        <line x1="150" y1="122" x2="150" y2="140" stroke="#8aa0b6" stroke-width="3"/>
+        <text x="150" y="155" fill="#a6b8cc" font-size="10" text-anchor="middle">to GND bus</text>
+        <!-- heat shrink over node -->
+        <rect x="130" y="46" width="40" height="20" rx="4" fill="none" stroke="#38d6c4" stroke-dasharray="4 3"/>
+        <text x="235" y="46" fill="#38d6c4" font-size="10" text-anchor="middle">node = 3 wires</text>
+        <text x="235" y="60" fill="#38d6c4" font-size="10" text-anchor="middle">+ resistor top</text>
+      </svg>
+    </div>
+    <div>
+      <p class="step-num">STEP 3</p>
+      <h4>Make one channel's node</h4>
+      <p>Solder three things into one point: the <span class="hi">sensor's ADC wire</span>, the <span class="hi">XIAO A0 wire</span>, and the <span class="hi">resistor's top leg</span>. The resistor's <span class="hi">other leg goes to the GND bus</span>. Heat-shrink the node. That's one complete voltage divider, floating in mid-air.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="svgbox">
+      <svg viewBox="0 0 300 165" role="img" aria-label="All four channels repeated, four floating resistors between the ADC nodes and the GND bus.">
+        <!-- 3v3 bus top, gnd bus bottom -->
+        <line x1="30" y1="24" x2="270" y2="24" stroke="#ff6b5c" stroke-width="3"/>
+        <line x1="30" y1="142" x2="270" y2="142" stroke="#8aa0b6" stroke-width="3"/>
+        <text x="276" y="27" fill="#ff8a7e" font-size="9">3V3 bus</text>
+        <text x="276" y="145" fill="#a6b8cc" font-size="9">GND bus</text>
+        <g>
+          <!-- 4 channels -->
+          <g>
+            <circle cx="60" cy="45" r="9" fill="#dfe8f2" stroke="#9fb2c6"/><text x="60" y="49" fill="#0e1622" font-size="9" text-anchor="middle">S1</text>
+            <path d="M60 36 V24" stroke="#ff6b5c" stroke-width="2.5"/>
+            <circle cx="60" cy="80" r="4" fill="#38d6c4"/><line x1="60" y1="54" x2="60" y2="76" stroke="#38d6c4" stroke-width="2"/>
+            <rect x="50" y="92" width="20" height="34" rx="4" fill="#1b2b3d" stroke="#f6c453"/><line x1="60" y1="84" x2="60" y2="92" stroke="#c98a5a" stroke-width="2"/><line x1="60" y1="126" x2="60" y2="142" stroke="#8aa0b6" stroke-width="2.5"/>
+            <text x="60" y="70" fill="#38d6c4" font-size="8" text-anchor="middle">A0</text>
+          </g>
+          <g>
+            <circle cx="120" cy="45" r="9" fill="#dfe8f2" stroke="#9fb2c6"/><text x="120" y="49" fill="#0e1622" font-size="9" text-anchor="middle">S2</text>
+            <path d="M120 36 V24" stroke="#ff6b5c" stroke-width="2.5"/>
+            <circle cx="120" cy="80" r="4" fill="#38d6c4"/><line x1="120" y1="54" x2="120" y2="76" stroke="#38d6c4" stroke-width="2"/>
+            <rect x="110" y="92" width="20" height="34" rx="4" fill="#1b2b3d" stroke="#f6c453"/><line x1="120" y1="84" x2="120" y2="92" stroke="#c98a5a" stroke-width="2"/><line x1="120" y1="126" x2="120" y2="142" stroke="#8aa0b6" stroke-width="2.5"/>
+            <text x="120" y="70" fill="#38d6c4" font-size="8" text-anchor="middle">A1</text>
+          </g>
+          <g>
+            <circle cx="180" cy="45" r="9" fill="#dfe8f2" stroke="#9fb2c6"/><text x="180" y="49" fill="#0e1622" font-size="9" text-anchor="middle">S3</text>
+            <path d="M180 36 V24" stroke="#ff6b5c" stroke-width="2.5"/>
+            <circle cx="180" cy="80" r="4" fill="#38d6c4"/><line x1="180" y1="54" x2="180" y2="76" stroke="#38d6c4" stroke-width="2"/>
+            <rect x="170" y="92" width="20" height="34" rx="4" fill="#1b2b3d" stroke="#f6c453"/><line x1="180" y1="84" x2="180" y2="92" stroke="#c98a5a" stroke-width="2"/><line x1="180" y1="126" x2="180" y2="142" stroke="#8aa0b6" stroke-width="2.5"/>
+            <text x="180" y="70" fill="#38d6c4" font-size="8" text-anchor="middle">A2</text>
+          </g>
+          <g>
+            <circle cx="240" cy="45" r="9" fill="#dfe8f2" stroke="#9fb2c6"/><text x="240" y="49" fill="#0e1622" font-size="9" text-anchor="middle">S4</text>
+            <path d="M240 36 V24" stroke="#ff6b5c" stroke-width="2.5"/>
+            <circle cx="240" cy="80" r="4" fill="#38d6c4"/><line x1="240" y1="54" x2="240" y2="76" stroke="#38d6c4" stroke-width="2"/>
+            <rect x="230" y="92" width="20" height="34" rx="4" fill="#1b2b3d" stroke="#f6c453"/><line x1="240" y1="84" x2="240" y2="92" stroke="#c98a5a" stroke-width="2"/><line x1="240" y1="126" x2="240" y2="142" stroke="#8aa0b6" stroke-width="2.5"/>
+            <text x="240" y="70" fill="#38d6c4" font-size="8" text-anchor="middle">A3</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <p class="step-num">STEP 4</p>
+      <h4>Repeat for all four channels</h4>
+      <p>Same node for S2→A1, S3→A2, S4→A3. When you're done you have <span class="hi">two buses and four floating dividers</span> — electrically identical to the perfboard version and to your breadboard, just smaller and hand-soldered.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="svgbox">
+      <svg viewBox="0 0 300 150" role="img" aria-label="The finished bundle wrapped with heat shrink, compact next to the XIAO and LiPo.">
+        <rect x="40" y="45" width="120" height="60" rx="10" fill="#1b2b3d" stroke="#33506e"/>
+        <text x="100" y="80" fill="#93a4b8" font-size="11" text-anchor="middle">insulated bundle</text>
+        <rect x="175" y="40" width="60" height="40" rx="6" fill="#152232" stroke="#33506e"/>
+        <text x="205" y="64" fill="#e7eef6" font-size="10" text-anchor="middle">XIAO</text>
+        <rect x="175" y="88" width="60" height="26" rx="5" fill="#20304a" stroke="#33506e"/>
+        <text x="205" y="105" fill="#93a4b8" font-size="9" text-anchor="middle">LiPo</text>
+        <text x="150" y="135" fill="#38d6c4" font-size="10" text-anchor="middle">test → then all three nest in the ball's core</text>
+      </svg>
+    </div>
+    <div>
+      <p class="step-num">STEP 5</p>
+      <h4>Insulate, test, and bundle</h4>
+      <p>Confirm <span class="hi">no bare joints touch</span> (a stray whisker between the 3.3V and GND buses is the same short that killed your PCB). Run the logger and press each pad. Then bundle the hub with the XIAO and LiPo into the ball's core, tails routed to the grip points.</p>
+    </div>
+  </div>
+
+  <div class="callout" style="border-left-color: var(--res);">
+    <p><b>Which should you pick?</b> If you have (or can grab) a scrap of perfboard, <b>Method A</b> — it survives throwing far better. If not, <b>Method B</b> works with only what you have on hand. Both are the exact same circuit; the perfboard just holds it rigid instead of your solder joints doing all the work.</p>
+  </div>
+</div>

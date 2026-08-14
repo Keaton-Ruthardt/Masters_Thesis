@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+.DS_Store
+Thumbs.db
+~$*
+*.tmp
+
+# Raw participant session captures are not redistributed. See README.
+*_session_480hz.csv
+realrate*.csv
+realdata*.csv
+Realpitcher*.csv

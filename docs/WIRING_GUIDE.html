@@ -1,0 +1,342 @@
+<title>SmartBall — Sensor Wiring & Ball Placement</title>
+<style>
+  :root {
+    --bg: #0e1622;
+    --panel: #152232;
+    --panel2: #1b2b3d;
+    --ink: #e7eef6;
+    --muted: #93a4b8;
+    --line: #2b3d52;
+    --pwr: #ff6b5c;   /* 3.3V power */
+    --gnd: #8aa0b6;   /* ground */
+    --sig: #38d6c4;   /* ADC signal */
+    --res: #f6c453;   /* resistor */
+    --sensor: #dfe8f2;
+    --sans: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 22px 80px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.55;
+  }
+  header.head {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 22px;
+    margin-bottom: 30px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--sig);
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-size: clamp(26px, 4.5vw, 38px);
+    line-height: 1.1;
+    margin: 0 0 12px;
+    text-wrap: balance;
+    font-weight: 650;
+  }
+  .sub { color: var(--muted); max-width: 62ch; margin: 0; }
+  h2 {
+    font-size: 20px;
+    margin: 46px 0 6px;
+    font-weight: 620;
+    text-wrap: balance;
+  }
+  .lead { color: var(--muted); margin: 0 0 18px; max-width: 64ch; }
+  section { scroll-margin-top: 20px; }
+
+  .callout {
+    background: linear-gradient(180deg, var(--panel2), var(--panel));
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--pwr);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin: 22px 0;
+  }
+  .callout p { margin: 0; }
+  .callout strong { color: var(--pwr); }
+  .callout .big {
+    font-size: 17px;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .scroll {
+    overflow-x: auto;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  svg { display: block; width: 100%; height: auto; min-width: 560px; }
+  svg text { font-family: var(--mono); }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin: 14px 2px 0;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .sw { width: 22px; height: 4px; border-radius: 2px; display: inline-block; }
+
+  ol.steps { counter-reset: step; list-style: none; padding: 0; margin: 8px 0 0; }
+  ol.steps li {
+    position: relative;
+    padding: 14px 16px 14px 54px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background: var(--panel);
+  }
+  ol.steps li::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 14px; top: 13px;
+    width: 26px; height: 26px;
+    display: grid; place-items: center;
+    background: var(--sig);
+    color: #06221f;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 7px;
+  }
+  ol.steps li b { color: var(--ink); }
+  ol.steps li .note { color: var(--muted); }
+  code {
+    font-family: var(--mono);
+    background: var(--panel2);
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    color: var(--sig);
+  }
+  .map { font-family: var(--mono); font-size: 13px; color: var(--muted); margin-top:6px;}
+  .map b { color: var(--ink); }
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">SmartBall · Build Reference</p>
+    <h1>Wiring 4 pressure sensors into the ball</h1>
+    <p class="sub">How the sensors share one power pin, how each female connector joins the board, and where each sensor sits under the leather. Everything here is buildable now except dropping in the four 10&nbsp;kΩ resistors.</p>
+  </header>
+
+  <section>
+    <h2>The part that confused you: one 3.3V pin feeds all four</h2>
+    <div class="callout">
+      <p><span class="big">3.3V is a shared rail — not one pin per sensor.</span>
+      You run <strong>one wire</strong> from the XIAO's single <strong>3V3</strong> pin to a common junction, then branch that junction to all four sensors. Ground works the same way in reverse: all four resistors meet at one junction that returns to the single <strong>GND</strong> pin. Your breadboard has been doing this the whole time — the red power rail <em>is</em> that shared junction. You'll just rebuild it as a solder splice (or a tiny scrap of perfboard) inside the ball.</p>
+    </div>
+    <p class="lead">Only the <strong style="color:var(--sig)">A0–A3</strong> connections are unique — each sensor gets its own analog pin. Power and ground are shared buses. Each sensor draws only microamps, so one pin driving four is completely normal.</p>
+  </section>
+
+  <section>
+    <h2>Full wiring — the ladder</h2>
+    <p class="lead">Read it as four identical rungs between two shared rails: <span style="color:var(--pwr)">3.3V on top</span>, <span style="color:var(--gnd)">GND on the bottom</span>. Each rung is one voltage divider: 3.3V → sensor → node → 10&nbsp;kΩ → GND, with the node tapped off to its own ADC pin.</p>
+    <div class="scroll">
+      <svg viewBox="0 0 820 470" role="img" aria-label="Ladder wiring diagram: one 3.3V rail and one GND rail feeding four sensor-and-resistor rungs, each node tapped to an ADC pin.">
+        <!-- rails -->
+        <line x1="150" y1="70" x2="785" y2="70" stroke="#ff6b5c" stroke-width="3"/>
+        <line x1="140" y1="405" x2="785" y2="405" stroke="#8aa0b6" stroke-width="3"/>
+        <text x="792" y="74" fill="#ff6b5c" font-size="13" font-weight="700">3.3V</text>
+        <text x="792" y="409" fill="#8aa0b6" font-size="13" font-weight="700">GND</text>
+
+        <!-- rail callouts -->
+        <text x="150" y="52" fill="#ff8a7e" font-size="12">one 3V3 pin → whole rail → all 4 sensors</text>
+        <text x="140" y="428" fill="#a6b8cc" font-size="12">all 4 resistors → one GND pin</text>
+
+        <!-- XIAO -->
+        <rect x="24" y="150" width="98" height="200" rx="11" fill="#1b2b3d" stroke="#33506e" stroke-width="1.5"/>
+        <text x="73" y="243" fill="#e7eef6" font-size="13" font-weight="700" text-anchor="middle">XIAO</text>
+        <text x="73" y="261" fill="#93a4b8" font-size="10.5" text-anchor="middle">nRF52840</text>
+        <!-- XIAO pins -->
+        <circle cx="122" cy="175" r="4" fill="#ff6b5c"/><text x="88" y="171" fill="#ff8a7e" font-size="10.5" text-anchor="end">3V3</text>
+        <circle cx="122" cy="300" r="4" fill="#8aa0b6"/><text x="88" y="304" fill="#a6b8cc" font-size="10.5" text-anchor="end">GND</text>
+        <circle cx="122" cy="210" r="4" fill="#38d6c4"/><text x="88" y="214" fill="#38d6c4" font-size="10.5" text-anchor="end">A0</text>
+        <circle cx="122" cy="235" r="4" fill="#38d6c4"/><text x="88" y="239" fill="#38d6c4" font-size="10.5" text-anchor="end">A1</text>
+        <circle cx="122" cy="260" r="4" fill="#38d6c4"/><text x="88" y="264" fill="#38d6c4" font-size="10.5" text-anchor="end">A2</text>
+        <circle cx="122" cy="285" r="4" fill="#38d6c4"/><text x="88" y="289" fill="#38d6c4" font-size="10.5" text-anchor="end">A3</text>
+
+        <!-- XIAO 3V3 to rail -->
+        <path d="M122 175 H150 V70" fill="none" stroke="#ff6b5c" stroke-width="3"/>
+        <!-- XIAO GND to rail -->
+        <path d="M122 300 H140 V405" fill="none" stroke="#8aa0b6" stroke-width="3"/>
+
+        <!-- Rungs -->
+        <!-- generator: 4 rungs -->
+        <g>
+          <!-- Rung 1 : x=255, A0, S1 index -->
+          <line x1="255" y1="70" x2="255" y2="122" stroke="#ff6b5c" stroke-width="2.5"/>
+          <rect x="215" y="122" width="80" height="54" rx="8" fill="#dfe8f2" stroke="#9fb2c6"/>
+          <text x="255" y="147" fill="#0e1622" font-size="14" font-weight="700" text-anchor="middle">S1</text>
+          <text x="255" y="164" fill="#3a4a5c" font-size="10" text-anchor="middle">index</text>
+          <line x1="255" y1="176" x2="255" y2="230" stroke="#cfd9e6" stroke-width="2.5"/>
+          <circle cx="255" cy="230" r="5" fill="#38d6c4"/>
+          <path d="M255 230 H196" fill="none" stroke="#38d6c4" stroke-width="2"/>
+          <path d="M205 226 L196 230 L205 234 Z" fill="#38d6c4"/>
+          <text x="252" y="222" fill="#38d6c4" font-size="11" text-anchor="end">→ A0</text>
+          <rect x="233" y="255" width="44" height="50" rx="6" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/>
+          <text x="255" y="284" fill="#f6c453" font-size="11" font-weight="700" text-anchor="middle">10kΩ</text>
+          <line x1="255" y1="230" x2="255" y2="255" stroke="#cfd9e6" stroke-width="2.5"/>
+          <line x1="255" y1="305" x2="255" y2="405" stroke="#8aa0b6" stroke-width="2.5"/>
+        </g>
+        <g>
+          <!-- Rung 2 : x=425, A1, S2 middle -->
+          <line x1="425" y1="70" x2="425" y2="122" stroke="#ff6b5c" stroke-width="2.5"/>
+          <rect x="385" y="122" width="80" height="54" rx="8" fill="#dfe8f2" stroke="#9fb2c6"/>
+          <text x="425" y="147" fill="#0e1622" font-size="14" font-weight="700" text-anchor="middle">S2</text>
+          <text x="425" y="164" fill="#3a4a5c" font-size="10" text-anchor="middle">middle</text>
+          <line x1="425" y1="176" x2="425" y2="230" stroke="#cfd9e6" stroke-width="2.5"/>
+          <circle cx="425" cy="230" r="5" fill="#38d6c4"/>
+          <path d="M425 230 H366" fill="none" stroke="#38d6c4" stroke-width="2"/>
+          <path d="M375 226 L366 230 L375 234 Z" fill="#38d6c4"/>
+          <text x="422" y="222" fill="#38d6c4" font-size="11" text-anchor="end">→ A1</text>
+          <rect x="403" y="255" width="44" height="50" rx="6" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/>
+          <text x="425" y="284" fill="#f6c453" font-size="11" font-weight="700" text-anchor="middle">10kΩ</text>
+          <line x1="425" y1="230" x2="425" y2="255" stroke="#cfd9e6" stroke-width="2.5"/>
+          <line x1="425" y1="305" x2="425" y2="405" stroke="#8aa0b6" stroke-width="2.5"/>
+        </g>
+        <g>
+          <!-- Rung 3 : x=595, A2, S3 thumb -->
+          <line x1="595" y1="70" x2="595" y2="122" stroke="#ff6b5c" stroke-width="2.5"/>
+          <rect x="555" y="122" width="80" height="54" rx="8" fill="#dfe8f2" stroke="#9fb2c6"/>
+          <text x="595" y="147" fill="#0e1622" font-size="14" font-weight="700" text-anchor="middle">S3</text>
+          <text x="595" y="164" fill="#3a4a5c" font-size="10" text-anchor="middle">thumb</text>
+          <line x1="595" y1="176" x2="595" y2="230" stroke="#cfd9e6" stroke-width="2.5"/>
+          <circle cx="595" cy="230" r="5" fill="#38d6c4"/>
+          <path d="M595 230 H536" fill="none" stroke="#38d6c4" stroke-width="2"/>
+          <path d="M545 226 L536 230 L545 234 Z" fill="#38d6c4"/>
+          <text x="592" y="222" fill="#38d6c4" font-size="11" text-anchor="end">→ A2</text>
+          <rect x="573" y="255" width="44" height="50" rx="6" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/>
+          <text x="595" y="284" fill="#f6c453" font-size="11" font-weight="700" text-anchor="middle">10kΩ</text>
+          <line x1="595" y1="230" x2="595" y2="255" stroke="#cfd9e6" stroke-width="2.5"/>
+          <line x1="595" y1="305" x2="595" y2="405" stroke="#8aa0b6" stroke-width="2.5"/>
+        </g>
+        <g>
+          <!-- Rung 4 : x=760, A3, S4 ring -->
+          <line x1="760" y1="70" x2="760" y2="122" stroke="#ff6b5c" stroke-width="2.5"/>
+          <rect x="720" y="122" width="80" height="54" rx="8" fill="#dfe8f2" stroke="#9fb2c6"/>
+          <text x="760" y="147" fill="#0e1622" font-size="14" font-weight="700" text-anchor="middle">S4</text>
+          <text x="760" y="164" fill="#3a4a5c" font-size="10" text-anchor="middle">ring</text>
+          <line x1="760" y1="176" x2="760" y2="230" stroke="#cfd9e6" stroke-width="2.5"/>
+          <circle cx="760" cy="230" r="5" fill="#38d6c4"/>
+          <path d="M760 230 H701" fill="none" stroke="#38d6c4" stroke-width="2"/>
+          <path d="M710 226 L701 230 L710 234 Z" fill="#38d6c4"/>
+          <text x="757" y="222" fill="#38d6c4" font-size="11" text-anchor="end">→ A3</text>
+          <rect x="738" y="255" width="44" height="50" rx="6" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/>
+          <text x="760" y="284" fill="#f6c453" font-size="11" font-weight="700" text-anchor="middle">10kΩ</text>
+          <line x1="760" y1="230" x2="760" y2="255" stroke="#cfd9e6" stroke-width="2.5"/>
+          <line x1="760" y1="305" x2="760" y2="405" stroke="#8aa0b6" stroke-width="2.5"/>
+        </g>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="background:#ff6b5c"></i> 3.3V (shared)</span>
+      <span><i class="sw" style="background:#8aa0b6"></i> GND (shared)</span>
+      <span><i class="sw" style="background:#38d6c4"></i> ADC signal A0–A3 (unique)</span>
+      <span><i class="sw" style="background:#f6c453"></i> 10kΩ resistor</span>
+      <span><i class="sw" style="background:#dfe8f2"></i> FlexiForce sensor</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>One sensor, end to end</h2>
+    <p class="lead">The A201's tab is two male pins on 0.1&nbsp;in spacing. A female connector clips straight on — no heat on the sensor. From the connector, two wires run back to the board: one joins the shared 3.3V rail, the other is the ADC node (where the 10&nbsp;kΩ to GND also lands).</p>
+    <div class="scroll">
+      <svg viewBox="0 0 780 260" role="img" aria-label="Single sensor detail: round sensing pad, tail, male pins, female connector secured with heat shrink, two wires to the board.">
+        <!-- sensing pad -->
+        <circle cx="70" cy="130" r="34" fill="#dfe8f2" stroke="#9fb2c6" stroke-width="2"/>
+        <circle cx="70" cy="130" r="16" fill="#c4d2e2"/>
+        <text x="70" y="196" fill="#93a4b8" font-size="11" text-anchor="middle">sensing pad</text>
+        <text x="70" y="210" fill="#93a4b8" font-size="11" text-anchor="middle">(under leather)</text>
+        <!-- tail -->
+        <rect x="104" y="120" width="150" height="20" rx="4" fill="#c9b9a0" stroke="#9c8a6f"/>
+        <text x="178" y="112" fill="#93a4b8" font-size="10.5" text-anchor="middle">flexible tail</text>
+        <!-- male pins -->
+        <rect x="254" y="122" width="30" height="6" fill="#e7c26b"/>
+        <rect x="254" y="132" width="30" height="6" fill="#e7c26b"/>
+        <!-- female connector housing -->
+        <rect x="278" y="112" width="60" height="36" rx="5" fill="#22374d" stroke="#3d5b7a" stroke-width="1.5"/>
+        <text x="308" y="103" fill="#38d6c4" font-size="10.5" text-anchor="middle">female plug</text>
+        <!-- heat shrink -->
+        <rect x="268" y="108" width="24" height="44" rx="4" fill="none" stroke="#ff6b5c" stroke-dasharray="4 3" stroke-width="1.5"/>
+        <text x="252" y="184" fill="#ff8a7e" font-size="10.5" text-anchor="middle">heat-shrink /</text>
+        <text x="252" y="197" fill="#ff8a7e" font-size="10.5" text-anchor="middle">glue to lock</text>
+        <!-- two wires out -->
+        <path d="M338 122 H470 Q486 122 486 106 V70 H560" fill="none" stroke="#ff6b5c" stroke-width="3"/>
+        <path d="M338 138 H452 Q470 138 470 158 V190 H560" fill="none" stroke="#38d6c4" stroke-width="3"/>
+        <text x="566" y="74" fill="#ff8a7e" font-size="12">to 3.3V rail</text>
+        <text x="566" y="194" fill="#38d6c4" font-size="12">to ADC node — A0</text>
+        <text x="566" y="210" fill="#93a4b8" font-size="10.5">(10kΩ to GND lands here too)</text>
+        <!-- board solder points -->
+        <circle cx="560" cy="70" r="5" fill="#ff6b5c"/>
+        <circle cx="560" cy="190" r="5" fill="#38d6c4"/>
+        <text x="560" y="240" fill="#93a4b8" font-size="10.5" text-anchor="middle">solder ends at the board / perfboard hub</text>
+      </svg>
+    </div>
+  </section>
+
+  <section>
+    <h2>Where each sensor sits — four-seam grip</h2>
+    <p class="lead">Map the pads to a four-seam grip so they sit exactly where the fingers press. Index and middle on top near the seams, thumb underneath, ring on the side. Label each pad to its sensor and pin as you place it.</p>
+    <div class="scroll">
+      <svg viewBox="0 0 460 420" role="img" aria-label="Baseball front view with four-seam grip: index and middle on top, ring on the side, thumb underneath.">
+        <!-- ball -->
+        <circle cx="220" cy="210" r="180" fill="#f4f1ea" stroke="#d8d2c4" stroke-width="2"/>
+        <!-- seams -->
+        <path d="M120 70 C 210 150, 210 270, 120 350" fill="none" stroke="#ff6b5c" stroke-width="2.5" stroke-dasharray="2 7" stroke-linecap="round"/>
+        <path d="M320 70 C 230 150, 230 270, 320 350" fill="none" stroke="#ff6b5c" stroke-width="2.5" stroke-dasharray="2 7" stroke-linecap="round"/>
+        <!-- markers -->
+        <!-- index -->
+        <circle cx="180" cy="128" r="15" fill="#38d6c4" stroke="#0e1622" stroke-width="1.5"/>
+        <text x="180" y="133" fill="#06221f" font-size="12" font-weight="700" text-anchor="middle">S1</text>
+        <text x="180" y="98" fill="#25333f" font-size="12" text-anchor="middle" font-weight="600">Index · A0</text>
+        <!-- middle -->
+        <circle cx="262" cy="128" r="15" fill="#38d6c4" stroke="#0e1622" stroke-width="1.5"/>
+        <text x="262" y="133" fill="#06221f" font-size="12" font-weight="700" text-anchor="middle">S2</text>
+        <text x="262" y="98" fill="#25333f" font-size="12" text-anchor="middle" font-weight="600">Middle · A1</text>
+        <!-- ring (side) -->
+        <circle cx="330" cy="238" r="15" fill="#38d6c4" stroke="#0e1622" stroke-width="1.5"/>
+        <text x="330" y="243" fill="#06221f" font-size="12" font-weight="700" text-anchor="middle">S4</text>
+        <text x="330" y="278" fill="#25333f" font-size="12" text-anchor="middle" font-weight="600">Ring · A3</text>
+        <!-- thumb (underside) -->
+        <circle cx="196" cy="300" r="15" fill="none" stroke="#0e1622" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <text x="196" y="305" fill="#25333f" font-size="12" font-weight="700" text-anchor="middle">S3</text>
+        <text x="196" y="336" fill="#25333f" font-size="12" text-anchor="middle" font-weight="600">Thumb · A2</text>
+        <text x="196" y="351" fill="#6b7684" font-size="10.5" text-anchor="middle">(underneath)</text>
+      </svg>
+    </div>
+    <p class="map"><b>Pin map:</b> S1 index → A0 &nbsp;·&nbsp; S2 middle → A1 &nbsp;·&nbsp; S3 thumb → A2 &nbsp;·&nbsp; S4 ring → A3 &nbsp;— matches <code>PIN[4] = {A0,A1,A2,A3}</code> in the firmware.</p>
+  </section>
+
+  <section>
+    <h2>Build order</h2>
+    <p class="lead">Everything below is doable now except step 5 (needs the 10&nbsp;kΩ). Pre-build 1–4 while you wait.</p>
+    <ol class="steps">
+      <li><b>Build 4 sensor harnesses.</b> <span class="note">Female connector onto each A201's pins, lock with heat-shrink/glue, run two wires (consistent colors: red = power side, teal = ADC side). Label S1–S4.</span></li>
+      <li><b>Make the 3.3V junction.</b> <span class="note">Splice all four red wires together with one wire back to the XIAO <code>3V3</code> pin — this is your shared rail.</span></li>
+      <li><b>Make the GND junction.</b> <span class="note">One wire from the XIAO <code>GND</code> pin to a common node all four resistors will return to.</span></li>
+      <li><b>Route each ADC wire</b> <span class="note">from each sensor to its own pin — S1→A0, S2→A1, S3→A2, S4→A3.</span></li>
+      <li><b>Add the four 10&nbsp;kΩ resistors.</b> <span class="note">Each one from its ADC node to the GND junction. <em>(Waiting on parts.)</em></span></li>
+      <li><b>Bench-test before the ball.</b> <span class="note">Run the logger, press each pad, confirm the correct channel moves. Only then embed and seal.</span></li>
+    </ol>
+  </section>
+</div>

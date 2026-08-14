@@ -1,0 +1,208 @@
+<title>Crimping the 3V3 Bus — Visual Guide</title>
+<style>
+  :root{
+    --paper:#ecebe6;--card:#f7f6f2;--ink:#1a1d21;--ink2:#4a4f56;--muted:#7c7f86;
+    --line:#d5d3cb;--sheet:#f4f1e9;--sheet-line:#e0dccf;
+    --copper:#b06a33;--wire:#c23b2f;--metal:#9aa0a7;--metal-dk:#6a6f76;
+    --graphite:#3a424c;--board:#2f6f4f;--accent:#1f7a8c;--seam:#b23a2c;--pwr:#c23b2f;
+    --mono:ui-monospace,"Cascadia Code",Consolas,Menlo,monospace;
+    --sans:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#15171b;--card:#1d2025;--ink:#eceef0;--ink2:#b6bac0;--muted:#878b92;--line:#2c3037;}}
+  :root[data-theme="dark"]{--paper:#15171b;--card:#1d2025;--ink:#eceef0;--ink2:#b6bac0;--muted:#878b92;--line:#2c3037;}
+  *{box-sizing:border-box;}body{margin:0;}
+  .wrap{max-width:860px;margin:0 auto;padding:34px 20px 80px;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55;}
+  header{border-bottom:3px solid var(--ink);padding-bottom:16px;margin-bottom:8px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--wire);margin:0 0 8px;}
+  h1{font-size:clamp(28px,5vw,42px);margin:0 0 10px;letter-spacing:-.02em;text-wrap:balance;}
+  .lede{margin:0;max-width:60ch;color:var(--ink2);font-size:16px;}
+  .step{margin-top:30px;}
+  .step-head{display:flex;align-items:center;gap:14px;margin-bottom:4px;}
+  .n{font-family:var(--mono);font-weight:700;font-size:16px;color:var(--card);background:var(--ink);width:36px;height:36px;border-radius:9px;display:grid;place-items:center;flex:none;}
+  h2{font-size:clamp(18px,3vw,23px);margin:0;letter-spacing:-.01em;}
+  .cap{margin:2px 0 0 50px;color:var(--ink2);max-width:58ch;font-size:15px;}
+  .cap b{color:var(--ink);}
+  figure{margin:12px 0 0;background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:10px;overflow-x:auto;}
+  figure svg{display:block;width:100%;height:auto;min-width:440px;}
+  .warn{display:flex;gap:12px;background:color-mix(in srgb,var(--seam) 10%,var(--card));border:1px solid var(--seam);border-left-width:5px;border-radius:8px;padding:14px 16px;margin-top:14px;}
+  .warn b{color:var(--seam);}.warn p{margin:0;font-size:14.5px;color:var(--ink2);}
+  footer{margin-top:50px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">SmartBall v2 · Crimping</p>
+    <h1>Crimp the 3V3 bus</h1>
+    <p class="lede">One female connector on the XIAO's 3V3 pin, feeding four wires out to the four sensors. Follow the pictures top to bottom.</p>
+  </header>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-head"><span class="n">1</span><h2>Cut four red wires</h2></div>
+    <p class="cap">Red = power, so you never mix it up. Long enough to reach each sensor with slack.</p>
+    <figure><svg viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace">
+      <g stroke="var(--wire)" stroke-width="7" stroke-linecap="round">
+        <line x1="40" y1="30" x2="520" y2="30"/><line x1="40" y1="55" x2="520" y2="55"/>
+        <line x1="40" y1="80" x2="520" y2="80"/><line x1="40" y1="105" x2="520" y2="105"/>
+      </g>
+      <text x="536" y="72" font-size="14" fill="var(--ink)">×4</text>
+    </svg></figure>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-head"><span class="n">2</span><h2>Strip ~4 mm off one end of each</h2></div>
+    <p class="cap"><b>Don't tin them.</b> Crimps grip bare copper strands best — solder makes them work loose.</p>
+    <figure><svg viewBox="0 0 560 120" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace">
+      <line x1="60" y1="60" x2="430" y2="60" stroke="var(--wire)" stroke-width="9" stroke-linecap="round"/>
+      <!-- exposed strands -->
+      <g stroke="var(--copper)" stroke-width="1.6">
+        <line x1="430" y1="56" x2="500" y2="52"/><line x1="430" y1="60" x2="502" y2="60"/><line x1="430" y1="64" x2="500" y2="68"/>
+      </g>
+      <path d="M430 40 L430 80" stroke="var(--ink2)" stroke-dasharray="3 3"/>
+      <text x="470" y="34" font-size="13" fill="var(--copper)" text-anchor="middle">bare copper</text>
+      <text x="245" y="90" font-size="13" fill="var(--ink2)" text-anchor="middle">insulation stays on</text>
+      <text x="466" y="98" font-size="12" fill="var(--ink2)" text-anchor="middle">~4 mm</text>
+    </svg></figure>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-head"><span class="n">3</span><h2>Twist all four bare ends into one bundle</h2></div>
+    <p class="cap">Four thin 30 AWG wires twisted together ≈ one normal wire — that's what goes in the crimp.</p>
+    <figure><svg viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace">
+      <!-- 4 wires converging -->
+      <path d="M40 40 C 160 40, 220 70, 300 75" fill="none" stroke="var(--wire)" stroke-width="7"/>
+      <path d="M40 70 C 160 70, 220 74, 300 75" fill="none" stroke="var(--wire)" stroke-width="7"/>
+      <path d="M40 100 C 160 100, 220 78, 300 77" fill="none" stroke="var(--wire)" stroke-width="7"/>
+      <path d="M40 130 C 160 130, 220 82, 300 79" fill="none" stroke="var(--wire)" stroke-width="7"/>
+      <!-- twisted bundle -->
+      <path d="M300 76 q20 -6 40 0 q20 6 40 0 q20 -6 40 0" fill="none" stroke="var(--copper)" stroke-width="6"/>
+      <text x="400" y="60" font-size="13" fill="var(--copper)" text-anchor="middle">twisted together</text>
+      <text x="150" y="20" font-size="12" fill="var(--ink2)">4 sensor wires</text>
+    </svg></figure>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-head"><span class="n">4</span><h2>Meet the crimp contact</h2></div>
+    <p class="cap">The female contact has two sets of little wings: the <b>wire crimp</b> (small, grips bare copper) and the <b>insulation crimp</b> (big, grips the jacket). The round end plugs onto the pin.</p>
+    <figure><svg viewBox="0 0 560 180" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace">
+      <!-- contact body -->
+      <rect x="60" y="80" width="120" height="34" rx="6" fill="var(--metal)" stroke="var(--metal-dk)" stroke-width="1.5"/>
+      <circle cx="86" cy="97" r="9" fill="var(--sheet)" stroke="var(--metal-dk)"/>
+      <text x="120" y="102" font-size="12" fill="#2a2d24" text-anchor="middle">socket</text>
+      <!-- wire crimp wings (small) -->
+      <path d="M210 100 L222 78 M240 100 L228 78" stroke="var(--metal-dk)" stroke-width="3"/>
+      <rect x="206" y="98" width="40" height="16" fill="var(--metal)" stroke="var(--metal-dk)"/>
+      <!-- insulation crimp wings (big) -->
+      <path d="M275 104 L292 70 M320 104 L303 70" stroke="var(--metal-dk)" stroke-width="3"/>
+      <rect x="272" y="100" width="52" height="20" fill="var(--metal)" stroke="var(--metal-dk)"/>
+      <!-- labels -->
+      <line x1="105" y1="70" x2="105" y2="45" stroke="var(--ink2)"/><text x="105" y="38" font-size="12" fill="var(--ink)" text-anchor="middle">plugs onto pin</text>
+      <line x1="226" y1="74" x2="226" y2="140" stroke="var(--accent)"/><text x="226" y="158" font-size="12" fill="var(--accent)" text-anchor="middle">wire crimp</text>
+      <line x1="298" y1="66" x2="360" y2="45" stroke="var(--accent)"/><text x="430" y="45" font-size="12" fill="var(--accent)" text-anchor="middle">insulation crimp</text>
+    </svg></figure>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-head"><span class="n">5</span><h2>Lay the bundle into the contact</h2></div>
+    <p class="cap">Bare copper sits in the <b>small</b> wings; the insulation edge sits in the <b>big</b> wings. Copper should peek just past the wire wings — not into the socket.</p>
+    <figure><svg viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace">
+      <!-- contact -->
+      <rect x="60" y="70" width="110" height="30" rx="6" fill="var(--metal)" stroke="var(--metal-dk)"/>
+      <circle cx="82" cy="85" r="8" fill="var(--sheet)" stroke="var(--metal-dk)"/>
+      <rect x="196" y="72" width="36" height="26" fill="var(--metal)" stroke="var(--metal-dk)"/>
+      <rect x="252" y="70" width="48" height="30" fill="var(--metal)" stroke="var(--metal-dk)"/>
+      <!-- wire laid in -->
+      <path d="M214 85 q40 0 70 0" stroke="var(--copper)" stroke-width="6" fill="none"/>
+      <line x1="284" y1="85" x2="520" y2="85" stroke="var(--wire)" stroke-width="8" stroke-linecap="round"/>
+      <text x="214" y="120" font-size="12" fill="var(--copper)" text-anchor="middle">copper in small wings</text>
+      <text x="330" y="120" font-size="12" fill="var(--wire)" text-anchor="middle">jacket in big wings</text>
+    </svg></figure>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-head"><span class="n">6</span><h2>Squeeze with the ratchet tool</h2></div>
+    <p class="cap">Put it in the small die slot, squeeze until the ratchet releases. The wings fold down and bite the wire.</p>
+    <figure><svg viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace">
+      <!-- jaws -->
+      <path d="M120 30 L300 70 L300 86 L120 66 Z" fill="var(--graphite)"/>
+      <path d="M120 160 L300 120 L300 104 L120 140 Z" fill="var(--graphite)"/>
+      <text x="80" y="100" font-size="13" fill="var(--ink2)" text-anchor="middle">tool</text>
+      <!-- arrows -->
+      <path d="M330 40 L330 80" stroke="var(--seam)" stroke-width="3"/><path d="M324 72 l6 10 l6 -10" fill="var(--seam)"/>
+      <path d="M330 150 L330 110" stroke="var(--seam)" stroke-width="3"/><path d="M324 118 l6 -10 l6 10" fill="var(--seam)"/>
+      <!-- contact being crimped -->
+      <rect x="300" y="86" width="70" height="18" fill="var(--metal)" stroke="var(--metal-dk)"/>
+      <line x1="370" y1="95" x2="520" y2="95" stroke="var(--wire)" stroke-width="8" stroke-linecap="round"/>
+      <text x="410" y="130" font-size="13" fill="var(--ink)" text-anchor="middle">squeeze → click → release</text>
+    </svg></figure>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-head"><span class="n">7</span><h2>Slide it into a 1-pin housing</h2></div>
+    <p class="cap">Push until it clicks and locks. The plastic housing is the insulation that stops channels touching later.</p>
+    <figure><svg viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace">
+      <!-- housing -->
+      <rect x="70" y="45" width="80" height="44" rx="5" fill="var(--graphite)"/>
+      <rect x="60" y="52" width="14" height="30" rx="2" fill="var(--graphite)"/>
+      <text x="110" y="112" font-size="12" fill="var(--ink2)" text-anchor="middle">plastic housing</text>
+      <!-- contact + wire entering -->
+      <rect x="180" y="60" width="50" height="14" fill="var(--metal)" stroke="var(--metal-dk)"/>
+      <line x1="230" y1="67" x2="470" y2="67" stroke="var(--wire)" stroke-width="8" stroke-linecap="round"/>
+      <path d="M175 67 L120 67" stroke="var(--seam)" stroke-width="3"/><path d="M128 61 l-10 6 l10 6" fill="var(--seam)"/>
+      <text x="300" y="100" font-size="12" fill="var(--ink2)" text-anchor="middle">push until it clicks</text>
+    </svg></figure>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step">
+    <div class="step-head"><span class="n">8</span><h2>Plug onto the XIAO's 3V3 pin</h2></div>
+    <p class="cap">One connector on 3V3, four red wires fanning out — each goes to a sensor's power pin.</p>
+    <figure><svg viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace">
+      <!-- xiao -->
+      <rect x="60" y="80" width="120" height="60" rx="8" fill="var(--board)"/><text x="120" y="115" fill="#eafff2" font-size="13" text-anchor="middle">XIAO</text>
+      <!-- 3v3 pin + housing -->
+      <rect x="180" y="100" width="10" height="14" fill="var(--pwr)"/><text x="185" y="95" font-size="11" fill="var(--pwr)" text-anchor="middle">3V3</text>
+      <rect x="192" y="98" width="34" height="18" rx="3" fill="var(--graphite)"/>
+      <!-- fan out to 4 sensors -->
+      <g stroke="var(--wire)" stroke-width="6" fill="none">
+        <path d="M226 106 C 320 60, 380 50, 470 45"/>
+        <path d="M226 108 C 320 90, 380 85, 470 90"/>
+        <path d="M226 110 C 320 130, 380 135, 470 135"/>
+        <path d="M226 112 C 320 160, 380 175, 470 180"/>
+      </g>
+      <g fill="var(--accent)"><circle cx="478" cy="45" r="8"/><circle cx="478" cy="90" r="8"/><circle cx="478" cy="135" r="8"/><circle cx="478" cy="180" r="8"/></g>
+      <text x="520" y="49" font-size="11" fill="var(--ink2)">S1</text><text x="520" y="94" font-size="11" fill="var(--ink2)">S2</text>
+      <text x="520" y="139" font-size="11" fill="var(--ink2)">S3</text><text x="520" y="184" font-size="11" fill="var(--ink2)">S4</text>
+    </svg></figure>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="step">
+    <div class="step-head"><span class="n">9</span><h2>Test every crimp before you trust it</h2></div>
+    <p class="cap"><b>Tug</b> each wire (none should pull out) and <b>beep</b> from the contact to each wire end. A crimp that looks perfect can still be open.</p>
+    <figure><svg viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace">
+      <!-- tug -->
+      <rect x="50" y="45" width="40" height="16" fill="var(--metal)" stroke="var(--metal-dk)"/>
+      <line x1="90" y1="53" x2="210" y2="53" stroke="var(--wire)" stroke-width="7" stroke-linecap="round"/>
+      <path d="M215 53 L255 53" stroke="var(--seam)" stroke-width="3"/><path d="M247 47 l10 6 l-10 6" fill="var(--seam)"/>
+      <text x="150" y="34" font-size="13" fill="var(--ink)" text-anchor="middle">tug — holds?</text>
+      <!-- beep -->
+      <rect x="60" y="100" width="60" height="40" rx="5" fill="var(--graphite)"/><text x="90" y="125" fill="#7CFCB0" font-size="13" text-anchor="middle">beep</text>
+      <path d="M120 120 L200 120" stroke="var(--accent)" stroke-width="2.5"/>
+      <rect x="200" y="112" width="34" height="16" fill="var(--metal)" stroke="var(--metal-dk)"/>
+      <line x1="234" y1="120" x2="360" y2="120" stroke="var(--wire)" stroke-width="7" stroke-linecap="round"/>
+      <text x="300" y="108" font-size="12" fill="var(--accent)" text-anchor="middle">continuity end-to-end</text>
+    </svg></figure>
+    <div class="warn"><b>!</b><p><b>Practice on scrap first.</b> Crimp a few, cut them open or tug hard, until they hold every time. A bad crimp is the #1 way this build fails — and it always looks fine from the outside.</p></div>
+  </div>
+
+  <footer>
+    Same method builds the <b>GND bus</b> (four resistor legs → one contact → GND pin) and each <b>node</b> (sensor wire + resistor leg → one contact → analog pin). If four wires won't fit one barrel, twist them into a ferrule first, then crimp the ferrule.
+  </footer>
+</div>

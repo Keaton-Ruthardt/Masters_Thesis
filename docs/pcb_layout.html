@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instrumented Baseball — Rigid PCB Component Layout</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0f1117;
+    color: #e0e0e0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    max-width: 900px;
+  }
+
+  header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.25rem;
+  }
+
+  header h1 span {
+    color: #60a5fa;
+  }
+
+  header .subtitle {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    font-weight: 400;
+  }
+
+  header .subtitle strong {
+    color: #c4b5fd;
+    font-weight: 500;
+  }
+
+  .main-container {
+    display: flex;
+    gap: 2rem;
+    max-width: 1400px;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .pcb-panel {
+    background: #1a1d27;
+    border: 1px solid #2a2d3a;
+    border-radius: 12px;
+    padding: 1.5rem;
+    flex: 1 1 750px;
+    max-width: 820px;
+    min-width: 600px;
+  }
+
+  .pcb-panel h2 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .side-panels {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex: 0 1 380px;
+    min-width: 320px;
+  }
+
+  .info-card {
+    background: #1a1d27;
+    border: 1px solid #2a2d3a;
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  .info-card h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .legend-label { color: #d1d5db; }
+  .legend-desc { color: #9ca3af; font-size: 0.78rem; }
+
+  .bom-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+  }
+
+  .bom-table th {
+    text-align: left;
+    color: #9ca3af;
+    font-weight: 500;
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid #2a2d3a;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .bom-table td {
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid #1e2130;
+    color: #d1d5db;
+  }
+
+  .bom-table td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: #93c5fd;
+  }
+
+  .bom-table tr:last-child td { border-bottom: none; }
+
+  .dim-note {
+    font-size: 0.78rem;
+    color: #9ca3af;
+    line-height: 1.5;
+    margin-top: 0.25rem;
+  }
+
+  .dim-note .val {
+    color: #fbbf24;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+  }
+
+  .spec-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid #1e2130;
+    font-size: 0.82rem;
+  }
+
+  .spec-row:last-child { border-bottom: none; }
+  .spec-label { color: #9ca3af; }
+  .spec-value {
+    color: #e0e0e0;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+  }
+
+  svg text {
+    font-family: 'Inter', -apple-system, sans-serif;
+  }
+
+  .tooltip-overlay {
+    position: fixed;
+    background: #1e2130;
+    border: 1px solid #3b3f54;
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.78rem;
+    color: #e0e0e0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+    max-width: 220px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+
+  .tooltip-overlay .tt-title {
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 0.2rem;
+  }
+
+  .tooltip-overlay .tt-detail {
+    color: #9ca3af;
+    font-size: 0.72rem;
+  }
+
+  footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.72rem;
+    color: #4b5563;
+  }
+
+  @media print {
+    body { background: #fff; color: #111; padding: 1rem; }
+    .pcb-panel, .info-card { background: #fafafa; border-color: #ddd; }
+    header h1 { color: #111; }
+    header h1 span { color: #2563eb; }
+    .bom-table td:first-child { color: #2563eb; }
+  }
+
+  @media (max-width: 1000px) {
+    .main-container { flex-direction: column; align-items: center; }
+    .pcb-panel { min-width: auto; width: 100%; }
+    .side-panels { width: 100%; max-width: 820px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Instrumented Baseball — <span>Rigid PCB Component Layout</span></h1>
+  <div class="subtitle">Phase 3 Design Preview &nbsp;|&nbsp; <strong>MastersBall Project</strong> &nbsp;|&nbsp; Custom 2-Layer Rigid PCB &nbsp;|&nbsp; JLCPCB Fabrication</div>
+</header>
+
+<div class="main-container">
+  <!-- Main PCB Diagram -->
+  <div class="pcb-panel">
+    <h2>Top View — Component Placement (to scale)</h2>
+    <svg id="pcb-svg" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+      <defs>
+        <!-- Glow filters -->
+        <filter id="glow-blue" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+
+        <!-- PCB substrate pattern -->
+        <pattern id="pcb-grid" width="10" height="10" patternUnits="userSpaceOnUse">
+          <rect width="10" height="10" fill="none"/>
+          <circle cx="5" cy="5" r="0.3" fill="#2a3a2a" opacity="0.4"/>
+        </pattern>
+
+        <!-- Hatching for antenna keepout -->
+        <pattern id="keepout-hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="0" y2="6" stroke="#ef444440" stroke-width="0.8"/>
+        </pattern>
+      </defs>
+
+      <!-- Background -->
+      <rect width="700" height="700" fill="#12151e" rx="8"/>
+
+      <!-- Baseball interior reference circle (73mm → scaled) -->
+      <circle cx="350" cy="350" r="310" fill="none" stroke="#ffffff08" stroke-width="1" stroke-dasharray="8 4"/>
+      <text x="350" y="48" text-anchor="middle" fill="#ffffff15" font-size="10" font-weight="500">BASEBALL INTERIOR ⌀73mm</text>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- PCB Outline — 30×25mm rectangular rigid PCB -->
+      <!-- Scale: ~8.5px per mm → 30mm=255px, 25mm=212px -->
+      <!-- ═══════════════════════════════════════ -->
+      <rect x="222" y="244" width="255" height="212" rx="6" fill="#1a2a1a" stroke="#3d5a3d" stroke-width="2"/>
+      <rect x="222" y="244" width="255" height="212" rx="6" fill="url(#pcb-grid)"/>
+      <!-- Inner copper pour boundary -->
+      <rect x="230" y="252" width="239" height="196" rx="4" fill="none" stroke="#2a3a2a" stroke-width="0.5" stroke-dasharray="3 3"/>
+
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- DIMENSION ANNOTATIONS -->
+      <!-- ═══════════════════════════════════════ -->
+
+      <!-- PCB width (30mm) -->
+      <line x1="222" y1="480" x2="477" y2="480" stroke="#fbbf24" stroke-width="0.8"/>
+      <line x1="222" y1="472" x2="222" y2="488" stroke="#fbbf24" stroke-width="0.8"/>
+      <line x1="477" y1="472" x2="477" y2="488" stroke="#fbbf24" stroke-width="0.8"/>
+      <line x1="222" y1="456" x2="222" y2="477" stroke="#fbbf2440" stroke-width="0.5" stroke-dasharray="2 2"/>
+      <line x1="477" y1="456" x2="477" y2="477" stroke="#fbbf2440" stroke-width="0.5" stroke-dasharray="2 2"/>
+      <rect x="318" y="473" width="65" height="16" rx="3" fill="#12151e"/>
+      <text x="350" y="485" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="600" font-family="'JetBrains Mono', monospace">30mm</text>
+
+      <!-- PCB height (25mm) -->
+      <line x1="500" y1="244" x2="500" y2="456" stroke="#fbbf24" stroke-width="0.8"/>
+      <line x1="492" y1="244" x2="508" y2="244" stroke="#fbbf24" stroke-width="0.8"/>
+      <line x1="492" y1="456" x2="508" y2="456" stroke="#fbbf24" stroke-width="0.8"/>
+      <rect x="505" y="340" width="50" height="16" rx="3" fill="#12151e"/>
+      <text x="530" y="352" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="600" font-family="'JetBrains Mono', monospace">25mm</text>
+
+      <!-- Baseball diameter reference -->
+      <line x1="40" y1="40" x2="40" y2="660" stroke="#ffffff20" stroke-width="0.5"/>
+      <line x1="35" y1="40" x2="45" y2="40" stroke="#ffffff20" stroke-width="0.5"/>
+      <line x1="35" y1="660" x2="45" y2="660" stroke="#ffffff20" stroke-width="0.5"/>
+      <text x="44" y="354" text-anchor="middle" fill="#ffffff20" font-size="9" font-weight="400" transform="rotate(-90,44,354)">⌀ 73mm baseball</text>
+
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- ZONE BACKGROUNDS -->
+      <!-- ═══════════════════════════════════════ -->
+
+      <!-- Communication zone (top-left — nRF52840 + antenna) -->
+      <rect x="232" y="252" width="120" height="90" rx="3" fill="#1e3a5a15" stroke="#3b82f615" stroke-width="1"/>
+
+      <!-- Sensing zone (right side — 3 sensors stacked) -->
+      <rect x="380" y="252" width="85" height="140" rx="3" fill="#1e5a2e15" stroke="#22c55e15" stroke-width="1"/>
+
+      <!-- Power zone (bottom-left) -->
+      <rect x="232" y="365" width="120" height="80" rx="3" fill="#5a1e1e15" stroke="#ef444415" stroke-width="1"/>
+
+      <!-- Signal conditioning zone (bottom-right) -->
+      <rect x="370" y="400" width="100" height="48" rx="3" fill="#5a3a1e15" stroke="#f9731615" stroke-width="1"/>
+
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- TRACES (simplified routing) -->
+      <!-- ═══════════════════════════════════════ -->
+
+      <!-- I2C Bus from nRF52840 to sensors -->
+      <path d="M 320 300 L 380 290" fill="none" stroke="#60a5fa50" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M 320 310 L 380 340" fill="none" stroke="#60a5fa50" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M 320 315 L 380 385" fill="none" stroke="#60a5fa50" stroke-width="1.8" stroke-linecap="round"/>
+      <text x="355" y="285" fill="#60a5fa70" font-size="7" font-weight="500">I²C</text>
+
+      <!-- Power traces -->
+      <path d="M 280 335 L 280 370" fill="none" stroke="#ef444450" stroke-width="2.2" stroke-linecap="round"/>
+      <text x="268" y="358" fill="#ef444460" font-size="7" font-weight="500">VBAT</text>
+
+      <!-- ADC traces to sensor pads (bottom edge) -->
+      <path d="M 305 335 L 370 425" fill="none" stroke="#f9731650" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="345" y="415" fill="#f9731660" font-size="7" font-weight="500">ADC</text>
+
+      <!-- GND pour indicator -->
+      <text x="350" y="465" text-anchor="middle" fill="#4a556830" font-size="9" font-weight="500">— GND POUR —</text>
+
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- COMPONENTS -->
+      <!-- ═══════════════════════════════════════ -->
+
+      <!-- ——— nRF52840 QFN-48 (7mm × 7mm → ~60px × 60px) ——— -->
+      <g class="component" data-name="nRF52840 QFN-48" data-detail="7×7mm | Central MCU | BLE 5 (2 Mbps) | 64MHz ARM Cortex-M4F | 256KB RAM">
+        <rect x="256" y="270" width="60" height="60" rx="3" fill="#1e3a5a" stroke="#3b82f6" stroke-width="1.5"/>
+        <!-- Orientation dot -->
+        <circle cx="264" cy="278" r="2.5" fill="#3b82f680"/>
+        <!-- QFN pad grid (simplified) -->
+        <rect x="262" y="266" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="272" y="266" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="282" y="266" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="292" y="266" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="302" y="266" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="252" y="276" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="252" y="286" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="252" y="296" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="252" y="306" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="252" y="316" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="316" y="276" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="316" y="286" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="316" y="296" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="316" y="306" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="316" y="316" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="262" y="330" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="272" y="330" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="282" y="330" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="292" y="330" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <rect x="302" y="330" width="4" height="4" rx="0.5" fill="#4a5568"/>
+        <!-- Chip label -->
+        <text x="286" y="296" text-anchor="middle" fill="#93c5fd" font-size="8" font-weight="600">nRF</text>
+        <text x="286" y="308" text-anchor="middle" fill="#93c5fd" font-size="8" font-weight="600">52840</text>
+        <!-- Size annotation -->
+        <text x="286" y="348" text-anchor="middle" fill="#fbbf2480" font-size="6" font-family="'JetBrains Mono', monospace">7×7mm</text>
+      </g>
+
+      <!-- ——— 32MHz Crystal (3.2×2.5mm → ~27×21px) ——— -->
+      <g class="component" data-name="32MHz Crystal" data-detail="3.2×2.5mm | External clock for nRF52840 | Required for BLE timing">
+        <rect x="240" y="340" width="27" height="18" rx="2" fill="#2a2a3a" stroke="#8b8bf680" stroke-width="1"/>
+        <text x="254" y="352" text-anchor="middle" fill="#a5a5f0" font-size="6" font-weight="500">32MHz</text>
+        <text x="254" y="362" text-anchor="middle" fill="#8b8bf660" font-size="5">XTAL</text>
+      </g>
+
+      <!-- ——— Chip Antenna / PCB Trace Antenna ——— -->
+      <g class="component" data-name="BLE Antenna" data-detail="Chip antenna or PCB trace | BLE 5 @ 2.4GHz | Keep-out zone required">
+        <rect x="232" y="252" width="50" height="16" rx="2" fill="url(#keepout-hatch)" stroke="#ef4444" stroke-width="1" stroke-dasharray="3 2"/>
+        <text x="257" y="262" text-anchor="middle" fill="#ef4444" font-size="6" font-weight="600">ANTENNA</text>
+        <rect x="237" y="254" width="40" height="5" rx="1" fill="#3b82f640" stroke="#3b82f6" stroke-width="0.5"/>
+      </g>
+
+      <!-- ——— ISM330DHCX (6-axis IMU, 3×3mm → ~26×26px) ——— -->
+      <g class="component" data-name="ISM330DHCX" data-detail="3×3mm | 6-axis Gyro+Accel | I2C 0x6A | ±4000°/s gyro | ±16g accel">
+        <rect x="395" y="262" width="26" height="26" rx="3" fill="#1e3a2a" stroke="#22c55e" stroke-width="1.5"/>
+        <circle cx="400" cy="268" r="1.5" fill="#22c55e80"/>
+        <text x="408" y="278" text-anchor="middle" fill="#4ade80" font-size="7" font-weight="600">ISM</text>
+        <text x="408" y="286" text-anchor="middle" fill="#4ade8080" font-size="5.5">330</text>
+        <text x="408" y="298" text-anchor="middle" fill="#22c55e60" font-size="5" font-family="'JetBrains Mono', monospace">0x6A</text>
+      </g>
+
+      <!-- ——— H3LIS331DL (high-g accel, 3×3mm → ~26×26px) ——— -->
+      <g class="component" data-name="H3LIS331DL" data-detail="3×3mm | High-g Accel | I2C 0x18 | ±400g range | Impact detection">
+        <rect x="395" y="310" width="26" height="26" rx="3" fill="#1e3a2a" stroke="#22c55e" stroke-width="1.5"/>
+        <circle cx="400" cy="316" r="1.5" fill="#22c55e80"/>
+        <text x="408" y="326" text-anchor="middle" fill="#4ade80" font-size="7" font-weight="600">H3LIS</text>
+        <text x="408" y="334" text-anchor="middle" fill="#4ade8080" font-size="5">331</text>
+        <text x="408" y="346" text-anchor="middle" fill="#22c55e60" font-size="5" font-family="'JetBrains Mono', monospace">0x18</text>
+      </g>
+
+      <!-- ——— LIS3MDL (magnetometer, 3×3mm → ~26×26px) ——— -->
+      <g class="component" data-name="LIS3MDL" data-detail="3×3mm | 3-axis Magnetometer | I2C 0x1C | DFT spin rate — no gyro saturation">
+        <rect x="395" y="358" width="26" height="26" rx="3" fill="#1e3a2a" stroke="#22c55e" stroke-width="1.5"/>
+        <circle cx="400" cy="364" r="1.5" fill="#22c55e80"/>
+        <text x="408" y="372" text-anchor="middle" fill="#4ade80" font-size="7" font-weight="600">LIS3</text>
+        <text x="408" y="380" text-anchor="middle" fill="#4ade8080" font-size="5.5">MDL</text>
+        <text x="408" y="393" text-anchor="middle" fill="#22c55e60" font-size="5" font-family="'JetBrains Mono', monospace">0x1C</text>
+      </g>
+
+      <!-- ——— MCP73831T (charge controller, SOT-23-5) ——— -->
+      <g class="component" data-name="MCP73831T" data-detail="SOT-23-5 | LiPo Charge Controller | 500mA | 4.2V">
+        <rect x="260" y="380" width="35" height="18" rx="2" fill="#3a1e1e" stroke="#ef4444" stroke-width="1.2"/>
+        <rect x="264" y="377" width="3" height="4" rx="0.5" fill="#6b7280"/>
+        <rect x="274" y="377" width="3" height="4" rx="0.5" fill="#6b7280"/>
+        <rect x="289" y="377" width="3" height="4" rx="0.5" fill="#6b7280"/>
+        <rect x="264" y="398" width="3" height="4" rx="0.5" fill="#6b7280"/>
+        <rect x="289" y="398" width="3" height="4" rx="0.5" fill="#6b7280"/>
+        <text x="278" y="393" text-anchor="middle" fill="#fca5a5" font-size="6" font-weight="600">MCP73831</text>
+        <text x="278" y="411" text-anchor="middle" fill="#9ca3af" font-size="5.5">Charge Ctrl</text>
+      </g>
+
+      <!-- ——— Qi Coil Connection Pads ——— -->
+      <g class="component" data-name="Qi Coil Pads" data-detail="2-pad connection | 5V input from Qi receiver coil">
+        <rect x="233" y="400" width="22" height="22" rx="3" fill="#3a1e1e80" stroke="#ef4444" stroke-width="1" stroke-dasharray="3 2"/>
+        <circle cx="239" cy="407" r="3" fill="none" stroke="#ef4444" stroke-width="1.5"/>
+        <circle cx="249" cy="416" r="3" fill="none" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="244" y="432" text-anchor="middle" fill="#fca5a580" font-size="5.5" font-weight="500">Qi PADS</text>
+      </g>
+
+      <!-- ——— LiPo Battery Pads (JST) ——— -->
+      <g class="component" data-name="LiPo Battery Connector" data-detail="JST-PH 2-pin | 3.7V LiPo | Battery connection pads">
+        <rect x="236" y="430" width="32" height="16" rx="3" fill="#3a1e1e80" stroke="#ef4444" stroke-width="1" stroke-dasharray="3 2"/>
+        <rect x="241" y="434" width="8" height="8" rx="1" fill="none" stroke="#ef444480" stroke-width="1"/>
+        <rect x="253" y="434" width="8" height="8" rx="1" fill="none" stroke="#ef444480" stroke-width="1"/>
+        <text x="252" y="454" text-anchor="middle" fill="#fca5a580" font-size="5.5" font-weight="500">BATT JST</text>
+      </g>
+
+      <!-- ——— 4× Voltage Divider Resistors (0603) ——— -->
+      <g class="component" data-name="Voltage Dividers" data-detail="4× 10kΩ 0603 SMD | ~1.6×0.8mm each | ADC signal conditioning for FSR sensors">
+        <rect x="380" y="408" width="11" height="6" rx="1" fill="#3a2a1e" stroke="#f97316" stroke-width="1"/>
+        <text x="396" y="414" fill="#fdba7480" font-size="5" font-family="'JetBrains Mono', monospace">R1 10k</text>
+        <rect x="380" y="419" width="11" height="6" rx="1" fill="#3a2a1e" stroke="#f97316" stroke-width="1"/>
+        <text x="396" y="425" fill="#fdba7480" font-size="5" font-family="'JetBrains Mono', monospace">R2 10k</text>
+        <rect x="380" y="430" width="11" height="6" rx="1" fill="#3a2a1e" stroke="#f97316" stroke-width="1"/>
+        <text x="396" y="436" fill="#fdba7480" font-size="5" font-family="'JetBrains Mono', monospace">R3 10k</text>
+        <rect x="380" y="441" width="11" height="6" rx="1" fill="#3a2a1e" stroke="#f97316" stroke-width="1"/>
+        <text x="396" y="447" fill="#fdba7480" font-size="5" font-family="'JetBrains Mono', monospace">R4 10k</text>
+      </g>
+
+      <!-- ——— 4× Sensor Wire Pads (bottom edge of PCB) ——— -->
+      <g class="component" data-name="Sensor Wire Pads" data-detail="4× solder pads for FlexiForce FSR sensors | A0, A1, A2, A3 (XIAO nRF52840)">
+        <circle cx="435" cy="410" r="5" fill="none" stroke="#f97316" stroke-width="1.5"/>
+        <circle cx="435" cy="410" r="1.5" fill="#f97316"/>
+        <text x="446" y="413" fill="#fdba74" font-size="5.5" font-weight="500">S1 <tspan fill="#9ca3af" font-weight="400">A0</tspan></text>
+        <circle cx="435" cy="424" r="5" fill="none" stroke="#f97316" stroke-width="1.5"/>
+        <circle cx="435" cy="424" r="1.5" fill="#f97316"/>
+        <text x="446" y="427" fill="#fdba74" font-size="5.5" font-weight="500">S2 <tspan fill="#9ca3af" font-weight="400">A1</tspan></text>
+        <circle cx="435" cy="438" r="5" fill="none" stroke="#f97316" stroke-width="1.5"/>
+        <circle cx="435" cy="438" r="1.5" fill="#f97316"/>
+        <text x="446" y="441" fill="#fdba74" font-size="5.5" font-weight="500">S3 <tspan fill="#9ca3af" font-weight="400">A2</tspan></text>
+        <circle cx="435" cy="452" r="5" fill="none" stroke="#f97316" stroke-width="1.5"/>
+        <circle cx="435" cy="452" r="1.5" fill="#f97316"/>
+        <text x="446" y="455" fill="#fdba74" font-size="5.5" font-weight="500">S4 <tspan fill="#9ca3af" font-weight="400">A3</tspan></text>
+      </g>
+
+      <!-- ——— I2C Pull-up Resistors ——— -->
+      <g class="component" data-name="I2C Pull-ups" data-detail="2× 4.7kΩ 0603 | SDA/SCL pull-up resistors">
+        <rect x="345" y="272" width="11" height="6" rx="1" fill="#3a2a1e" stroke="#f9731680" stroke-width="0.8"/>
+        <text x="360" y="278" fill="#fdba7460" font-size="5">4.7k SDA</text>
+        <rect x="345" y="283" width="11" height="6" rx="1" fill="#3a2a1e" stroke="#f9731680" stroke-width="0.8"/>
+        <text x="360" y="289" fill="#fdba7460" font-size="5">4.7k SCL</text>
+      </g>
+
+      <!-- ——— Decoupling Capacitors (0603) ——— -->
+      <g class="component" data-name="Decoupling Caps" data-detail="5× 100nF + 1× 10µF 0603 SMD | Power rail filtering | Near each IC">
+        <!-- C1 near nRF52840 -->
+        <rect x="320" y="275" width="8" height="5" rx="1" fill="#3a2a1e" stroke="#f9731680" stroke-width="0.8"/>
+        <text x="331" y="280" fill="#fdba7460" font-size="4.5">C1</text>
+        <!-- C2 near ISM330 -->
+        <rect x="425" y="265" width="8" height="5" rx="1" fill="#3a2a1e" stroke="#f9731680" stroke-width="0.8"/>
+        <text x="436" y="270" fill="#fdba7460" font-size="4.5">C2</text>
+        <!-- C3 near H3LIS -->
+        <rect x="425" y="313" width="8" height="5" rx="1" fill="#3a2a1e" stroke="#f9731680" stroke-width="0.8"/>
+        <text x="436" y="318" fill="#fdba7460" font-size="4.5">C3</text>
+        <!-- C4 near LIS3MDL -->
+        <rect x="425" y="361" width="8" height="5" rx="1" fill="#3a2a1e" stroke="#f9731680" stroke-width="0.8"/>
+        <text x="436" y="366" fill="#fdba7460" font-size="4.5">C4</text>
+        <!-- C5 near MCP -->
+        <rect x="298" y="385" width="8" height="5" rx="1" fill="#3a2a1e" stroke="#f9731680" stroke-width="0.8"/>
+        <text x="309" y="390" fill="#fdba7460" font-size="4.5">C5</text>
+        <!-- C6 bulk -->
+        <rect x="298" y="395" width="8" height="5" rx="1" fill="#3a2a1e" stroke="#f9731680" stroke-width="0.8"/>
+        <text x="309" y="400" fill="#fdba7460" font-size="4.5">C6 10µF</text>
+      </g>
+
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- ZONE LABELS -->
+      <!-- ═══════════════════════════════════════ -->
+      <text x="290" y="260" text-anchor="middle" fill="#3b82f650" font-size="7" font-weight="600" letter-spacing="0.1em">COMMUNICATION</text>
+      <text x="408" y="258" text-anchor="middle" fill="#22c55e50" font-size="7" font-weight="600" letter-spacing="0.1em">SENSING</text>
+      <text x="275" y="378" text-anchor="middle" fill="#ef444450" font-size="7" font-weight="600" letter-spacing="0.1em">POWER</text>
+      <text x="420" y="405" text-anchor="middle" fill="#f9731650" font-size="7" font-weight="600" letter-spacing="0.1em">SIGNAL COND.</text>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- CENTER OF MASS MARKER -->
+      <!-- ═══════════════════════════════════════ -->
+      <line x1="345" y1="345" x2="355" y2="355" stroke="#ffffff30" stroke-width="0.8"/>
+      <line x1="355" y1="345" x2="345" y2="355" stroke="#ffffff30" stroke-width="0.8"/>
+      <circle cx="350" cy="350" r="6" fill="none" stroke="#ffffff15" stroke-width="0.5"/>
+      <text x="362" y="356" fill="#ffffff25" font-size="5">CoM</text>
+
+    </svg>
+
+    <!-- Cross-section inset -->
+    <h2 style="margin-top: 1.5rem;">Cross-Section — PCB Inside Baseball</h2>
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+      <rect width="700" height="200" fill="#12151e" rx="8"/>
+
+      <!-- Baseball outer shell -->
+      <ellipse cx="350" cy="160" rx="280" ry="140" fill="none" stroke="#9ca3af30" stroke-width="2"/>
+      <!-- Baseball leather -->
+      <path d="M 70 160 A 280 140 0 0 1 630 160" fill="none" stroke="#9ca3af" stroke-width="3"/>
+      <text x="350" y="38" text-anchor="middle" fill="#9ca3af40" font-size="10">LEATHER COVER</text>
+
+      <!-- Cork/rubber core outline -->
+      <ellipse cx="350" cy="160" rx="160" ry="80" fill="none" stroke="#78716c30" stroke-width="1" stroke-dasharray="4 3"/>
+      <text x="350" y="185" text-anchor="middle" fill="#78716c40" font-size="8">CORK/RUBBER CORE</text>
+
+      <!-- Epoxy coating around electronics -->
+      <rect x="290" y="68" width="120" height="55" rx="6" fill="#a78bfa10" stroke="#a78bfa50" stroke-width="1.5" stroke-dasharray="4 2"/>
+      <text x="560" y="88" fill="#a78bfa60" font-size="8">EPOXY COAT</text>
+
+      <!-- Rigid PCB (flat board at center) -->
+      <rect x="300" y="78" width="100" height="5" rx="1" fill="#22c55e" stroke="#22c55e" stroke-width="1"/>
+
+      <!-- Component bumps on PCB -->
+      <!-- nRF52840 -->
+      <rect x="310" y="68" width="24" height="10" rx="2" fill="#1e3a5a" stroke="#3b82f6" stroke-width="1"/>
+      <text x="322" y="76" text-anchor="middle" fill="#93c5fd" font-size="5" font-weight="600">nRF52840</text>
+
+      <!-- IMU (ISM330) -->
+      <rect x="340" y="71" width="12" height="7" rx="1.5" fill="#1e3a2a" stroke="#22c55e" stroke-width="0.8"/>
+      <text x="346" y="68" text-anchor="middle" fill="#4ade80" font-size="4.5">ISM</text>
+
+      <!-- H3LIS -->
+      <rect x="358" y="71" width="12" height="7" rx="1.5" fill="#1e3a2a" stroke="#22c55e" stroke-width="0.8"/>
+      <text x="364" y="68" text-anchor="middle" fill="#4ade80" font-size="4.5">H3L</text>
+
+      <!-- LIS3MDL (magnetometer) -->
+      <rect x="376" y="71" width="12" height="7" rx="1.5" fill="#1e3a2a" stroke="#22c55e" stroke-width="0.8"/>
+      <text x="382" y="68" text-anchor="middle" fill="#4ade80" font-size="4.5">MAG</text>
+
+      <!-- Battery (below PCB) -->
+      <rect x="310" y="90" width="80" height="25" rx="4" fill="#3a1e1e50" stroke="#ef4444" stroke-width="1" stroke-dasharray="3 2"/>
+      <text x="350" y="106" text-anchor="middle" fill="#fca5a580" font-size="7" font-weight="500">LiPo BATTERY</text>
+
+      <!-- Qi coil -->
+      <ellipse cx="350" cy="130" rx="50" ry="6" fill="none" stroke="#ef444460" stroke-width="1" stroke-dasharray="2 2"/>
+      <text x="350" y="146" text-anchor="middle" fill="#ef444450" font-size="6">Qi COIL</text>
+
+      <!-- Dimension lines -->
+      <line x1="200" y1="68" x2="200" y2="140" stroke="#fbbf2460" stroke-width="0.5"/>
+      <line x1="196" y1="68" x2="204" y2="68" stroke="#fbbf2460" stroke-width="0.5"/>
+      <line x1="196" y1="140" x2="204" y2="140" stroke="#fbbf2460" stroke-width="0.5"/>
+      <text x="193" y="106" text-anchor="end" fill="#fbbf24" font-size="7" font-family="'JetBrains Mono', monospace">~12mm</text>
+      <text x="193" y="116" text-anchor="end" fill="#fbbf2480" font-size="6">stack</text>
+
+      <!-- Labels -->
+      <text x="620" y="165" text-anchor="end" fill="#9ca3af50" font-size="7" font-style="italic">Not to exact scale</text>
+    </svg>
+  </div>
+
+  <!-- Side Panels -->
+  <div class="side-panels">
+
+    <!-- Legend -->
+    <div class="info-card">
+      <h3>Color Legend</h3>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#3b82f6;"></div>
+        <div>
+          <div class="legend-label">Communication</div>
+          <div class="legend-desc">nRF52840 QFN MCU, BLE 5 antenna</div>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#22c55e;"></div>
+        <div>
+          <div class="legend-label">Sensing</div>
+          <div class="legend-desc">ISM330DHCX, H3LIS331DL, LIS3MDL</div>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#ef4444;"></div>
+        <div>
+          <div class="legend-label">Power</div>
+          <div class="legend-desc">Battery, Qi charging, MCP73831T</div>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#f97316;"></div>
+        <div>
+          <div class="legend-label">Signal Conditioning</div>
+          <div class="legend-desc">Voltage dividers, decoupling caps, pull-ups</div>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#fbbf24;"></div>
+        <div>
+          <div class="legend-label">Dimensions</div>
+          <div class="legend-desc">Measurement annotations</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Specifications -->
+    <div class="info-card">
+      <h3>PCB Specifications</h3>
+      <div class="spec-row">
+        <span class="spec-label">Type</span>
+        <span class="spec-value">2-layer Rigid</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">Size</span>
+        <span class="spec-value">~30 × 25mm</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">Material</span>
+        <span class="spec-value">FR-4 (standard)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">Thickness</span>
+        <span class="spec-value">0.8mm</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">Copper</span>
+        <span class="spec-value">1oz / 35µm</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">Min trace</span>
+        <span class="spec-value">0.15mm / 6mil</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">Manufacturer</span>
+        <span class="spec-value">JLCPCB</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">Target mass</span>
+        <span class="spec-value">&lt; 8g (board)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">Total target</span>
+        <span class="spec-value">&lt; 12g (+ battery)</span>
+      </div>
+    </div>
+
+    <!-- Bill of Materials -->
+    <div class="info-card">
+      <h3>Bill of Materials</h3>
+      <table class="bom-table">
+        <thead>
+          <tr><th>Component</th><th>Package</th><th>Qty</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>nRF52840</td><td>QFN-48</td><td>1</td></tr>
+          <tr><td>ISM330DHCX</td><td>LGA-14</td><td>1</td></tr>
+          <tr><td>H3LIS331DL</td><td>LGA-16</td><td>1</td></tr>
+          <tr><td>LIS3MDL</td><td>LGA-12</td><td>1</td></tr>
+          <tr><td>MCP73831T</td><td>SOT-23-5</td><td>1</td></tr>
+          <tr><td>32MHz Crystal</td><td>3.2×2.5</td><td>1</td></tr>
+          <tr><td>Chip Antenna</td><td>SMD</td><td>1</td></tr>
+          <tr><td>10kΩ Resistor</td><td>0603</td><td>4</td></tr>
+          <tr><td>4.7kΩ Resistor</td><td>0603</td><td>2</td></tr>
+          <tr><td>100nF Cap</td><td>0603</td><td>5</td></tr>
+          <tr><td>10µF Cap</td><td>0603</td><td>1</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Design Notes -->
+    <div class="info-card">
+      <h3>Design Notes</h3>
+      <div class="dim-note">
+        <p>• <span class="val">~30×25mm rigid PCB</span> — proven by McGinnis 2012 (fits inside baseball core)</p>
+        <p style="margin-top:0.4rem;">• nRF52840 QFN-48 (<span class="val">7×7mm</span>) — same chip as PitchLogic smart baseball</p>
+        <p style="margin-top:0.4rem;">• Three I2C sensors stacked on right side for compact routing</p>
+        <p style="margin-top:0.4rem;">• LIS3MDL magnetometer enables <span class="val">DFT spin rate</span> — no gyro saturation limit</p>
+        <p style="margin-top:0.4rem;">• Power section isolated in lower-left to minimize ADC noise</p>
+        <p style="margin-top:0.4rem;">• <span class="val">4× FSR sensor wires</span> exit via pads, routed through yarn channels</p>
+        <p style="margin-top:0.4rem;">• Board + battery coated in <span class="val">epoxy</span> for shock protection (Yeh method)</p>
+      </div>
+    </div>
+
+    <!-- I2C Bus Map -->
+    <div class="info-card">
+      <h3>I2C Bus Map</h3>
+      <div class="dim-note">
+        <p style="font-family:'JetBrains Mono',monospace; font-size:0.72rem; line-height:1.8;">
+          <span style="color:#93c5fd;">nRF52840</span> ── SDA ── SCL<br/>
+          &nbsp;&nbsp;├── <span style="color:#4ade80;">ISM330DHCX</span> @ <span class="val">0x6A</span><br/>
+          &nbsp;&nbsp;├── <span style="color:#4ade80;">H3LIS331DL</span> @ <span class="val">0x18</span><br/>
+          &nbsp;&nbsp;└── <span style="color:#4ade80;">LIS3MDL</span> @ <span class="val">0x1C</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ADC Pin Map -->
+    <div class="info-card">
+      <h3>ADC Pin Assignments</h3>
+      <div class="dim-note">
+        <p style="font-family:'JetBrains Mono',monospace; font-size:0.72rem; line-height:1.8;">
+          <span style="color:#fdba74;">Sensor 1</span> (Index)  → A0<br/>
+          <span style="color:#fdba74;">Sensor 2</span> (Middle) → A1<br/>
+          <span style="color:#fdba74;">Sensor 3</span> (Thumb)  → A2<br/>
+          <span style="color:#fdba74;">Sensor 4</span> (Ring)   → A3
+        </p>
+        <p style="margin-top:0.5rem; color:#9ca3af80; font-size:0.68rem;">A4, A5 available for future expansion</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  Instrumented Baseball Project — Rigid PCB Layout v2.0 — For academic review purposes — Designed for KiCad → JLCPCB fabrication
+</footer>
+
+<!-- Tooltip for hover interactions -->
+<div class="tooltip-overlay" id="tooltip">
+  <div class="tt-title"></div>
+  <div class="tt-detail"></div>
+</div>
+
+<script>
+  // Interactive hover tooltips for components
+  const tooltip = document.getElementById('tooltip');
+  const components = document.querySelectorAll('.component');
+
+  components.forEach(comp => {
+    comp.style.cursor = 'pointer';
+
+    comp.addEventListener('mouseenter', (e) => {
+      const name = comp.dataset.name;
+      const detail = comp.dataset.detail;
+      tooltip.querySelector('.tt-title').textContent = name;
+      tooltip.querySelector('.tt-detail').textContent = detail;
+      tooltip.style.opacity = '1';
+
+      // Subtle highlight
+      const rects = comp.querySelectorAll('rect, circle');
+      rects.forEach(r => {
+        r.style.transition = 'filter 0.15s';
+        r.style.filter = 'brightness(1.3)';
+      });
+    });
+
+    comp.addEventListener('mousemove', (e) => {
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+    });
+
+    comp.addEventListener('mouseleave', () => {
+      tooltip.style.opacity = '0';
+      const rects = comp.querySelectorAll('rect, circle');
+      rects.forEach(r => {
+        r.style.filter = 'none';
+      });
+    });
+  });
+</script>
+</body>
+</html>

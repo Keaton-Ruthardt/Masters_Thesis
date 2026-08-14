@@ -1,0 +1,559 @@
+<title>SmartBall v2 — Build Manual</title>
+<style>
+  :root{
+    --paper:#ecebe6; --card:#f7f6f2; --ink:#1a1d21; --ink2:#4a4f56; --muted:#7c7f86;
+    --line:#d5d3cb; --sheet:#f4f1e9; --sheet-line:#e0dccf;
+    /* material colors — constant across themes so cutaways always read */
+    --leather:#c99a5b; --leather-dk:#a97e42; --yarn:#dccdae; --seam:#b23a2c;
+    --copper:#b06a33; --graphite:#3a424c; --board:#2f6f4f; --sensor:#1f7a8c;
+    --steel:#8b9199; --pwr:#c23b2f; --accent:#1f7a8c;
+    --mono:ui-monospace,"Cascadia Code",Consolas,Menlo,monospace;
+    --sans:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){--paper:#15171b;--card:#1d2025;--ink:#eceef0;--ink2:#b6bac0;--muted:#878b92;--line:#2c3037;}
+  }
+  :root[data-theme="dark"]{--paper:#15171b;--card:#1d2025;--ink:#eceef0;--ink2:#b6bac0;--muted:#878b92;--line:#2c3037;}
+  *{box-sizing:border-box;}
+  body{margin:0;}
+  .wrap{max-width:960px;margin:0 auto;padding:36px 22px 90px;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.6;min-height:100vh;}
+
+  header{border-bottom:3px solid var(--ink);padding-bottom:20px;margin-bottom:10px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--seam);margin:0 0 10px;}
+  h1{font-size:clamp(30px,5.5vw,50px);line-height:1.02;margin:0 0 12px;letter-spacing:-.02em;text-wrap:balance;}
+  .lede{margin:0;max-width:64ch;color:var(--ink2);font-size:17px;}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 10px;margin-top:20px;}
+  .chip{font-family:var(--mono);font-size:12.5px;background:var(--card);border:1px solid var(--line);padding:6px 11px;border-radius:5px;}
+  .chip b{color:var(--accent);}
+
+  section{margin-top:52px;scroll-margin-top:20px;}
+  .phase-head{display:flex;align-items:baseline;gap:16px;margin-bottom:6px;}
+  .pnum{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--card);background:var(--ink);width:34px;height:34px;border-radius:8px;display:grid;place-items:center;flex:none;align-self:center;}
+  h2{font-size:clamp(22px,3.4vw,30px);margin:0;letter-spacing:-.01em;text-wrap:balance;}
+  .dur{font-family:var(--mono);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin:2px 0 0 50px;}
+  section > p{max-width:65ch;}
+  p b{color:var(--ink);}
+
+  /* the drawing sheet — always light so material colors read in any theme */
+  figure{margin:22px 0;background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:8px;overflow-x:auto;}
+  figure svg{display:block;width:100%;height:auto;min-width:520px;}
+  figcaption{font-size:13.5px;color:#5b5f52;padding:8px 10px 4px;border-top:1px solid var(--sheet-line);margin-top:6px;}
+  figcaption b{color:#2a2d24;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:7px 18px;margin:12px 2px 0;font-size:13px;}
+  .legend span{display:inline-flex;align-items:center;gap:7px;color:var(--ink2);}
+  .sw{width:16px;height:10px;border-radius:3px;display:inline-block;border:1px solid rgba(0,0,0,.15);}
+
+  .cols{display:grid;grid-template-columns:1fr;gap:8px;}
+  ul.do{list-style:none;padding:0;margin:14px 0;}
+  ul.do li{position:relative;padding:5px 0 5px 26px;max-width:64ch;}
+  ul.do li::before{content:"";position:absolute;left:2px;top:12px;width:9px;height:9px;border:2px solid var(--accent);border-radius:2px;}
+  ul.do li .k{font-family:var(--mono);font-size:.88em;background:var(--card);border:1px solid var(--line);padding:1px 5px;border-radius:3px;}
+
+  .gate{display:flex;gap:14px;background:color-mix(in srgb,var(--seam) 10%,var(--card));border:1px solid var(--seam);border-left-width:5px;border-radius:8px;padding:16px 18px;margin:20px 0;}
+  .gate .mk{font-family:var(--mono);font-weight:700;color:var(--seam);font-size:20px;line-height:1;}
+  .gate h4{margin:0 0 5px;font-size:16px;}
+  .gate p{margin:0;font-size:14.5px;color:var(--ink2);max-width:60ch;}
+  .gate code{font-family:var(--mono);background:var(--card);padding:1px 5px;border-radius:3px;border:1px solid var(--line);}
+
+  .callout{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:18px 0;font-size:14.5px;color:var(--ink2);max-width:66ch;}
+  .callout b{color:var(--ink);}
+
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0;}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  td.m{font-family:var(--mono);}
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;}
+
+  footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;}
+  a{color:var(--accent);}
+  @media print{.wrap{max-width:none;} figure{break-inside:avoid;} section{break-inside:avoid;}}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Instrumented Baseball · Rebuild Manual · v2</p>
+    <h1>How to build the ball</h1>
+    <p class="lede">A start-to-finish visual guide for assembling the second instrumented baseball — with cutaway drawings showing exactly where every component sits inside the ball, and the wiring changes that stop the channels from bridging this time.</p>
+    <div class="meta">
+      <span class="chip">Target weight <b>142–149 g</b></span>
+      <span class="chip">Pins <b>A0 · A2 · A4 · A5</b></span>
+      <span class="chip">4× FlexiForce A301</span>
+      <span class="chip">~3 build days</span>
+    </div>
+  </header>
+
+  <!-- ============ THE FINISHED BALL ============ -->
+  <section id="overview">
+    <div class="phase-head"><span class="pnum">◎</span><h2>The finished ball, in cross-section</h2></div>
+    <p>Before any steps, here is the target — a cutaway of the completed ball so every phase below has a place to point to. Everything is organized around one rule from the embedded-ball literature (McGinnis &amp; Perkins 2012): <b>the electronics sit as one potted block at the exact center of the ball</b>, so the ball's balance and spin behave like a normal baseball.</p>
+
+    <figure>
+      <svg viewBox="0 0 760 660" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace" role="img" aria-label="Labeled cutaway of the finished instrumented baseball showing leather cover, yarn windings, a potted electronics block at the center containing the XIAO microcontroller, LiPo battery and resistor hub, four FlexiForce sensor pads under the cover with leads routing to the center, steel ballast opposite a USB-C charging pigtail.">
+        <defs>
+          <radialGradient id="yarn" cx="50%" cy="45%" r="60%">
+            <stop offset="0%" stop-color="#e6d9bd"/><stop offset="100%" stop-color="#d2c19c"/>
+          </radialGradient>
+        </defs>
+        <!-- ball body -->
+        <circle cx="360" cy="330" r="250" fill="url(#yarn)" stroke="var(--leather-dk)" stroke-width="2"/>
+        <!-- leather cover ring -->
+        <circle cx="360" cy="330" r="250" fill="none" stroke="var(--leather)" stroke-width="26"/>
+        <circle cx="360" cy="330" r="237" fill="none" stroke="var(--leather-dk)" stroke-width="1.5"/>
+        <!-- figure-8 seam (two red curves) with cross-stitch ticks -->
+        <path d="M180 180 C 300 300, 300 360, 180 480" fill="none" stroke="var(--seam)" stroke-width="2.5"/>
+        <path d="M540 180 C 420 300, 420 360, 540 480" fill="none" stroke="var(--seam)" stroke-width="2.5"/>
+        <g stroke="var(--seam)" stroke-width="1.6">
+          <path d="M188 205 l14 -6 M186 250 l16 -5 M186 300 l16 -3 M186 360 l16 3 M186 410 l16 5 M188 455 l14 6"/>
+          <path d="M532 205 l-14 -6 M534 250 l-16 -5 M534 300 l-16 -3 M534 360 l-16 3 M534 410 l-16 5 M532 455 l-14 6"/>
+        </g>
+        <!-- yarn winding hint -->
+        <circle cx="360" cy="330" r="150" fill="none" stroke="#c9b88f" stroke-width="1" opacity=".6"/>
+        <circle cx="360" cy="330" r="185" fill="none" stroke="#c9b88f" stroke-width="1" opacity=".5"/>
+        <circle cx="360" cy="330" r="215" fill="none" stroke="#c9b88f" stroke-width="1" opacity=".4"/>
+
+        <!-- central cavity -->
+        <circle cx="360" cy="330" r="118" fill="#efeadf" stroke="var(--graphite)" stroke-width="1.4" stroke-dasharray="4 4"/>
+        <!-- epoxy pot blob -->
+        <path d="M268 320 q-6 -60 60 -74 q70 -16 108 20 q40 34 22 92 q-16 54 -84 60 q-70 6 -96 -34 q-14 -22 -10 -64 z" fill="#dfe7ea" stroke="var(--accent)" stroke-width="1.4" opacity=".9"/>
+        <!-- LiPo -->
+        <rect x="300" y="300" width="120" height="46" rx="4" fill="var(--graphite)"/>
+        <text x="360" y="327" fill="#e7e7e7" font-size="13" text-anchor="middle">100 mAh LiPo</text>
+        <!-- XIAO board -->
+        <rect x="316" y="352" width="88" height="34" rx="3" fill="var(--board)"/>
+        <text x="360" y="373" fill="#eafff2" font-size="12" text-anchor="middle">XIAO nRF52840</text>
+        <!-- resistor hub -->
+        <rect x="322" y="266" width="76" height="26" rx="3" fill="#6b5330"/>
+        <text x="360" y="283" fill="#ffe9c8" font-size="11" text-anchor="middle">resistor hub</text>
+
+        <!-- sensor pads under cover (4 finger positions) + copper leads to center -->
+        <g>
+          <!-- index (top-left) -->
+          <ellipse cx="300" cy="120" rx="16" ry="9" fill="var(--sensor)"/>
+          <path d="M300 128 C 320 200, 340 250, 348 300" fill="none" stroke="var(--copper)" stroke-width="2.4"/>
+          <!-- middle (top-right) -->
+          <ellipse cx="420" cy="120" rx="16" ry="9" fill="var(--sensor)"/>
+          <path d="M420 128 C 400 200, 380 250, 372 300" fill="none" stroke="var(--copper)" stroke-width="2.4"/>
+          <!-- thumb (left) -->
+          <ellipse cx="150" cy="360" rx="9" ry="16" fill="var(--sensor)"/>
+          <path d="M158 360 C 230 360, 270 348, 300 340" fill="none" stroke="var(--copper)" stroke-width="2.4"/>
+          <!-- ring (right) -->
+          <ellipse cx="570" cy="300" rx="9" ry="16" fill="var(--sensor)"/>
+          <path d="M562 300 C 490 305, 450 315, 420 322" fill="none" stroke="var(--copper)" stroke-width="2.4"/>
+        </g>
+
+        <!-- steel ballast, opposite the pigtail (bottom) -->
+        <g>
+          <ellipse cx="360" cy="424" rx="34" ry="10" fill="var(--steel)" stroke="#6a6f76" stroke-width="1"/>
+          <ellipse cx="360" cy="418" rx="34" ry="10" fill="#9aa0a7" stroke="#6a6f76" stroke-width="1"/>
+        </g>
+
+        <!-- USB-C pigtail exiting top through leather flap -->
+        <rect x="345" y="250" width="30" height="14" rx="3" fill="var(--graphite)"/>
+        <path d="M360 250 L360 120" stroke="var(--graphite)" stroke-width="3"/>
+        <rect x="344" y="70" width="32" height="20" rx="3" fill="#4a5058" stroke="#2a2e33"/>
+        <text x="360" y="84" fill="#dfe3e7" font-size="10" text-anchor="middle">USB-C</text>
+        <path d="M330 96 q30 -14 60 0" fill="none" stroke="var(--leather-dk)" stroke-width="2" stroke-dasharray="3 3"/>
+
+        <!-- LEADER LABELS -->
+        <g font-size="13" fill="var(--ink)">
+          <!-- leather -->
+          <line x1="600" y1="150" x2="540" y2="205" stroke="#8a8d84"/><text x="606" y="150">Leather cover</text>
+          <!-- yarn -->
+          <line x1="628" y1="470" x2="500" y2="440" stroke="#8a8d84"/><text x="634" y="472">Yarn windings</text>
+          <text x="634" y="488" font-size="11" fill="#5b5f52">(repacked to hit weight)</text>
+          <!-- cavity -->
+          <line x1="150" y1="230" x2="266" y2="300" stroke="#8a8d84"/><text x="40" y="228">Potted block at</text>
+          <text x="40" y="244" >center of mass</text>
+          <!-- pigtail -->
+          <line x1="470" y1="70" x2="376" y2="80" stroke="#8a8d84"/><text x="476" y="66">USB-C charge pigtail</text>
+          <text x="476" y="82" font-size="11" fill="#5b5f52">exits a leather flap</text>
+          <!-- sensors -->
+          <line x1="250" y1="70" x2="296" y2="112" stroke="#8a8d84"/><text x="70" y="66">FlexiForce pads under</text>
+          <text x="70" y="82">the cover (4 fingers)</text>
+          <!-- lead -->
+          <line x1="150" y1="470" x2="250" y2="392" stroke="#8a8d84"/><text x="40" y="486">Sensor leads (30 AWG)</text>
+          <!-- ballast -->
+          <line x1="470" y1="560" x2="380" y2="428" stroke="#8a8d84"/><text x="476" y="562">Steel ballast —</text>
+          <text x="476" y="578" font-size="11" fill="#5b5f52">counterweights the pigtail</text>
+        </g>
+      </svg>
+      <figcaption><b>The target.</b> Electronics potted as one block dead-center; four sensor pads sit just under the leather at the finger contact points with thin leads running inward; steel ballast sits opposite the charge pigtail so the center of mass stays centered.</figcaption>
+    </figure>
+
+    <div class="legend">
+      <span><i class="sw" style="background:var(--leather)"></i>Leather cover</span>
+      <span><i class="sw" style="background:var(--yarn)"></i>Yarn winding</span>
+      <span><i class="sw" style="background:var(--sensor)"></i>FlexiForce pad</span>
+      <span><i class="sw" style="background:var(--copper)"></i>Sensor lead</span>
+      <span><i class="sw" style="background:var(--graphite)"></i>Electronics / GND</span>
+      <span><i class="sw" style="background:var(--board)"></i>XIAO board</span>
+      <span><i class="sw" style="background:var(--steel)"></i>Steel ballast</span>
+      <span><i class="sw" style="background:var(--seam)"></i>Seam / stitching</span>
+    </div>
+  </section>
+
+  <!-- ============ PARTS ============ -->
+  <section id="parts">
+    <div class="phase-head"><span class="pnum">▤</span><h2>What goes in it</h2></div>
+    <p>Everything that ends up inside or on the ball. The wiring hardware — crimp contacts and the header — is what changed from v1; that is where the last build failed.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Part</th><th>Qty</th><th>Where it lives</th></tr></thead>
+        <tbody>
+          <tr><td>Seeed XIAO nRF52840</td><td class="m">1</td><td>center block</td></tr>
+          <tr><td>FlexiForce A301 (25 lb / 111 N)</td><td class="m">4</td><td>pads under leather at fingers</td></tr>
+          <tr><td>10 kΩ resistor, 1% metal film</td><td class="m">4</td><td>resistor hub in center block</td></tr>
+          <tr><td>100 mAh LiPo</td><td class="m">1</td><td>center block</td></tr>
+          <tr><td>Female crimp contacts + housings</td><td class="m">~14</td><td>XIAO pin connections</td></tr>
+          <tr><td>30 AWG silicone wire (2+ colors)</td><td class="m">—</td><td>buses + leads</td></tr>
+          <tr><td>Steel washers / BBs</td><td class="m">~30 g</td><td>ballast, opposite pigtail</td></tr>
+          <tr><td>USB-C pigtail / short cable</td><td class="m">1</td><td>exits leather flap</td></tr>
+          <tr><td>Slow-cure epoxy (30 min)</td><td class="m">—</td><td>potting the block</td></tr>
+          <tr><td>Regulation baseball + spare (lace donor)</td><td class="m">2</td><td>the ball itself</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 1 ============ -->
+  <section id="p1">
+    <div class="phase-head"><span class="pnum">1</span><h2>Test &amp; calibrate the sensors</h2></div>
+    <p class="dur">Before any wiring · ~½ day</p>
+    <p>Start here because the sensors are your long-lead item and your least-certain parts. Ohm each one across its two outer pins: a healthy A301 reads near-open at rest and drops sharply when you press the pad. Keep the four best. Then <b>recalibrate every survivor</b> — the old calibration factors are void now that the pads have been handled and remounted.</p>
+    <p>The one change that matters: last time you calibrated only up to about 15&nbsp;N, then pitches loaded the pads far past that. <b>This time load each sensor across the full range</b>, up toward 80–110&nbsp;N, so the fit covers where the real forces live.</p>
+
+    <figure>
+      <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace" role="img" aria-label="Calibration rig: a sensor sits on a kitchen scale, pressed through a rigid flat block; the sensor connects through a 10k resistor divider to the XIAO A2 pin, and a laptop logs the reading against the scale force.">
+        <!-- scale -->
+        <rect x="60" y="200" width="200" height="60" rx="8" fill="#cfd3d8" stroke="#9aa0a7"/>
+        <rect x="95" y="222" width="130" height="26" rx="4" fill="#2b2e33"/><text x="160" y="240" fill="#7CFCB0" font-size="15" text-anchor="middle">14.7 N</text>
+        <text x="160" y="278" font-size="12" fill="#5b5f52" text-anchor="middle">kitchen / postal scale</text>
+        <!-- rigid block + sensor -->
+        <rect x="120" y="150" width="80" height="26" rx="3" fill="#b9bdc3" stroke="#8a8d84"/>
+        <text x="160" y="167" font-size="11" text-anchor="middle" fill="#2a2d24">rigid flat block</text>
+        <ellipse cx="160" cy="188" rx="26" ry="7" fill="var(--sensor)"/>
+        <text x="160" y="205" font-size="10" fill="#2a2d24" text-anchor="middle">A301 pad</text>
+        <!-- hand press arrow -->
+        <path d="M160 120 L160 146" stroke="var(--seam)" stroke-width="3"/><path d="M154 138 l6 8 l6 -8" fill="var(--seam)"/>
+        <text x="160" y="112" font-size="12" text-anchor="middle" fill="var(--seam)">press</text>
+        <!-- divider to XIAO -->
+        <path d="M186 186 L360 186" stroke="var(--pwr)" stroke-width="2.4"/><text x="270" y="178" font-size="11" fill="var(--pwr)" text-anchor="middle">3V3</text>
+        <path d="M186 192 L320 210" stroke="var(--copper)" stroke-width="2.4"/>
+        <circle cx="360" cy="210" r="4" fill="var(--copper)"/><text x="360" y="200" font-size="11" fill="var(--copper)" text-anchor="middle">A2</text>
+        <rect x="352" y="222" width="16" height="40" rx="2" fill="#6b5330"/><text x="392" y="246" font-size="11" fill="#5b5f52">10 kΩ</text>
+        <path d="M360 262 L360 280 L300 280" stroke="var(--graphite)" stroke-width="2.4" fill="none"/><text x="300" y="296" font-size="11" fill="var(--graphite)">GND</text>
+        <!-- XIAO + laptop -->
+        <rect x="430" y="150" width="90" height="120" rx="8" fill="var(--board)"/><text x="475" y="214" fill="#eafff2" font-size="12" text-anchor="middle">XIAO</text>
+        <path d="M520 210 L600 210" stroke="#8a8d84" stroke-width="2"/>
+        <rect x="600" y="150" width="120" height="90" rx="6" fill="#2b2e33"/><text x="660" y="200" fill="#cfe" font-size="12" text-anchor="middle">logger</text>
+        <text x="475" y="292" font-size="11" fill="#5b5f52" text-anchor="middle">reads A2 divider</text>
+      </svg>
+      <figcaption><b>Calibration rig.</b> Sensor and scale are in series, so the scale reads the true force reaching the pad. Hold each level 3–5&nbsp;s; run <b>3 trials per sensor</b>; swap every sensor through the same A2 channel so they share identical conditioning. Calibrate through a leather scrap if you can — it matches the real mounting.</figcaption>
+    </figure>
+
+    <ul class="do">
+      <li>Ohm all five sensors; keep the four best (rest = MΩ, pressed = drops hard).</li>
+      <li>Flash <span class="k">calibrate_sensors.ino</span>, read on <span class="k">A2</span>, log plateau vs. scale force.</li>
+      <li>Load to <b>~80–110 N</b>, not 15 N. Levels like 10 / 30 / 50 / 80 / 110 N.</li>
+      <li>Fit with <span class="k">fit_calibration.py</span> → record calFactor, R², RMSE per sensor.</li>
+    </ul>
+  </section>
+
+  <!-- ============ PHASE 2 ============ -->
+  <section id="p2">
+    <div class="phase-head"><span class="pnum">2</span><h2>Build the crimped harness</h2></div>
+    <p class="dur">The reliability-critical step · ~1 day</p>
+    <p>This is the part that failed last time and the part to slow down on. In v1, bare wires soldered onto four adjacent pads slowly bridged together until three "independent" channels carried the same signal. The fix has three independent layers: <b>non-adjacent pins</b>, <b>crimped contacts in plastic housings</b> instead of bare solder blobs on the header, and <b>conformal coating</b> over everything.</p>
+    <p>Each channel is one voltage divider. The trick that keeps it clean: the sensor's signal wire and the resistor's top leg go into the <b>same crimp contact</b>, so the node is formed inside a plastic housing that plugs straight onto the analog pin — nothing floating in open space to migrate.</p>
+
+    <figure>
+      <svg viewBox="0 0 760 470" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace" role="img" aria-label="Wiring harness: the XIAO with power on a 3V3 bus, four channels on non-adjacent pins A0 A2 A4 A5 each with a sensor and a 10k resistor to a shared ground bus. Each node is a single crimp contact joining sensor signal, resistor top leg and the pin.">
+        <!-- XIAO board -->
+        <rect x="300" y="30" width="160" height="70" rx="8" fill="var(--board)"/><text x="380" y="70" fill="#eafff2" font-size="14" text-anchor="middle">XIAO nRF52840</text>
+        <!-- pin pads along bottom of board: 3V3 GND A0 A1 A2 A3 A4 A5 -->
+        <g font-size="10" text-anchor="middle">
+          <g transform="translate(315,100)"><rect x="-9" y="0" width="18" height="12" fill="var(--pwr)"/><text x="0" y="24" fill="var(--pwr)">3V3</text></g>
+          <g transform="translate(345,100)"><rect x="-9" y="0" width="18" height="12" fill="var(--graphite)"/><text x="0" y="24" fill="var(--graphite)">GND</text></g>
+          <g transform="translate(372,100)"><rect x="-8" y="0" width="16" height="12" fill="var(--copper)"/><text x="0" y="24" fill="var(--copper)">A0</text></g>
+          <g transform="translate(396,100)"><rect x="-8" y="0" width="16" height="12" fill="#c7c7c7"/><text x="0" y="24" fill="#9aa0a7">A1</text></g>
+          <g transform="translate(400,100)"></g>
+          <g transform="translate(410,100)"><rect x="-8" y="0" width="16" height="12" fill="var(--copper)"/><text x="0" y="24" fill="var(--copper)">A2</text></g>
+          <g transform="translate(430,100)"><rect x="-8" y="0" width="16" height="12" fill="#c7c7c7"/><text x="0" y="24" fill="#9aa0a7">A3</text></g>
+          <g transform="translate(448,100)"><rect x="-8" y="0" width="16" height="12" fill="var(--copper)"/><text x="0" y="24" fill="var(--copper)">A4</text></g>
+          <!-- A5 wraps to be shown as 4th channel; label on right -->
+        </g>
+        <text x="380" y="150" font-size="12" fill="var(--seam)" text-anchor="middle">use A0 · A2 · A4 · A5 — skip A1/A3 so channels can't bridge</text>
+
+        <!-- buses -->
+        <line x1="60" y1="185" x2="700" y2="185" stroke="var(--pwr)" stroke-width="6"/><text x="60" y="176" font-size="12" fill="var(--pwr)">3V3 BUS  (4 sensor power leads, one crimp)</text>
+        <line x1="60" y1="430" x2="700" y2="430" stroke="var(--graphite)" stroke-width="7"/><text x="60" y="452" font-size="12" fill="var(--graphite)">GND BUS  (4 resistor legs, one ferrule/joint)</text>
+
+        <!-- 4 channels -->
+        <g font-size="10" text-anchor="middle">
+          <!-- template positions -->
+          <!-- ch coords -->
+          <g>
+            <!-- S1/A0 -->
+            <g transform="translate(150,0)">
+              <line x1="0" y1="185" x2="0" y2="215" stroke="var(--pwr)" stroke-width="2.2"/>
+              <ellipse cx="0" cy="230" rx="20" ry="11" fill="var(--sensor)"/><text x="0" y="234" fill="#eaffff">S1</text>
+              <line x1="0" y1="241" x2="0" y2="300" stroke="var(--copper)" stroke-width="2.4"/>
+              <circle cx="0" cy="300" r="6" fill="var(--copper)"/>
+              <rect x="-9" y="300" width="18" height="14" fill="#111" opacity="0" />
+              <!-- crimp housing = node -->
+              <rect x="-16" y="298" width="32" height="20" rx="3" fill="none" stroke="var(--accent)" stroke-dasharray="3 2"/>
+              <line x1="0" y1="300" x2="0" y2="112" stroke="var(--copper)" stroke-width="2.4" opacity=".0"/>
+              <line x1="0" y1="318" x2="0" y2="345" stroke="var(--copper)" stroke-width="2.2"/>
+              <rect x="-7" y="345" width="14" height="34" rx="2" fill="#6b5330"/><text x="24" y="366" fill="#5b5f52">10k</text>
+              <line x1="0" y1="379" x2="0" y2="430" stroke="var(--graphite)" stroke-width="2.2"/>
+              <line x1="0" y1="300" x2="-70" y2="112" stroke="var(--copper)" stroke-width="1.6" stroke-dasharray="4 3"/>
+              <text x="0" y="336" fill="var(--accent)">A0</text>
+            </g>
+            <!-- S2/A2 -->
+            <g transform="translate(320,0)">
+              <line x1="0" y1="185" x2="0" y2="215" stroke="var(--pwr)" stroke-width="2.2"/>
+              <ellipse cx="0" cy="230" rx="20" ry="11" fill="var(--sensor)"/><text x="0" y="234" fill="#eaffff">S2</text>
+              <line x1="0" y1="241" x2="0" y2="300" stroke="var(--copper)" stroke-width="2.4"/>
+              <circle cx="0" cy="300" r="6" fill="var(--copper)"/>
+              <rect x="-16" y="298" width="32" height="20" rx="3" fill="none" stroke="var(--accent)" stroke-dasharray="3 2"/>
+              <line x1="0" y1="318" x2="0" y2="345" stroke="var(--copper)" stroke-width="2.2"/>
+              <rect x="-7" y="345" width="14" height="34" rx="2" fill="#6b5330"/><text x="24" y="366" fill="#5b5f52">10k</text>
+              <line x1="0" y1="379" x2="0" y2="430" stroke="var(--graphite)" stroke-width="2.2"/>
+              <text x="0" y="336" fill="var(--accent)">A2</text>
+            </g>
+            <!-- S3/A4 -->
+            <g transform="translate(470,0)">
+              <line x1="0" y1="185" x2="0" y2="215" stroke="var(--pwr)" stroke-width="2.2"/>
+              <ellipse cx="0" cy="230" rx="20" ry="11" fill="var(--sensor)"/><text x="0" y="234" fill="#eaffff">S3</text>
+              <line x1="0" y1="241" x2="0" y2="300" stroke="var(--copper)" stroke-width="2.4"/>
+              <circle cx="0" cy="300" r="6" fill="var(--copper)"/>
+              <rect x="-16" y="298" width="32" height="20" rx="3" fill="none" stroke="var(--accent)" stroke-dasharray="3 2"/>
+              <line x1="0" y1="318" x2="0" y2="345" stroke="var(--copper)" stroke-width="2.2"/>
+              <rect x="-7" y="345" width="14" height="34" rx="2" fill="#6b5330"/><text x="24" y="366" fill="#5b5f52">10k</text>
+              <line x1="0" y1="379" x2="0" y2="430" stroke="var(--graphite)" stroke-width="2.2"/>
+              <text x="0" y="336" fill="var(--accent)">A4</text>
+            </g>
+            <!-- S4/A5 -->
+            <g transform="translate(620,0)">
+              <line x1="0" y1="185" x2="0" y2="215" stroke="var(--pwr)" stroke-width="2.2"/>
+              <ellipse cx="0" cy="230" rx="20" ry="11" fill="var(--sensor)"/><text x="0" y="234" fill="#eaffff">S4</text>
+              <line x1="0" y1="241" x2="0" y2="300" stroke="var(--copper)" stroke-width="2.4"/>
+              <circle cx="0" cy="300" r="6" fill="var(--copper)"/>
+              <rect x="-16" y="298" width="32" height="20" rx="3" fill="none" stroke="var(--accent)" stroke-dasharray="3 2"/>
+              <line x1="0" y1="318" x2="0" y2="345" stroke="var(--copper)" stroke-width="2.2"/>
+              <rect x="-7" y="345" width="14" height="34" rx="2" fill="#6b5330"/><text x="24" y="366" fill="#5b5f52">10k</text>
+              <line x1="0" y1="379" x2="0" y2="430" stroke="var(--graphite)" stroke-width="2.2"/>
+              <text x="0" y="336" fill="var(--accent)">A5</text>
+            </g>
+          </g>
+        </g>
+        <!-- node callout -->
+        <text x="150" y="404" font-size="11" fill="var(--accent)" text-anchor="middle">dashed box = ONE crimp:</text>
+        <text x="150" y="418" font-size="11" fill="var(--accent)" text-anchor="middle">sensor + resistor + pin wire</text>
+      </svg>
+      <figcaption><b>The harness.</b> Four independent dividers. Each <span style="color:var(--accent)">dashed box is a single crimp contact</span> — sensor signal wire + resistor top leg + the wire to the analog pin, all in one barrel, inside a plastic housing. Power leads gather on the 3V3 bus; resistor legs gather on the GND bus (a ferrule handles the four stiff legs).</figcaption>
+    </figure>
+
+    <ul class="do">
+      <li><b>Practice crimp on scrap first</b> — tug-test each; a bad crimp looks fine until it fails.</li>
+      <li>Sensor signal + resistor top leg into <span class="k">one</span> female contact → houses onto the pin.</li>
+      <li>Solder the single <b>GND bus</b> joint (open space, low risk) or use a <b>ferrule</b>; heat-shrink it.</li>
+      <li>Wash every joint with <b>99% IPA</b> — flux residue was a prime suspect in the v1 bridge.</li>
+      <li>Heat-shrink each crimp barrel; no bare metal left anywhere.</li>
+    </ul>
+
+    <div class="gate">
+      <span class="mk">◈</span>
+      <div>
+        <h4>GATE — isolation test (do not skip)</h4>
+        <p>Flash <code>isolation_test.ino</code>. Press <b>one pad at a time</b>; every other channel must stay under <b>5%</b> of the pressed one. A channel that follows = a bridge. Fix it now — this is the exact check that would have caught the v1 failure. Re-run it after coating, after potting, after stitching, and before every session.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 3 ============ -->
+  <section id="p3">
+    <div class="phase-head"><span class="pnum">3</span><h2>Open the ball &amp; carve the cavity</h2></div>
+    <p class="dur">~2 hours</p>
+    <p>Unstitch the leather along one figure-eight seam and fold the cover back — this keeps the cover intact so you can re-lace it later (Yeh et al. cut theirs in half and sealed with polymer; unstitching is the more reversible route). Under the leather is tightly wound yarn around a cork-and-rubber pill. Dig a <b>central pocket</b> just big enough for the potted block, keeping the pill roughly centered so the ball still feels right. Save the yarn you remove — it goes back in for weight.</p>
+
+    <figure>
+      <svg viewBox="0 0 760 320" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace" role="img" aria-label="Two-step cross section: left, leather unstitched and peeled back exposing yarn; right, a central pocket carved into the yarn to receive the electronics block.">
+        <!-- left: peel -->
+        <g transform="translate(180,160)">
+          <circle r="120" fill="url(#yarn)" stroke="var(--leather-dk)"/>
+          <path d="M0 -120 A120 120 0 0 1 104 60 L86 50 A100 100 0 0 0 0 -100 Z" fill="var(--leather)"/>
+          <path d="M0 -120 A120 120 0 0 0 -104 60" fill="none" stroke="var(--leather)" stroke-width="20"/>
+          <!-- peeled flap -->
+          <path d="M104 60 q60 20 70 -20 q6 -40 -30 -60" fill="var(--leather-dk)" opacity=".85"/>
+          <line x1="-40" y1="-92" x2="-30" y2="-70" stroke="var(--seam)"/><line x1="-58" y1="-72" x2="-46" y2="-54" stroke="var(--seam)"/>
+          <text x="0" y="150" font-size="12" text-anchor="middle" fill="#5b5f52">1 · unstitch &amp; peel the cover</text>
+        </g>
+        <path d="M330 160 L400 160" stroke="#8a8d84" stroke-width="2"/><path d="M392 154 l10 6 l-10 6" fill="#8a8d84"/>
+        <!-- right: cavity -->
+        <g transform="translate(560,160)">
+          <circle r="120" fill="url(#yarn)" stroke="var(--leather-dk)"/>
+          <circle r="120" fill="none" stroke="var(--leather)" stroke-width="20"/>
+          <circle r="52" fill="#efeadf" stroke="var(--graphite)" stroke-dasharray="4 4"/>
+          <circle r="20" fill="#c6a06a" stroke="#8a6a3a"/><text x="0" y="4" font-size="9" text-anchor="middle" fill="#4a3520">pill</text>
+          <text x="0" y="150" font-size="12" text-anchor="middle" fill="#5b5f52">2 · carve a central pocket</text>
+          <line x1="52" y1="-40" x2="110" y2="-70" stroke="#8a8d84"/><text x="112" y="-70" font-size="11" fill="#2a2d24">pocket for block</text>
+        </g>
+      </svg>
+      <figcaption><b>Access.</b> Unstitch one seam, peel the cover, and hollow a central pocket in the yarn — sized so the potted block will sit with its middle at the ball's center. Bag the removed yarn by weight; you'll add it back to reach 142–149&nbsp;g.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ PHASE 4 ============ -->
+  <section id="p4">
+    <div class="phase-head"><span class="pnum">4</span><h2>Place the sensors under the cover</h2></div>
+    <p class="dur">~1 hour</p>
+    <p>Mount the four pads on the <b>inside face of the leather</b> at the exact finger contact points, following Yeh et al.'s method — the leather transmits finger force to the 0.2&nbsp;mm pad while protecting it. Mark the spots from a real four-seam grip: index and middle on top across the seam, thumb underneath, ring on the side. Route each lead inward toward the central pocket, leaving a little slack so nothing pulls on a joint. Only the round sensing pad sits under the grip; bend the tail/pins inward, away from the film.</p>
+
+    <figure>
+      <svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace" role="img" aria-label="Ball from the grip side showing four-seam fastball finger positions with a FlexiForce pad at each, leads routing toward the center.">
+        <circle cx="380" cy="165" r="140" fill="url(#yarn)" stroke="var(--leather-dk)"/>
+        <circle cx="380" cy="165" r="140" fill="none" stroke="var(--leather)" stroke-width="18"/>
+        <!-- seams -->
+        <path d="M270 70 C 340 150, 340 180, 270 260" fill="none" stroke="var(--seam)" stroke-width="2"/>
+        <path d="M490 70 C 420 150, 420 180, 490 260" fill="none" stroke="var(--seam)" stroke-width="2"/>
+        <!-- pads -->
+        <ellipse cx="345" cy="95" rx="18" ry="11" fill="var(--sensor)"/><text x="345" y="99" font-size="10" fill="#eaffff" text-anchor="middle">idx</text>
+        <ellipse cx="415" cy="95" rx="18" ry="11" fill="var(--sensor)"/><text x="415" y="99" font-size="10" fill="#eaffff" text-anchor="middle">mid</text>
+        <ellipse cx="300" cy="210" rx="11" ry="18" fill="var(--sensor)"/><text x="300" y="214" font-size="9" fill="#eaffff" text-anchor="middle">thb</text>
+        <ellipse cx="470" cy="200" rx="11" ry="18" fill="var(--sensor)"/><text x="470" y="204" font-size="9" fill="#eaffff" text-anchor="middle">rng</text>
+        <!-- leads to center -->
+        <g stroke="var(--copper)" stroke-width="2.2" fill="none">
+          <path d="M345 106 C 355 140, 370 150, 378 160"/>
+          <path d="M415 106 C 405 140, 390 150, 382 160"/>
+          <path d="M311 210 C 340 190, 360 175, 375 168"/>
+          <path d="M459 200 C 430 185, 405 175, 388 168"/>
+        </g>
+        <circle cx="380" cy="165" r="8" fill="#efeadf" stroke="var(--graphite)" stroke-dasharray="3 3"/>
+        <text x="380" y="150" font-size="10" fill="#5b5f52" text-anchor="middle">to central block</text>
+        <!-- mark note -->
+        <line x1="345" y1="60" x2="560" y2="40" stroke="#8a8d84"/><text x="565" y="40" font-size="12" fill="#2a2d24">mark from a real grip</text>
+        <line x1="470" y1="235" x2="560" y2="280" stroke="#8a8d84"/><text x="565" y="284" font-size="12" fill="#2a2d24">pad under leather,</text>
+        <text x="565" y="300" font-size="11" fill="#5b5f52">leads route inward</text>
+      </svg>
+      <figcaption><b>Sensor placement.</b> Mark the four contact points from a real four-seam grip, bond each pad to the inside of the leather, and route the leads to the central pocket. These marks also become the pitcher's registration points — Yeh's fix for consistent finger placement.</figcaption>
+    </figure>
+    <div class="callout"><b>Watch the tails.</b> The A301 tail is short but the pins are stiff — bend them inward once, gently, away from the sensing film, so nothing sits proud under the grip and no bend cracks the pad.</div>
+  </section>
+
+  <!-- ============ PHASE 5 ============ -->
+  <section id="p5">
+    <div class="phase-head"><span class="pnum">5</span><h2>Coat, then pot the block at center</h2></div>
+    <p class="dur">~½ day incl. cure</p>
+    <p>First, <b>conformal-coat</b> the whole harness — this seals every joint against the slow bridging that killed v1, and locks wires so epoxy pressure can't shift them. Let it cure, then run the isolation test again. Only then pot: nest the XIAO + LiPo + resistor hub into the central pocket and epoxy them as one block, with its center of mass at the ball's center. Pour <b>thin layers</b>, not one deep pour — a thick pour of epoxy gets genuinely hot as it cures and can damage the LiPo. Keep the sensing pads and the USB-C pigtail clear of epoxy.</p>
+
+    <figure>
+      <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace" role="img" aria-label="Central block cross-section: LiPo, XIAO and resistor hub stacked and encased in epoxy at the ball center, with thin-layer pours indicated and heat warning near the battery.">
+        <circle cx="240" cy="150" r="120" fill="url(#yarn)" stroke="var(--leather-dk)"/>
+        <circle cx="240" cy="150" r="120" fill="none" stroke="var(--leather)" stroke-width="18"/>
+        <!-- epoxy blob -->
+        <path d="M175 150 q-6 -55 55 -66 q64 -12 96 20 q34 32 16 82 q-16 46 -74 50 q-62 4 -84 -32 q-12 -20 -9 -54z" fill="#dfe7ea" stroke="var(--accent)"/>
+        <rect x="196" y="126" width="90" height="30" rx="3" fill="var(--graphite)"/><text x="241" y="146" fill="#e7e7e7" font-size="11" text-anchor="middle">LiPo</text>
+        <rect x="206" y="160" width="70" height="24" rx="3" fill="var(--board)"/><text x="241" y="177" fill="#eafff2" font-size="10" text-anchor="middle">XIAO</text>
+        <rect x="212" y="104" width="58" height="18" rx="2" fill="#6b5330"/><text x="241" y="117" fill="#ffe9c8" font-size="9" text-anchor="middle">resistors</text>
+        <!-- center crosshair -->
+        <line x1="230" y1="150" x2="250" y2="150" stroke="var(--seam)"/><line x1="240" y1="140" x2="240" y2="160" stroke="var(--seam)"/>
+        <text x="240" y="290" font-size="11" fill="#5b5f52" text-anchor="middle">block centered on the ball's middle</text>
+
+        <!-- right: thin layers + heat note -->
+        <g transform="translate(520,0)">
+          <text x="0" y="60" font-size="13" fill="#2a2d24">Pour in thin layers ↓</text>
+          <rect x="0" y="72" width="180" height="14" fill="#cfe0e4"/><text x="190" y="83" font-size="10" fill="#5b5f52">layer 3</text>
+          <rect x="0" y="90" width="180" height="14" fill="#bcd6db"/><text x="190" y="101" font-size="10" fill="#5b5f52">layer 2</text>
+          <rect x="0" y="108" width="180" height="14" fill="#a7cbd1"/><text x="190" y="119" font-size="10" fill="#5b5f52">layer 1 (cure each)</text>
+          <g transform="translate(0,150)">
+            <rect x="0" y="0" width="200" height="60" rx="8" fill="color-mix(in srgb, var(--seam) 12%, #fff)" stroke="var(--seam)"/>
+            <text x="14" y="24" font-size="12" fill="var(--seam)" font-weight="bold">Heat warning</text>
+            <text x="14" y="42" font-size="11" fill="#5b3a34">thick pours cook the LiPo —</text>
+            <text x="14" y="56" font-size="11" fill="#5b3a34">thin layers stay cool.</text>
+          </g>
+        </g>
+      </svg>
+      <figcaption><b>Potting.</b> Encase the stack as one centered block. Thin epoxy layers, cured one at a time, keep the exotherm off the battery. Pads and the charge pigtail stay epoxy-free.</figcaption>
+    </figure>
+
+    <div class="gate">
+      <span class="mk">◈</span>
+      <div><h4>GATE — isolation test after coating, and again after potting</h4>
+      <p>Coating and potting are exactly when a wire can shift or a pad crease. Press each pad, confirm the others stay under 5%. Catching a fault <b>before</b> the epoxy fully buries it is the difference between a 10-minute fix and a scrapped ball.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 6 ============ -->
+  <section id="p6">
+    <div class="phase-head"><span class="pnum">6</span><h2>Ballast to weight &amp; balance</h2></div>
+    <p class="dur">~1 hour</p>
+    <p>Repack the saved yarn, then trim to the regulation <b>142–149&nbsp;g</b> with steel washers or BBs bedded in a little epoxy. The charge pigtail adds ~11&nbsp;g on one side, so place the ballast <b>diametrically opposite it</b> to keep the center of mass centered. Verify with the <b>roll test</b>: roll the ball on a flat surface from random starts; a balanced ball settles randomly, an unbalanced one keeps putting the heavy spot down.</p>
+
+    <figure>
+      <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace" role="img" aria-label="Balance diagram: pigtail mass at top counterweighted by steel ballast at the bottom, with a roll test settling randomly when balanced.">
+        <!-- balance -->
+        <g transform="translate(200,120)">
+          <circle r="100" fill="url(#yarn)" stroke="var(--leather-dk)"/><circle r="100" fill="none" stroke="var(--leather)" stroke-width="16"/>
+          <rect x="-18" y="-104" width="36" height="18" rx="3" fill="#4a5058"/><text x="0" y="-92" font-size="9" fill="#dfe3e7" text-anchor="middle">USB-C</text>
+          <text x="0" y="-118" font-size="10" fill="#5b5f52" text-anchor="middle">pigtail ≈ 11 g</text>
+          <ellipse cx="0" cy="86" rx="34" ry="12" fill="var(--steel)" stroke="#6a6f76"/><ellipse cx="0" cy="80" rx="34" ry="12" fill="#9aa0a7" stroke="#6a6f76"/>
+          <text x="0" y="128" font-size="10" fill="#5b5f52" text-anchor="middle">≈ 11 g ballast, opposite</text>
+          <line x1="0" y1="-70" x2="0" y2="66" stroke="var(--seam)" stroke-dasharray="4 4"/>
+        </g>
+        <!-- roll test -->
+        <g transform="translate(470,0)">
+          <text x="0" y="40" font-size="13" fill="#2a2d24">Roll test</text>
+          <line x1="0" y1="150" x2="240" y2="150" stroke="#8a8d84" stroke-width="2"/>
+          <circle cx="40" cy="132" r="18" fill="url(#yarn)" stroke="var(--leather-dk)"/>
+          <circle cx="120" cy="132" r="18" fill="url(#yarn)" stroke="var(--leather-dk)"/>
+          <circle cx="200" cy="132" r="18" fill="url(#yarn)" stroke="var(--leather-dk)"/>
+          <text x="40" y="185" font-size="16" fill="var(--board)" text-anchor="middle">✓</text>
+          <text x="120" y="185" font-size="16" fill="var(--board)" text-anchor="middle">✓</text>
+          <text x="200" y="185" font-size="16" fill="var(--board)" text-anchor="middle">✓</text>
+          <text x="120" y="212" font-size="11" fill="#5b5f52" text-anchor="middle">settles randomly = balanced</text>
+        </g>
+      </svg>
+      <figcaption><b>Balance.</b> Ballast opposite the pigtail keeps the center of mass at the geometric center. The roll test is your check — a lopsided ball wobbles in flight and skews the TrackMan movement numbers.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ PHASE 7 ============ -->
+  <section id="p7">
+    <div class="phase-head"><span class="pnum">7</span><h2>Re-lace, expose the pigtail, wall-test</h2></div>
+    <p class="dur">~2 hours</p>
+    <p>Stitch the leather back with the figure-eight lacing (harvest lace from the spare ball if you run short). Bring the <b>USB-C pigtail</b> out through a small leather flap so you can recharge without opening the ball — recessed and taped flush, never proud, so it can't snag or get smashed. Before you unplug the charger for the last stitch, confirm the logger reads <b>≥ 4.15 V</b>. Finally, borrow Yeh's durability check: throw it at a wall at game speed, then <b>re-run the isolation test</b> — if it still passes, the ball is field-ready.</p>
+
+    <figure>
+      <svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,Consolas,monospace" role="img" aria-label="Finished ball being re-laced with the USB-C pigtail exposed through a leather flap, then thrown at a wall as a durability test.">
+        <!-- laced ball -->
+        <g transform="translate(180,120)">
+          <circle r="100" fill="url(#yarn)" stroke="var(--leather-dk)"/><circle r="100" fill="none" stroke="var(--leather)" stroke-width="18"/>
+          <path d="M-70 -60 C 0 0, 0 20, -70 80" fill="none" stroke="var(--seam)" stroke-width="2"/>
+          <path d="M70 -60 C 0 0, 0 20, 70 80" fill="none" stroke="var(--seam)" stroke-width="2"/>
+          <g stroke="var(--seam)" stroke-width="1.5">
+            <path d="M-60 -40 l14 -4 M-60 0 l16 0 M-60 40 l14 5 M60 -40 l-14 -4 M60 0 l-16 0 M60 40 l-14 5"/>
+          </g>
+          <rect x="-16" y="-96" width="32" height="16" rx="3" fill="#4a5058"/><text x="0" y="-84" font-size="9" fill="#dfe3e7" text-anchor="middle">USB-C</text>
+          <text x="0" y="130" font-size="11" fill="#5b5f52" text-anchor="middle">re-laced · pigtail in a flap</text>
+        </g>
+        <!-- wall throw -->
+        <g transform="translate(430,0)">
+          <rect x="250" y="20" width="20" height="200" fill="#b9bdc3"/>
+          <circle cx="120" cy="120" r="16" fill="url(#yarn)" stroke="var(--leather-dk)"/>
+          <path d="M40 120 L235 120" stroke="var(--seam)" stroke-width="2" stroke-dasharray="6 5"/><path d="M228 114 l10 6 l-10 6" fill="var(--seam)"/>
+          <text x="140" y="100" font-size="12" fill="#2a2d24">game-speed wall throw</text>
+          <text x="140" y="176" font-size="11" fill="#5b5f52">then isolation test again</text>
+        </g>
+      </svg>
+      <figcaption><b>Close &amp; prove.</b> Re-lace, expose the pigtail flush in a flap, verify ≥ 4.15 V before the final stitch, then impact-test and re-run isolation. A pass here means the wiring survives real throwing — the thing v1 never demonstrated.</figcaption>
+    </figure>
+
+    <div class="callout"><b>The through-line:</b> the isolation test appears in phases 2, 5, and 7, and before every data session. That single 60-second check is the habit that turns "hope it works" into "know it works." It is the one procedure the first ball never had.</div>
+  </section>
+
+  <footer>
+    SmartBall v2 build manual · pairs with <code>firmware/isolation_test/isolation_test.ino</code>, <code>calibrate_sensors.ino</code>, and <code>fit_calibration.py</code>. Construction method after McGinnis &amp; Perkins (2012) and Yeh et&nbsp;al. (2024).
+  </footer>
+</div>

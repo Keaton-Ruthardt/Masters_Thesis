@@ -1,0 +1,138 @@
+<title>SmartBall — Making a Rail on Perfboard</title>
+<style>
+  :root{--bg:#0e1622;--panel:#152232;--panel2:#1b2b3d;--ink:#e7eef6;--muted:#93a4b8;--line:#2b3d52;
+    --pwr:#ff6b5c;--gnd:#8aa0b6;--sig:#38d6c4;--copper:#c98a5a;--solder:#d7dde6;
+    --sans:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--mono:ui-monospace,Consolas,monospace;}
+  *{box-sizing:border-box}
+  .wrap{max-width:760px;margin:0 auto;padding:38px 22px 70px;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--sig);margin:0 0 10px}
+  h1{font-size:clamp(23px,4.2vw,31px);margin:0 0 12px;text-wrap:balance;font-weight:650}
+  .sub{color:var(--muted);max-width:60ch;margin:0 0 26px}
+  h2{font-size:18px;margin:34px 0 6px;font-weight:620}
+  p{font-size:15px;color:#c2ccd8;max-width:62ch}
+  .stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0}
+  .stage .t{font-family:var(--mono);font-size:12px;color:var(--sig);letter-spacing:.08em;margin:0 0 4px}
+  .stage h3{margin:0 0 4px;font-size:16px}
+  .stage p{margin:6px 0 0;font-size:14px;color:var(--muted)}
+  .svgbox{overflow-x:auto;margin-top:10px}
+  svg{display:block;width:100%;height:auto;min-width:320px}
+  svg text{font-family:var(--mono)}
+  .callout{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-left:3px solid var(--pwr);border-radius:12px;padding:15px 18px;margin:24px 0}
+  .callout p{margin:0;max-width:none}
+  b.cop{color:var(--copper)} b.sol{color:#e7eef6}
+</style>
+<div class="wrap">
+  <p class="eyebrow">SmartBall · Perfboard</p>
+  <h1>Making a "rail" out of a row of pads</h1>
+  <p class="sub">A perfboard's holes are all separate. To make a shared power (3V3) or ground (GND) line, you join a whole row of pads into one connected strip — a rail — by soldering a bare wire across them. Here's exactly that, in three stages. Everything shown is the <b class="cop">copper side</b> (the bottom of the board).</p>
+
+  <div class="stage">
+    <p class="t">STAGE 1 — WHAT YOU START WITH</p>
+    <h3>Separate copper pads</h3>
+    <div class="svgbox">
+      <svg viewBox="0 0 360 70" role="img" aria-label="A row of five separate copper pads, each with a hole.">
+        <g>
+          <circle cx="55" cy="35" r="11" fill="#c98a5a"/><circle cx="55" cy="35" r="4.5" fill="#0e1622"/>
+          <circle cx="115" cy="35" r="11" fill="#c98a5a"/><circle cx="115" cy="35" r="4.5" fill="#0e1622"/>
+          <circle cx="175" cy="35" r="11" fill="#c98a5a"/><circle cx="175" cy="35" r="4.5" fill="#0e1622"/>
+          <circle cx="235" cy="35" r="11" fill="#c98a5a"/><circle cx="235" cy="35" r="4.5" fill="#0e1622"/>
+          <circle cx="295" cy="35" r="11" fill="#c98a5a"/><circle cx="295" cy="35" r="4.5" fill="#0e1622"/>
+        </g>
+      </svg>
+    </div>
+    <p>Five copper pads, each with a hole in the middle. Right now they are <strong>not connected to each other</strong> — a wire in one hole does nothing to the next.</p>
+  </div>
+
+  <div class="stage">
+    <p class="t">STAGE 2 — LAY THE WIRE</p>
+    <h3>Rest a bare wire across the row</h3>
+    <div class="svgbox">
+      <svg viewBox="0 0 360 70" role="img" aria-label="A bare wire laid flat across all five copper pads.">
+        <g>
+          <circle cx="55" cy="35" r="11" fill="#c98a5a"/><circle cx="55" cy="35" r="4.5" fill="#0e1622"/>
+          <circle cx="115" cy="35" r="11" fill="#c98a5a"/><circle cx="115" cy="35" r="4.5" fill="#0e1622"/>
+          <circle cx="175" cy="35" r="11" fill="#c98a5a"/><circle cx="175" cy="35" r="4.5" fill="#0e1622"/>
+          <circle cx="235" cy="35" r="11" fill="#c98a5a"/><circle cx="235" cy="35" r="4.5" fill="#0e1622"/>
+          <circle cx="295" cy="35" r="11" fill="#c98a5a"/><circle cx="295" cy="35" r="4.5" fill="#0e1622"/>
+        </g>
+        <line x1="30" y1="35" x2="330" y2="35" stroke="#e7eef6" stroke-width="3"/>
+        <text x="335" y="39" fill="#93a4b8" font-size="11">bare wire</text>
+      </svg>
+    </div>
+    <p>Strip a piece of 30 AWG so it's bare the whole length (or use a bare/solid wire), and lay it flat <strong>on top of the row of pads</strong>, touching each one. Don't solder yet — just rest it there.</p>
+  </div>
+
+  <div class="stage">
+    <p class="t">STAGE 3 — SOLDER AT EACH PAD</p>
+    <h3>Tack the wire to every pad → now it's one rail</h3>
+    <div class="svgbox">
+      <svg viewBox="0 0 360 70" role="img" aria-label="Solder blobs at each pad bonding the wire to all five pads, making a continuous rail.">
+        <line x1="30" y1="35" x2="330" y2="35" stroke="#e7eef6" stroke-width="3"/>
+        <g>
+          <circle cx="55" cy="35" r="11" fill="#c98a5a"/><circle cx="55" cy="35" r="7" fill="#d7dde6"/>
+          <circle cx="115" cy="35" r="11" fill="#c98a5a"/><circle cx="115" cy="35" r="7" fill="#d7dde6"/>
+          <circle cx="175" cy="35" r="11" fill="#c98a5a"/><circle cx="175" cy="35" r="7" fill="#d7dde6"/>
+          <circle cx="235" cy="35" r="11" fill="#c98a5a"/><circle cx="235" cy="35" r="7" fill="#d7dde6"/>
+          <circle cx="295" cy="35" r="11" fill="#c98a5a"/><circle cx="295" cy="35" r="7" fill="#d7dde6"/>
+        </g>
+        <text x="55" y="62" fill="#93a4b8" font-size="9" text-anchor="middle">solder</text>
+        <text x="295" y="62" fill="#93a4b8" font-size="9" text-anchor="middle">solder</text>
+      </svg>
+    </div>
+    <p>Touch the iron to the wire <strong>and</strong> a pad at the same time, feed a bit of solder so a shiny blob bonds the wire to that pad. Do it at <strong>every</strong> pad in the row. The wire now electrically ties all five pads together — that whole row is one <strong>rail</strong>.</p>
+  </div>
+
+  <h2>Do it twice</h2>
+  <p>Make <b style="color:var(--pwr)">one row the 3V3 rail</b> and <b style="color:var(--gnd)">another row the GND rail</b>, each with its own bare wire soldered across it. Then a wire in <em>any</em> hole of the 3V3 row is connected to 3.3&nbsp;V, and any hole of the GND row is connected to ground — that's how all four sensors share power and all four resistors share ground.</p>
+
+  <h2>Where the sensor wires and A0–A3 solder</h2>
+  <p>With the two rails made, here's the whole tiny hub. The <b style="color:var(--pwr)">3V3 rail</b> (top) and <b style="color:var(--gnd)">GND rail</b> (bottom) are the rows you just built. Between them sit four <b style="color:var(--sig)">node pads</b> — one per sensor.</p>
+  <div class="svgbox">
+    <svg viewBox="0 0 380 210" role="img" aria-label="Perfboard hub: 3V3 rail on top, GND rail on bottom, four node pads in the middle each with a 10k resistor to the GND rail.">
+      <!-- 3V3 rail -->
+      <line x1="60" y1="34" x2="330" y2="34" stroke="#e7eef6" stroke-width="3"/>
+      <g><circle cx="100" cy="34" r="8" fill="#c98a5a"/><circle cx="100" cy="34" r="5" fill="#d7dde6"/>
+         <circle cx="170" cy="34" r="8" fill="#c98a5a"/><circle cx="170" cy="34" r="5" fill="#d7dde6"/>
+         <circle cx="240" cy="34" r="8" fill="#c98a5a"/><circle cx="240" cy="34" r="5" fill="#d7dde6"/>
+         <circle cx="310" cy="34" r="8" fill="#c98a5a"/><circle cx="310" cy="34" r="5" fill="#d7dde6"/></g>
+      <text x="60" y="20" fill="#ff8a7e" font-size="11">3V3 rail</text>
+      <path d="M30 34 H60" stroke="#ff6b5c" stroke-width="2.5"/><text x="10" y="30" fill="#ff8a7e" font-size="9">3V3</text>
+      <!-- sensor power stubs into 3V3 rail -->
+      <g stroke="#ff6b5c" stroke-width="2.5"><path d="M100 34 V14"/><path d="M170 34 V14"/><path d="M240 34 V14"/><path d="M310 34 V14"/></g>
+      <text x="205" y="10" fill="#ff8a7e" font-size="9" text-anchor="middle">4× sensor POWER wires → onto the 3V3 rail</text>
+      <!-- node pads -->
+      <g><circle cx="100" cy="98" r="8" fill="#c98a5a"/><circle cx="100" cy="98" r="5" fill="#38d6c4"/>
+         <circle cx="170" cy="98" r="8" fill="#c98a5a"/><circle cx="170" cy="98" r="5" fill="#38d6c4"/>
+         <circle cx="240" cy="98" r="8" fill="#c98a5a"/><circle cx="240" cy="98" r="5" fill="#38d6c4"/>
+         <circle cx="310" cy="98" r="8" fill="#c98a5a"/><circle cx="310" cy="98" r="5" fill="#38d6c4"/></g>
+      <text x="100" y="88" fill="#38d6c4" font-size="9" text-anchor="middle">S1</text>
+      <text x="170" y="88" fill="#38d6c4" font-size="9" text-anchor="middle">S2</text>
+      <text x="240" y="88" fill="#38d6c4" font-size="9" text-anchor="middle">S3</text>
+      <text x="310" y="88" fill="#38d6c4" font-size="9" text-anchor="middle">S4</text>
+      <!-- node input stubs (signal + A pin) -->
+      <g stroke="#38d6c4" stroke-width="2"><path d="M100 98 H70"/><path d="M170 98 H150"/><path d="M240 98 H220"/><path d="M310 98 H290"/></g>
+      <text x="205" y="125" fill="#38d6c4" font-size="9" text-anchor="middle">each node pad = sensor SIGNAL wire + its A-pin wire (A0→S1 … A3→S4)</text>
+      <!-- resistors node -> GND -->
+      <g>
+        <line x1="100" y1="106" x2="100" y2="140" stroke="#c98a5a" stroke-width="2"/><rect x="90" y="140" width="20" height="26" rx="4" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/><line x1="100" y1="166" x2="100" y2="176" stroke="#8aa0b6" stroke-width="2.5"/>
+        <line x1="170" y1="106" x2="170" y2="140" stroke="#c98a5a" stroke-width="2"/><rect x="160" y="140" width="20" height="26" rx="4" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/><line x1="170" y1="166" x2="170" y2="176" stroke="#8aa0b6" stroke-width="2.5"/>
+        <line x1="240" y1="106" x2="240" y2="140" stroke="#c98a5a" stroke-width="2"/><rect x="230" y="140" width="20" height="26" rx="4" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/><line x1="240" y1="166" x2="240" y2="176" stroke="#8aa0b6" stroke-width="2.5"/>
+        <line x1="310" y1="106" x2="310" y2="140" stroke="#c98a5a" stroke-width="2"/><rect x="300" y="140" width="20" height="26" rx="4" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/><line x1="310" y1="166" x2="310" y2="176" stroke="#8aa0b6" stroke-width="2.5"/>
+      </g>
+      <text x="345" y="156" fill="#f6c453" font-size="9">10kΩ</text>
+      <!-- GND rail -->
+      <line x1="60" y1="176" x2="330" y2="176" stroke="#e7eef6" stroke-width="3"/>
+      <g><circle cx="100" cy="176" r="8" fill="#c98a5a"/><circle cx="100" cy="176" r="5" fill="#d7dde6"/>
+         <circle cx="170" cy="176" r="8" fill="#c98a5a"/><circle cx="170" cy="176" r="5" fill="#d7dde6"/>
+         <circle cx="240" cy="176" r="8" fill="#c98a5a"/><circle cx="240" cy="176" r="5" fill="#d7dde6"/>
+         <circle cx="310" cy="176" r="8" fill="#c98a5a"/><circle cx="310" cy="176" r="5" fill="#d7dde6"/></g>
+      <text x="60" y="200" fill="#a6b8cc" font-size="11">GND rail</text>
+      <path d="M30 176 H60" stroke="#8aa0b6" stroke-width="2.5"/><text x="10" y="172" fill="#a6b8cc" font-size="9">GND</text>
+    </svg>
+  </div>
+  <p style="font-size:14px;color:var(--muted)">So each column is one sensor: its <b style="color:var(--pwr)">power</b> wire solders onto the <b style="color:var(--pwr)">3V3 rail</b>; its <b style="color:var(--sig)">signal</b> wire and the matching <b style="color:var(--sig)">A-pin wire</b> (A0→S1, A1→S2, A2→S3, A3→S4) both solder into that column's <b style="color:var(--sig)">node pad</b>; and a <b style="color:var(--res)">10 kΩ</b> resistor bridges the node pad down to the <b style="color:var(--gnd)">GND rail</b>. The sensor's <b class="sol">male jumper pins</b> just push through the holes and solder on the copper side like any other wire.</p>
+
+  <div class="callout">
+    <p><b class="sol">The key idea:</b> the bare wire <em>is</em> the rail. Soldering it to each pad turns a row of separate holes into one shared power (or ground) line — so you don't run a separate wire from the XIAO to every sensor; they all tap the rail. Power wires meet the 3V3 rail, resistors meet the GND rail, and the A0–A3 wires meet the node pads.</p>
+  </div>
+</div>

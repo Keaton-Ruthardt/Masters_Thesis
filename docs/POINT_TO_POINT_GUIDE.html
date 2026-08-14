@@ -1,0 +1,193 @@
+<title>SmartBall — No-Perfboard Wiring, Step by Step</title>
+<style>
+  :root{
+    --bg:#0e1622; --panel:#152232; --panel2:#1b2b3d; --ink:#e7eef6; --muted:#93a4b8;
+    --line:#2b3d52; --pwr:#ff6b5c; --gnd:#8aa0b6; --sig:#38d6c4; --res:#f6c453; --copper:#c98a5a;
+    --sans:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"Cascadia Code","SFMono-Regular",Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  .wrap{max-width:880px;margin:0 auto;padding:40px 22px 80px;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);line-height:1.55}
+  header.head{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:26px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--sig);margin:0 0 10px}
+  h1{font-size:clamp(25px,4.5vw,34px);line-height:1.12;margin:0 0 12px;text-wrap:balance;font-weight:650}
+  .sub{color:var(--muted);max-width:64ch;margin:0}
+  h2{font-size:20px;margin:42px 0 6px;font-weight:630;text-wrap:balance}
+  .lead{color:var(--muted);margin:0 0 18px;max-width:66ch}
+  .terms{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:20px 0;
+    display:grid;gap:8px}
+  .terms div{display:flex;gap:10px;align-items:baseline;font-size:14.5px}
+  .terms b{font-family:var(--mono);color:var(--ink);min-width:74px}
+  .terms span{color:var(--muted)}
+  .chip{font-family:var(--mono);font-size:12px;padding:1px 7px;border-radius:5px;color:#0e1622;font-weight:700}
+  .callout{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);
+    border-left:3px solid var(--sig);border-radius:12px;padding:16px 20px;margin:20px 0}
+  .callout.warn{border-left-color:var(--pwr)}
+  .callout p{margin:0}
+  ul.need{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:6px}
+  ul.need li{padding-left:20px;position:relative;color:var(--cbd,#b8c4d3);font-size:14.5px}
+  ul.need li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:2px;background:var(--sig)}
+  .step{border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0;background:var(--panel)}
+  .step .n{font-family:var(--mono);font-size:12px;color:var(--sig);letter-spacing:.1em}
+  .step h3{margin:4px 0 8px;font-size:17px}
+  .step p{margin:0 0 8px;font-size:14.5px;color:#c2ccd8}
+  .step p:last-child{margin:0}
+  .step .svgbox{overflow-x:auto;margin:12px 0 4px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px}
+  .step svg{display:block;width:100%;height:auto;min-width:280px}
+  svg text{font-family:var(--mono)}
+  b.pw{color:var(--pwr)} b.gd{color:var(--gnd)} b.sg{color:var(--sig)} b.rs{color:var(--res)}
+  code{font-family:var(--mono);background:var(--panel2);padding:1px 6px;border-radius:5px;font-size:.9em;color:var(--sig)}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:10px 2px 0;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:18px;height:4px;border-radius:2px;display:inline-block}
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">SmartBall · Build Reference</p>
+    <h1>Wiring the ball with no perfboard</h1>
+    <p class="sub">Point-to-point ("dead-bug") assembly: the two shared rails become two solder blobs, and each resistor floats in the wiring. Plain steps, real terms. Everything is one small cluster you'll pot in epoxy.</p>
+  </header>
+
+  <div class="terms">
+    <div><b class="pw">3V3</b><span>the XIAO's 3.3-volt <b class="pw">power</b> pin (the "+")</span></div>
+    <div><b class="gd">GND</b><span><b class="gd">ground</b> — the power return (the "–")</span></div>
+    <div><b class="sg">0 1 2 3</b><span>the four <b class="sg">analog pins</b> (A0–A3) that read your four sensors</span></div>
+    <div><b>bus</b><span>one solder blob where several wires join, so they all share one connection</span></div>
+    <div><b>node</b><span>the junction for one sensor: its signal + its ADC pin + its resistor meet here</span></div>
+  </div>
+
+  <p class="lead">You are building <strong>three kinds of connection point</strong>: one <b class="pw">3V3 bus</b> (shared power), one <b class="gd">GND bus</b> (shared ground), and <b class="sg">four nodes</b> (one per sensor).</p>
+
+  <h2>What you need</h2>
+  <ul class="need">
+    <li>XIAO nRF52840 with its metal header pins (already on it) and the LiPo soldered to B+/B–</li>
+    <li>4 FlexiForce sensors, each with a female jumper on each pin (2 wires per sensor)</li>
+    <li>4 × 10&nbsp;kΩ resistors</li>
+    <li>30 AWG hookup wire (stranded preferred), soldering iron + solder, heat-shrink or tape, cutters</li>
+  </ul>
+
+  <div class="legend">
+    <span><i class="sw" style="background:#ff6b5c"></i> 3V3 / power</span>
+    <span><i class="sw" style="background:#8aa0b6"></i> GND</span>
+    <span><i class="sw" style="background:#38d6c4"></i> signal / A0–A3</span>
+    <span><i class="sw" style="background:#f6c453"></i> 10&nbsp;kΩ</span>
+    <span><i class="sw" style="background:#c98a5a"></i> solder joint</span>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <p class="n">STEP 1</p>
+    <h3>Put a wire on each XIAO pin you'll use</h3>
+    <p>You need a wire coming off <strong>six</strong> pins. Find them by the silkscreen labels: <b class="pw">3V3</b>, <b class="gd">GND</b>, and <b class="sg">0, 1, 2, 3</b>. (Ignore <code>5V</code> — everything runs on 3V3.)</p>
+    <p>The header pins are already on your board, so <strong>solder a wire straight onto each pin:</strong> hook the stripped, tinned wire around the pin, touch the iron to the pin and wire together for ~2 seconds, feed a little solder, hold still until it hardens. Tug to check.</p>
+    <div class="svgbox">
+      <svg viewBox="0 0 460 150" role="img" aria-label="XIAO with a wire soldered to 3V3, GND, and pins 0,1,2,3.">
+        <rect x="150" y="24" width="160" height="100" rx="12" fill="#1b2b3d" stroke="#33506e"/>
+        <text x="230" y="70" fill="#e7eef6" font-size="13" font-weight="700" text-anchor="middle">XIAO</text>
+        <text x="230" y="88" fill="#93a4b8" font-size="10.5" text-anchor="middle">nRF52840</text>
+        <!-- left pins 0-3 (signal) -->
+        <g>
+          <circle cx="150" cy="42" r="4" fill="#38d6c4"/><line x1="150" y1="42" x2="60" y2="42" stroke="#38d6c4" stroke-width="2.5"/><text x="128" y="38" fill="#38d6c4" font-size="10" text-anchor="end">0 (A0)</text>
+          <circle cx="150" cy="66" r="4" fill="#38d6c4"/><line x1="150" y1="66" x2="60" y2="66" stroke="#38d6c4" stroke-width="2.5"/><text x="128" y="62" fill="#38d6c4" font-size="10" text-anchor="end">1 (A1)</text>
+          <circle cx="150" cy="90" r="4" fill="#38d6c4"/><line x1="150" y1="90" x2="60" y2="90" stroke="#38d6c4" stroke-width="2.5"/><text x="128" y="86" fill="#38d6c4" font-size="10" text-anchor="end">2 (A2)</text>
+          <circle cx="150" cy="114" r="4" fill="#38d6c4"/><line x1="150" y1="114" x2="60" y2="114" stroke="#38d6c4" stroke-width="2.5"/><text x="128" y="110" fill="#38d6c4" font-size="10" text-anchor="end">3 (A3)</text>
+        </g>
+        <!-- right pins 3V3 GND -->
+        <g>
+          <circle cx="310" cy="54" r="4" fill="#ff6b5c"/><line x1="310" y1="54" x2="400" y2="54" stroke="#ff6b5c" stroke-width="2.5"/><text x="332" y="50" fill="#ff8a7e" font-size="10">3V3</text>
+          <circle cx="310" cy="94" r="4" fill="#8aa0b6"/><line x1="310" y1="94" x2="400" y2="94" stroke="#8aa0b6" stroke-width="2.5"/><text x="332" y="90" fill="#a6b8cc" font-size="10">GND</text>
+        </g>
+      </svg>
+    </div>
+    <p style="color:var(--muted);font-size:13px">Don't let solder bridge two neighbouring pins — check under good light after each one.</p>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <p class="n">STEP 2</p>
+    <h3>Build the <b class="pw">3V3 bus</b> — shared power</h3>
+    <p>Each sensor has two wires; the sensor isn't polarised, so just call one wire <strong>power</strong> and one <strong>signal</strong> (be consistent). Gather <strong>five</strong> wires and solder them into <strong>one blob</strong>: the XIAO <b class="pw">3V3</b> wire + the <strong>power</strong> wire from S1, S2, S3, S4. Slide heat-shrink over it. That blob now feeds 3.3&nbsp;V to all four sensors.</p>
+    <div class="svgbox">
+      <svg viewBox="0 0 420 120" role="img" aria-label="One solder joint joining XIAO 3V3 and four sensor power wires.">
+        <circle cx="210" cy="60" r="9" fill="#c98a5a"/>
+        <g stroke="#ff6b5c" stroke-width="3" fill="none">
+          <path d="M210 60 L110 26"/><path d="M210 60 L110 48"/><path d="M210 60 L110 72"/><path d="M210 60 L118 94"/>
+          <path d="M210 60 H320"/>
+        </g>
+        <text x="100" y="30" fill="#93a4b8" font-size="10" text-anchor="end">S1 power</text>
+        <text x="100" y="52" fill="#93a4b8" font-size="10" text-anchor="end">S2 power</text>
+        <text x="100" y="76" fill="#93a4b8" font-size="10" text-anchor="end">S3 · S4 power</text>
+        <text x="326" y="64" fill="#ff8a7e" font-size="11">XIAO 3V3</text>
+        <rect x="235" y="51" width="34" height="18" rx="4" fill="none" stroke="#38d6c4" stroke-dasharray="4 3"/>
+        <text x="252" y="90" fill="#38d6c4" font-size="9" text-anchor="middle">heat-shrink</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <p class="n">STEP 3</p>
+    <h3>Build the <b class="gd">GND bus</b> — shared ground</h3>
+    <p>Same idea for ground. Gather <strong>five</strong> and solder into one blob: the XIAO <b class="gd">GND</b> wire + <strong>one leg of each 10&nbsp;kΩ resistor</strong> (pick the same leg on all four — call it the "bottom" leg). Heat-shrink it.</p>
+    <div class="svgbox">
+      <svg viewBox="0 0 420 120" role="img" aria-label="One solder joint joining XIAO GND and four resistor bottom legs.">
+        <circle cx="210" cy="60" r="9" fill="#c98a5a"/>
+        <g stroke="#8aa0b6" stroke-width="3" fill="none">
+          <path d="M210 60 L110 26"/><path d="M210 60 L110 48"/><path d="M210 60 L110 72"/><path d="M210 60 L118 94"/>
+          <path d="M210 60 H320"/>
+        </g>
+        <text x="100" y="30" fill="#f6c453" font-size="10" text-anchor="end">R1 bottom leg</text>
+        <text x="100" y="52" fill="#f6c453" font-size="10" text-anchor="end">R2 bottom leg</text>
+        <text x="100" y="76" fill="#f6c453" font-size="10" text-anchor="end">R3 · R4</text>
+        <text x="326" y="64" fill="#a6b8cc" font-size="11">XIAO GND</text>
+        <rect x="235" y="51" width="34" height="18" rx="4" fill="none" stroke="#38d6c4" stroke-dasharray="4 3"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <p class="n">STEP 4</p>
+    <h3>Build the four <b class="sg">nodes</b> — one per sensor</h3>
+    <p>This is where each sensor, its resistor, and its ADC pin meet. <strong>Repeat for all four.</strong> For S1 (→ pin&nbsp;0/A0), solder <strong>three things into one point:</strong> S1's <b class="sg">signal</b> wire + the wire from XIAO <b class="sg">pin&nbsp;0</b> + the <b class="rs">top</b> leg of a 10&nbsp;kΩ resistor. Heat-shrink it. That resistor's bottom leg is already in the GND bus from Step&nbsp;3.</p>
+    <p>Then: <b class="sg">S2 signal + pin 1</b> + a resistor top leg · <b class="sg">S3 signal + pin 2</b> + a resistor top leg · <b class="sg">S4 signal + pin 3</b> + a resistor top leg.</p>
+    <div class="svgbox">
+      <svg viewBox="0 0 440 170" role="img" aria-label="One channel: 3V3 bus through sensor to a node, node to ADC pin, node through 10k resistor to GND bus.">
+        <line x1="30" y1="30" x2="410" y2="30" stroke="#ff6b5c" stroke-width="3"/>
+        <text x="30" y="22" fill="#ff8a7e" font-size="10">3V3 bus</text>
+        <line x1="30" y1="150" x2="410" y2="150" stroke="#8aa0b6" stroke-width="3"/>
+        <text x="30" y="165" fill="#a6b8cc" font-size="10">GND bus</text>
+        <!-- sensor from 3V3 down to node -->
+        <circle cx="150" cy="45" r="12" fill="#dfe8f2" stroke="#9fb2c6"/><text x="150" y="49" fill="#0e1622" font-size="9" text-anchor="middle">S1</text>
+        <line x1="150" y1="33" x2="150" y2="30" stroke="#ff6b5c" stroke-width="2.5"/>
+        <line x1="150" y1="57" x2="150" y2="82" stroke="#38d6c4" stroke-width="2.5"/>
+        <!-- node -->
+        <circle cx="150" cy="86" r="6" fill="#38d6c4"/>
+        <text x="150" y="106" fill="#38d6c4" font-size="10" text-anchor="middle">node</text>
+        <!-- to ADC pin -->
+        <path d="M150 86 H300" stroke="#38d6c4" stroke-width="2.5" fill="none"/>
+        <text x="306" y="90" fill="#38d6c4" font-size="10">→ XIAO pin 0 (A0)</text>
+        <!-- resistor down to GND -->
+        <line x1="150" y1="92" x2="150" y2="110" stroke="#c98a5a" stroke-width="2"/>
+        <rect x="140" y="110" width="20" height="30" rx="4" fill="#1b2b3d" stroke="#f6c453" stroke-width="1.5"/>
+        <text x="176" y="128" fill="#f6c453" font-size="10">10kΩ</text>
+        <line x1="150" y1="140" x2="150" y2="150" stroke="#8aa0b6" stroke-width="2.5"/>
+      </svg>
+    </div>
+    <p style="color:var(--muted);font-size:13px">Each finger's divider = <b class="pw">3V3 bus</b> → sensor → <b class="sg">node</b> → <b class="rs">10 kΩ</b> → <b class="gd">GND bus</b>, with the node also feeding its ADC pin.</p>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <p class="n">STEP 5</p>
+    <h3>Insulate, then test</h3>
+    <p><strong>No bare metal may touch any other bare metal</strong> — every joint covered by heat-shrink or tape. Above all, the <b class="pw">3V3 bus</b> and <b class="gd">GND bus</b> must never touch; a stray strand between them is a dead short (the same fault that killed the custom PCB).</p>
+    <p>Then charge the LiPo, unplug USB, run <code>python ble_logger.py</code>, connect, and <strong>press each sensor one at a time</strong> — confirm the right channel moves (S1→idx, S2→mid, S3→thb, S4→rng) and nothing gets warm. If all four respond, bundle the cluster tight against the XIAO and it's ready to pot in epoxy.</p>
+  </div>
+
+  <div class="callout warn">
+    <p><strong>The whole circuit in one line:</strong> each sensor runs from the <b class="pw">3V3 bus</b>, through the sensor, to its <b class="sg">node</b>, through a <b class="rs">10&nbsp;kΩ</b> resistor, to the <b class="gd">GND bus</b> — and each node also connects to its <b class="sg">ADC pin (0/1/2/3)</b> so the XIAO can read it.</p>
+  </div>
+</div>

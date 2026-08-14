@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+title: An Instrumented Baseball for Per-Finger Grip Force Measurement
+message: If you use this software or data, please cite the thesis it accompanies.
+type: software
+authors:
+  - family-names: Ruthardt
+    given-names: Keaton
+    email: keatonruthardt10@gmail.com
+    affiliation: Oral Roberts University
+license: MIT
+year: 2026

@@ -1,0 +1,9 @@
+# SmartBall v2 calibration — fit_v3_calibration.py
+# Model: F(N) = calFactor * ADC/(4095-ADC), through origin.
+# Weight sequence read per-file from the capture header.
+sensor,calFactor_N,R2,repeatability_cv_pct,tests,max_force_N
+BK,119,0.986,2.6,20,28.4
+CD,331,0.973,7.1,4,19.6
+CG,157,0.961,7.8,20,19.6
+KA,148,0.995,1.3,20,19.6
+RM,129,0.977,6.5,20,28.4
