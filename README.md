@@ -6,7 +6,7 @@ Grip Force Measurement: Finger Force Tracks Delivery Effort Rather Than Release 
 
 A regulation baseball instrumented with four thin-film force sensors under the leather
 cover, sampling all channels at 480 Hz and streaming over Bluetooth Low Energy, paired
-per pitch with TrackMan radar release velocity. Total build cost under $300.
+per pitch with TrackMan radar release velocity.
 
 ## What the study found
 
