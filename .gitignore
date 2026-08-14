@@ -13,3 +13,6 @@ Thumbs.db
 realrate*.csv
 realdata*.csv
 Realpitcher*.csv
+
+# Word temp extraction from the zip
+Masters_Thesis_and_Defense/

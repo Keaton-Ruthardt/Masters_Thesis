@@ -17,7 +17,7 @@ after Holm correction.
 
 Holding commanded effort fixed removes that association. Index + middle force at
 release falls to *r* = 0.33 (n.s.), and its unique contribution to velocity variance
-is **ΔR² = 0.000**, against 0.759 for commanded effort alone. A mixed-effects model
+is **ΔR² = 0.000**, against 0.743 for commanded effort alone. A mixed-effects model
 agrees (χ²(1) = 0.47, *p* = 0.49).
 
 Three thumb-dominated features survive Benjamini–Hochberg correction (*q* = 0.035);
