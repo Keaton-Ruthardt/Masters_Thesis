@@ -30,6 +30,9 @@ is largely a readout of delivery effort rather than a determinant of release vel
 
 | Path | Contents |
 |---|---|
+| `thesis/` | The thesis (`MSCS_Paper.docx`) and its Quarto source, bibliography, and CSL style |
+| `defense/` | Defense presentation, including a copy with speaker notes |
+| `Masters_Thesis_and_Defense.zip` | Thesis and presentation bundled together |
 | `firmware/` | Arduino sketches for the Seeed XIAO nRF52840 |
 | `acquisition/` | `ble_logger.py` — BLE client, writes raw counts to CSV |
 | `calibration/` | Per-sensor calibration procedure, fitting script, factors, raw captures |

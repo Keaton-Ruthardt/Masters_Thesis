@@ -1,0 +1,1065 @@
+---
+format:
+  docx:
+    reference-doc: "MSCS Paper Outline.docx"
+    toc: false
+    number-sections: false
+bibliography: references.bib
+# APA 7th edition, per reviewer recommendation. To enable: download
+#   https://www.zotero.org/styles/apa
+# save it as apa.csl beside this file, then uncomment the next line.
+# Leaving it commented renders in Chicago author-date (pandoc's default).
+csl: apa.csl
+---
+
+<!--
+  MSCS Paper: Instrumented Baseball for Grip Pressure Analysis
+  GCSC 599 — Oral Roberts University
+  Author: Keaton Ruthardt
+
+  RENDERING: Run `quarto render MSCS_Paper.qmd` to generate MSCS_Paper.docx
+
+  PRE-SUBMISSION CHECKLIST (Word, after rendering):
+  1. Center-align the Title Page and Committee Approval blocks (Ctrl+E)
+  2. Right-click the Table of Contents -> Update Field (or Ctrl+A then F9 for all fields).
+     Do the same for the List of Tables and List of Figures.
+  3. Convert every "Table N." / "Figure N." label to a Word caption via
+     References > Insert Caption, so numbering and the lists auto-update.
+  4. Accept all tracked changes and turn Track Changes OFF. Remove all comments.
+  5. Check page breaks: no heading orphaned at the foot of a page, no table or
+     figure split from its caption.
+  6. Verify the reference list is alphabetical with hanging indents.
+  7. Human proofread. Spelling/grammar tools are a supplement, not a substitute.
+-->
+
+```{=openxml}
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t>AN INSTRUMENTED BASEBALL FOR PER-FINGER GRIP FORCE MEASUREMENT: FINGER FORCE TRACKS DELIVERY EFFORT RATHER THAN RELEASE VELOCITY</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>A Project</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>Presented to</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>the Faculty of the Computing and Mathematics Department</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>Oral Roberts University</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>In partial fulfillment of the requirements for the degree of</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>Master of Science, Computer Science, Data Science</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>Prepared by</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:i/></w:rPr><w:t>Keaton Ruthardt</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:i/></w:rPr><w:t>August 2026</w:t></w:r></w:p>
+<w:p><w:r><w:br w:type="page"/></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t>Committee Approval</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>This project report has been reviewed and unanimously approved by the Project Committee.</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>____________________________________     ______________________________</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>Dr. Woerner, Committee Chair                Signature and Date</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>____________________________________     ______________________________</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>Dr. Valderrama, Committee Member            Signature and Date</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>____________________________________     ______________________________</w:t></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>Wes Davis, Committee Member                 Signature and Date</w:t></w:r></w:p>
+<w:p><w:r><w:br w:type="page"/></w:r></w:p>
+```
+
+```{=openxml}
+<w:p>
+  <w:pPr><w:jc w:val="center"/></w:pPr>
+  <w:r>
+    <w:rPr><w:b/></w:rPr>
+    <w:t>Table of Contents</w:t>
+  </w:r>
+</w:p>
+<w:p>
+  <w:r>
+    <w:fldChar w:fldCharType="begin" w:dirty="true"/>
+  </w:r>
+  <w:r>
+    <w:instrText xml:space="preserve"> TOC \o "1-1" \h \z \u </w:instrText>
+  </w:r>
+  <w:r>
+    <w:fldChar w:fldCharType="separate"/>
+  </w:r>
+  <w:r>
+    <w:t>[Right-click and select Update Field to generate the Table of Contents]</w:t>
+  </w:r>
+  <w:r>
+    <w:fldChar w:fldCharType="end"/>
+  </w:r>
+</w:p>
+<w:p><w:r><w:br w:type="page"/></w:r></w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t>List of Tables</w:t></w:r></w:p>
+<w:p>
+  <w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r>
+  <w:r><w:instrText xml:space="preserve"> TOC \h \z \t "Table Caption,1" </w:instrText></w:r>
+  <w:r><w:fldChar w:fldCharType="separate"/></w:r>
+  <w:r><w:t>[Right-click and select Update Field to generate the List of Tables]</w:t></w:r>
+  <w:r><w:fldChar w:fldCharType="end"/></w:r>
+</w:p>
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t>List of Figures</w:t></w:r></w:p>
+<w:p>
+  <w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r>
+  <w:r><w:instrText xml:space="preserve"> TOC \h \z \t "Figure Caption,1" </w:instrText></w:r>
+  <w:r><w:fldChar w:fldCharType="separate"/></w:r>
+  <w:r><w:t>[Right-click and select Update Field to generate the List of Figures]</w:t></w:r>
+  <w:r><w:fldChar w:fldCharType="end"/></w:r>
+</w:p>
+```
+
+{{< pagebreak >}}
+
+# PROJECT DESCRIPTION
+
+This project presents the design and construction of an instrumented baseball that measures grip pressure distribution at the finger contact points during live pitching. The instrument embeds four thin-film force-sensitive resistors at the primary finger contact points (index, middle, thumb, and ring finger), sampled by a Bluetooth Low Energy 5 microcontroller (Seeed XIAO nRF52840) that streams the data wirelessly to a companion logger. Release velocity is captured concurrently by an Oral Roberts University TrackMan Doppler radar system, an established commercial pitch-tracking reference that has been reported as the ball-tracking component of Major League Baseball's Statcast system [@trackman; @statcast]. Each pitch therefore yields a paired record: how the ball was gripped, measured on-board, and what the ball did as a result, measured independently. Sourcing the ball-flight outcome externally rather than from on-board inertial sensors lets the instrument concentrate on the grip-pressure measurement it uniquely provides. The complete assembly preserves regulation weight and balance.
+
+The specific contribution is the combined measurement system: per-pitch, per-finger grip behavior recorded through the release event, paired with independently measured ball-flight outcomes. Prior instrumented baseballs have measured either finger force or ball flight; the reviewed literature does not report a system that records both for the same pitch at four finger positions [@kinoshita2017; @yeh2024; @pitchlogic].
+
+## Problem Statement
+
+Pitch-tracking systems measure what the ball does after it leaves the pitcher's hand, and none of them measures the grip that produced it [@pitchlogic; @statcast]. Research instruments that do measure finger force during pitching exist, but they are laboratory devices that report force alone, and the most recent instrumented only the index and middle fingers [@kinoshita2017; @yeh2024]. A pitcher told to change how they hold the ball therefore has no way to verify that the change was executed, and no way to relate it to the result.
+
+That is a measurement gap, and closing it is the primary engineering problem this project addresses. But there is a second problem, in the evidence rather than the instrumentation, and it turns out to govern what the measurement is worth.
+
+Establishing that grip force relates to release velocity *within* a pitcher requires a spread of velocities to correlate against. A single pitcher's maximum-effort fastballs vary by little more than the resolution of the outcome instrument, so the standard solution is a graded submaximal effort protocol [@kinoshita2017]. Commanded effort, however, raises grip force and ball velocity together. A correlation obtained under that protocol is confounded by the very design that made it estimable, and it cannot by itself distinguish a genuine grip--outcome relationship from the trivial observation that harder throws involve harder gripping. Separating the two requires recording commanded effort for every pitch and holding it fixed in the analysis --- which in turn requires an instrument that captures per-finger grip force pitch by pitch, under live conditions rather than in a laboratory.
+
+This project therefore addresses two coupled problems: it builds a self-contained instrumented baseball that records grip pressure at four finger positions during live pitching, pairs each pitch with an independently measured release velocity, and uses that pairing to test whether grip force carries velocity information that delivery effort does not.
+
+## Scope and Deliverables
+
+The project is organized into five phases:
+
+1. **Proof of Concept** (Weeks 1--4): Breadboard prototype with pressure sensors, a development-grade IMU, and BLE data transmission to validate the core data pipeline.
+2. **nRF52840 Migration and Four-Sensor Array** (Weeks 5--10): Migration from ESP32 to the nRF52840 microcontroller, the platform adopted by comparable commercial smart balls, expansion to four pressure sensors covering the primary finger positions, and firmware rewrite for BLE 5.
+3. **Instrument Fabrication** (Weeks 11--16): Building a throwable, self-contained instrument around the Seeed XIAO nRF52840, a lithium-polymer battery, and the four-sensor array, with per-sensor force calibration. A custom rigid PCB was attempted during this phase; its fabrication outcome and the resulting build decision are documented in the milestones and change proposals.
+4. **Baseball Integration** (Weeks 17--19): Embedding the electronics into a regulation baseball using a construction method informed by McGinnis (2012) and Yeh et al. (2024), routing sensor leads to the finger contact positions, and verifying weight, balance, and durability for live throwing.
+5. **Data Collection and Analysis** (Weeks 20--26): Capturing paired grip-pressure and TrackMan ball-flight data across pitchers and pitch types, and developing a companion pipeline that extracts grip-force features and relates them to release velocity.
+
+## Equipment and Facilities
+
+**Fabrication and bench equipment.** Soldering station, digital multimeter, breadboards, and a crimping tool for the insulated ferrule and housed-contact terminations used in the second instrument. A digital scale reading to 0.1 g verifies regulation mass, and a flat roll surface checks balance.
+
+**Deployed instrument.** Four FlexiForce A301 thin-film force sensors; a Seeed XIAO nRF52840 development board (Nordic Semiconductor nRF52840 with BLE 5); a 100 mAh lithium-polymer cell charged through the board's on-board charger via a USB-C pigtail; 10 k$\Omega$ divider resistors; two-part epoxy for potting; and a regulation baseball, deconstructed and re-stitched. The custom printed circuit board specified in the original plan was fabricated but non-functional, and the deployed instrument is built on the development board instead (CP-12).
+
+**Calibration.** Per-sensor calibration was performed against a scale-referenced staircase of known masses applied through a rigid platen, twenty trials per sensor, with the fitted factors recorded in Table 1 and applied downstream in analysis rather than on the ball.
+
+**Ball-flight reference.** Release velocity is obtained from the Oral Roberts University TrackMan Doppler radar, a stadium-grade commercial tracking system [@trackman; @statcast]. TrackMan also reports spin and movement, but Doppler tracking of the instrumented ball proved intermittent---the altered interior shortens the radar track---and those quantities were recovered for too few pitches to analyze. **Velocity is the only ball-flight outcome used in this work.**
+
+**Facilities.** Data collection took place at the ORU TrackMan facility, throwing from a mound at regulation distance during ordinary training sessions.
+
+**Software.** A companion Python logger built on the Bleak Bluetooth library records the wireless stream to timestamped CSV, with each pitch's outcome typed into a marker field at capture. Analysis is in Python (NumPy, pandas, SciPy, statsmodels, scikit-learn, Matplotlib).
+
+Actual expenditure is reported per phase in the milestones rather than estimated here.
+
+## Subject Matter Experts
+
+The project committee consists of Dr. Woerner (Chair), Dr. Valderrama, and Wes Davis, who provide expertise in computer science, data science, and domain knowledge relevant to the project.
+
+## Project Criteria
+
+This project satisfies the criteria for a master's project as follows:
+
+- **Independence.** The project is a discrete unit with a well-defined beginning (sensor validation) and end (a functioning instrumented baseball with analysis capability), with clearly defined success criteria at each phase.
+- **Ownership.** The student is solely responsible for all hardware design, firmware development, integration, and analysis pipeline development.
+- **Background Research.** The project requires investigation of prior instrumented ball designs, force-sensing technologies, embedded systems packaging constraints, and pitching biomechanics literature before and during implementation.
+- **Creativity.** Within the products and literature reviewed for this project, no existing design combines multi-point grip-pressure sensing with a concurrent, independently measured ball-flight outcome in a single baseball-form-factor instrument. The solution requires integration of mechanical, electrical, and software engineering disciplines.
+
+# MOTIVATION
+
+Modern pitch-tracking technologies have advanced rapidly in quantifying ball-flight metrics. Products such as PitchLogic embed inertial sensors inside a regulation baseball to report velocity, spin rate, spin axis, and seam orientation in near-real-time [@pitchlogic]. Radar- and camera-based systems such as Rapsodo [@driveline2018], and stadium-level installations such as Statcast [@statcast], provide additional ball-flight data from external vantage points. However, all of these systems measure only what the ball does after it leaves the pitcher's hand; they capture no information about the grip forces that produced those outcomes.
+
+This gap matters because recent biomechanics research demonstrates a direct link between finger forces and pitch quality. A 2024 study published in *Sensors* used a sensor-embedded baseball to examine finger characteristics in twenty-one pitchers and found significant correlations between finger force rate of development, impulse, and force discrepancy with both spin rate and pitching velocity [@yeh2024]. Earlier work by Kinoshita et al. established that the index and middle fingers each exert peak resultant forces of approximately 97 N during fastball delivery, and that the shear forces generated by these fingers at release---summing to 102 N---are the kinetic source of backspin [@kinoshita2017]. These studies provide evidence that grip force patterns are not merely incidental to pitching mechanics.
+
+There is, however, a difficulty in that evidence that motivates the present work as much as the measurement gap does. Establishing a within-pitcher relationship between grip force and velocity requires a range of velocities to correlate against, and the standard way to induce that range is to have the pitcher throw at graded submaximal effort [@kinoshita2017]. But commanded effort raises grip force and ball velocity together, so a correlation obtained that way is confounded by the design that made it estimable. Distinguishing a grip--outcome relationship from the trivial observation that harder throws involve harder gripping requires recording commanded effort per pitch and holding it fixed---which requires, in turn, an instrument that captures grip force pitch by pitch under live conditions. That is the instrument this project builds, and the distinction turns out to matter a great deal.
+
+Despite this evidence, no existing tool provides pitchers or coaches with objective, real-time feedback on grip pressure distribution during live throws. Training adjustments remain guided by subjective feel and verbal coaching cues. A pitcher who is told to "grip the ball tighter with the index finger" has no way to quantify that adjustment or verify that it was executed as intended. This leaves a critical performance variable unmeasured and unmanaged.
+
+The instrumented baseball developed in this project addresses that gap. By embedding force-sensitive resistors at each finger contact point and pairing them with a concurrent, independently measured release velocity, the system produces a unified per-pitch dataset: how the ball was gripped and what the ball did as a result. This pairing supports a feedback loop that subjective coaching cues alone cannot provide.
+
+The platform may also be relevant to training-load research. Pitching biomechanics research has quantified the substantial elbow and shoulder loads the throwing motion generates and connected them to injury mechanisms [@fleisig1995], and Kinoshita et al. observed that maximal-effort fastballs demand more than 80 percent of a pitcher's measured maximum finger strength, which the authors interpret as supporting a role for distal-finger conditioning [@kinoshita2017]. Whether measured finger-force patterns carry any predictive relationship to injury is beyond the scope and design of the present study, and no such claim is made here; the connection is identified only as a direction that a larger prospective study could investigate. The architecture is generalizable to other sports where grip is consequential and unmeasured, including cricket bowling, softball pitching, and football throwing.
+
+# OBJECTIVES
+
+The primary objective is to design and fabricate a throwable, self-contained instrumented baseball that captures real-time grip pressure distribution across four finger contact points (index, middle, thumb, and ring finger) during regulation pitching motions. The instrument embeds four thin-film force-sensitive resistors at the finger contact positions, samples all four channels continuously, and transmits the resulting data wirelessly via Bluetooth Low Energy 5 to a companion logger. The complete assembly maintains regulation weight and balance.
+
+The secondary objective is to pair each pitch's grip-pressure record with independently measured ball-flight outcomes. Rather than estimating velocity and spin from on-board inertial sensors---an approach constrained by MEMS gyroscope saturation and by drift in the integration of accelerometer data---this project uses the Oral Roberts University TrackMan Doppler radar as the ball-flight reference, providing release velocity for every pitch it successfully tracks. Individual pitches are tagged during capture and joined to their TrackMan records, producing a unified per-pitch dataset. Release is delimited within the pressure signal itself by the characteristic build-up and drop-out of grip force.
+
+A tertiary objective is to develop a companion data pipeline that ingests the paired datasets and extracts interpretable grip-force features---peak force, rate of force development, impulse, and inter-finger force balance---for each pitch, then relates those features to release velocity. The analysis focuses on two representative pitch types, the four-seam fastball and the curveball, which contrast a low-movement, high-velocity grip with a high-spin, breaking-ball grip. The pipeline includes pitch segmentation, calibrated force conversion, feature extraction, and exploratory statistical analysis in Python, with data exported in standard formats (CSV).
+
+# BACKGROUND: PRIOR AND OTHER CURRENT WORK
+
+The study of pitching biomechanics has a long history, but instrumented measurement of the finger-ball interface remains in its early stages. This section reviews the key prior work that informs the present project, spanning commercial products, academic research on instrumented baseballs, and biomechanical studies of finger forces during pitching.
+
+## Commercial Products: PitchLogic
+
+PitchLogic represents the current state of the art in consumer-grade instrumented baseballs. The product embeds an inertial measurement unit inside a regulation-weight baseball and uses Bluetooth Low Energy to transmit pitch data to a companion mobile application in less than 0.1 seconds after release [@pitchlogic]. Reported metrics include velocity, spin rate, spin axis, spin efficiency, seam orientation, and release point. Pitching-development facilities such as Driveline Baseball have evaluated smart-ball and pitch-tracking technologies for training feedback [@driveline2018]. PitchLogic demonstrates the viability of embedding electronics in a baseball while maintaining acceptable weight and balance, and it validates BLE as a practical wireless protocol for this application. However, PitchLogic measures only ball-flight dynamics; it includes no pressure sensors and provides no information about grip forces.
+
+## Miniaturized IMU Design for Baseballs
+
+McGinnis and Perkins developed a highly miniaturized wireless IMU specifically designed for embedding in pitched baseballs and softballs [@mcginnis2012]. Their work established several important design principles for instrumented balls. First, the electronics must be centered at the ball's center of mass to minimize perturbation of the ball's moments of inertia. Second, the total added mass must be minimized---their design targeted masses small enough to avoid detectable changes in ball dynamics. Third, the IMU must have sufficient gyroscope range and sampling rate to capture the high angular velocities encountered in pitching, where fastball spin rates typically range from roughly 1,800 to 2,800 RPM [@statcast]. Their validation work confirmed that a properly miniaturized and centered electronics package does not significantly alter the flight characteristics of the ball, providing a critical proof of concept for the present project's approach to embedding additional pressure-sensing hardware.
+
+## Finger Forces in Pitching
+
+Kinoshita et al. conducted a foundational study of finger forces during fastball pitching by installing a three-dimensional force transducer inside a baseball [@kinoshita2017]. Data collected from eleven pitchers revealed that the index and middle fingers exhibit a bimodal force pattern, with initial peaks at approximately 38--39 milliseconds before release and secondary peaks at 6--7 milliseconds before release, each reaching approximately 97 N. The ring finger and thumb produced single-peak forces of approximately 50 N and 83 N, respectively. The shear forces generated by the index and middle fingers formed distinct peaks at 4--5 milliseconds before release, summing to 102 N---identified as the primary kinetic source of backspin. An additional experiment with submaximal effort demonstrated a linear relationship between peak finger forces and ball velocity, and the peak forces during maximal-effort fastballs exceeded 80 percent of measured maximum finger strength, suggesting that distal finger strengthening is important for both performance enhancement and injury prevention.
+
+## Sensor-Embedded Baseball for Finger Characteristics
+
+Most recently, Yeh et al. designed a sensor-embedded baseball to investigate the relationship between finger characteristics and pitching performance [@yeh2024]. Their study of twenty-one pitchers measured finger length and strength alongside pitch metrics captured by the embedded sensors. They found significant correlations between finger force rate of development, impulse, and inter-finger force discrepancy with both spin rate and pitching velocity. This work is the closest precursor to the present project in that it combines force measurement with ball-embedded sensing, though it focused on static finger characteristics rather than dynamic, pitch-by-pitch pressure distribution mapping.
+
+## Related Instrumented-Ball and Sensing Systems
+
+Instrumenting sports balls with embedded electronics is an established line of work beyond baseball. Miniature wireless inertial units have characterized golf-swing dynamics [@king2008] and bowling-ball motion [@king2011], and smart cricket balls have been developed for detailed bowling performance analysis [@fuss2015; @fuss2021]. Distributed wearable sensor systems have likewise been applied to evaluating pitchers and batters [@paradiso2006], and the instrumented-baseball concept has been patented [@perkins_patent2015; @mcginnis_procedia2012]. The Nordic nRF52840 microcontroller used here is the same platform adopted by commercial smart balls, including the Kookaburra SmartBall [@nordic_smartball] and the PitchLogic baseball [@nordic_pitchlogic; @nordic_nrf52840], and independent validation of PitchLogic against reference instruments has been reported [@samford2020; @driveline2018]. On the sensing side, the FlexiForce A301 force-sensitive resistor is a widely used thin-film transducer whose conductance-versus-force behavior underlies the calibration model applied in this project [@tekscan_a301]. For ball-flight interpretation, spin and movement follow well-characterized baseball aerodynamics [@nathan_aero], and magnetometer-based spin measurement---the commercial basis for treating spin as an externally measured quantity---has been described in the patent literature [@diamondkinetics_spin].
+
+## Synthesis
+
+Collectively, these studies establish three key findings that motivate the present project: (1) finger forces are directly linked to pitch quality and can be measured with embedded sensors; (2) electronics can be embedded in a baseball without significantly altering its dynamics; and (3) no existing system provides per-pitch grip pressure distribution data paired with a concurrent ball-flight outcome. The present project addresses this gap by combining multi-point grip-pressure sensing with a concurrent, externally referenced release velocity in a single, wirelessly communicating instrument.
+
+# REQUIREMENTS (project)
+
+This section specifies the functional and non-functional requirements for the instrumented baseball system.
+
+## Functional Requirements
+
+The system shall:
+
+1. **Measure grip pressure** at four discrete finger contact points (index, middle, thumb, and ring finger) using thin-film force-sensitive resistors [@tekscan_a301]. Each sensor resolves forces across the 0--25 pound (0--111 N) range with sufficient resolution to distinguish meaningful grip adjustments.
+
+2. **Sample all four pressure channels** continuously at a fixed rate sufficient to resolve the release transient, time-stamped on-board so that grip build-up, peak, and release are temporally resolved within each pitch. The reference literature places the second pre-release force peak 6 to 7 ms before release [@kinoshita2017] and samples at 433 Hz [@yeh2024], establishing a target of at least 400 Hz. The deployed instrument samples at 480 Hz.
+
+3. **Transmit data wirelessly** via Bluetooth Low Energy 5 to a companion logging device, which records the stream to timestamped CSV for post-processing.
+
+4. **Support per-pitch tagging** during capture so that each grip-pressure record can be joined to its corresponding TrackMan ball-flight record.
+
+5. **Delimit release** from the pressure signal itself: grip force builds during the arm action and drops out at ball release, marking the release point and bounding each pitch for feature extraction. Because the channels lose contact at different instants, release is resolved per finger rather than as a single ball-level event.
+
+6. **Maintain channel independence.** Each pressure channel shall respond only to force applied at its own sensor. Cross-channel response shall remain below 5 percent of the driven channel, verified by instrumented test before and after each stage of assembly.
+
+7. **Recharge via a wired USB-C connection.** No exposed high-voltage ports are present on the ball's surface during throwing, and the charge port is reachable for recharging and for firmware updates without disassembling the ball.
+
+## Non-Functional Requirements
+
+1. **Weight.** The total mass of the instrumented baseball shall not exceed 5.25 ounces (148.8 g), the upper bound of the regulation baseball weight of 5 to 5.25 ounces [@mlb_rules]. The added electronics mass shall be below 12 g, with a design target below 8 g.
+
+2. **Balance.** The center of mass of the instrumented baseball shall not deviate perceptibly from that of a standard baseball. All electronics shall be centered at or near the geometric center of the ball.
+
+3. **Sensor profile.** Pressure sensors mounted along the seams shall not exceed 0.5 mm in thickness to avoid perceptible alteration of the ball's grip surface.
+
+4. **Durability.** The system shall withstand repeated pitching at velocities of 80+ mph without sensor or electronics failure. The design shall include potting and structural protection for internal components. *Met:* the deployed instrument was thrown at up to 82.4 mph across three sessions without sensor or electronics failure, streaming continuously and passing the channel-isolation check after use.
+
+5. **Battery life.** The system shall operate on a single charge for the duration of a full data-collection session (several hours). Measured runtime is approximately eight hours on a 100 mAh, 3.7 V cell.
+
+6. **Sampling fidelity.** Analog-to-digital conversion shall provide at least 12-bit resolution across all pressure channels.
+
+7. **Latency.** Grip-pressure samples shall stream continuously to the receiving device in near-real-time over BLE, with the ball's own timestamp on each sample so that timing is preserved even when individual packets are dropped.
+
+# DESIGN SPECIFICATION (project)
+
+This section describes the system architecture, component selection rationale, data flow, power system design, and sensor placement strategy for the instrumented baseball.
+
+## System Architecture
+
+The instrumented baseball comprises three subsystems: (1) a four-channel grip-pressure sensor array, (2) a microcontroller with BLE 5 wireless communication, and (3) a rechargeable power system. Ball-flight metrics are supplied externally by the TrackMan Doppler radar rather than sensed on-board, which removes the inertial-measurement subsystem from the deployed instrument and focuses it on the grip-pressure measurement it is uniquely able to provide. Figure 1 shows the complete signal path.
+
+![Block diagram of the instrumented baseball system. On the ball: four FlexiForce A301 sensors feed voltage dividers, sampled by a XIAO nRF52840 at 480 Hz, powered by a 100 mAh cell. Off the ball: a Bluetooth Low Energy link carries raw counts to a Python logger, and TrackMan radar supplies release velocity; the two are joined into a per-pitch paired record.](figures/fig2_architecture.png){width=6.5in}
+
+::: {custom-style="Figure Caption"}
+Figure 1. *Instrumented baseball system architecture.* Force applied at each of four finger positions changes the resistance of a thin-film sensor; each sensor forms a voltage divider with a fixed 10 k$\Omega$ resistor, and the divider nodes are sampled by the microcontroller's 12-bit converter at 480 Hz. Samples are buffered, batched four to a packet, and transmitted over Bluetooth Low Energy to a Python logger that writes raw counts to CSV. Release velocity is measured independently and joined to the pressure record by a per-pitch tag. Note that calibration is applied downstream in analysis, not on the ball, so raw counts remain the archived source of truth.
+:::
+
+## Pressure Sensor Array
+
+The pressure sensor array consists of four FlexiForce A301 thin-film force-sensitive resistors manufactured by Tekscan [@tekscan_a301]. These sensors are the same transducer family used by Yeh et al. in the closest precursor work, which employed the compact A301 variant of the same 0--111 N sensor [@yeh2024]. These sensors were selected for their ultra-thin polyester construction (0.2 mm thickness), small sensing area (9.5 mm diameter), and measurement range of 0--25 pounds (0--111 N), which encompasses the expected finger forces during pitching [@kinoshita2017]. The sensors are positioned at four finger contact points: one each for the index finger, middle finger, thumb, and ring finger. This configuration samples grip force at four discrete locations rather than mapping a continuous pressure distribution, and it extends the coverage of the closest prior work: Yeh et al. instrumented only the index and middle fingers, reporting no thumb or ring-finger data [@yeh2024]. Following the Yeh et al. construction method, the sensors are placed beneath the leather cover, where the leather transmits finger force to the 0.2 mm sensor while preserving natural grip feel. Figure 3 shows the sensor placement and internal construction.
+
+## Ball-Flight Reference (TrackMan)
+
+Ball flight is not sensed on-board. **Release velocity is the outcome measure of this work**, and it is obtained from the Oral Roberts University TrackMan Doppler radar, a stadium-grade commercial tracking system reported as the ball-tracking component of MLB Statcast [@trackman; @statcast; @nathan_aero]. TrackMan also reports spin rate, spin axis, and movement, and those quantities were recorded wherever the system returned them; in practice the instrumented ball's altered interior produced a shortened, intermittent radar track and they were recovered for too few pitches to support inference. They are reported descriptively where present and enter no model. Every outcome analysis in this document is against velocity. This choice avoids two well-documented limitations of ball-embedded inertial sensing. First, MEMS gyroscopes typically saturate near ±4,000 degrees per second [@st_ism330dhcx]---approximately 666 RPM on a single axis---far below the 1,800 to 2,800 RPM of a competitive fastball [@statcast], so a gyroscope cannot measure real pitch spin without saturating. Second, velocity estimates obtained by integrating accelerometer data accumulate drift. Using TrackMan as the ball-flight reference yields more accurate outcome measurements than an on-board IMU could provide, and lets the instrument devote its entire mass and power budget to grip-pressure sensing.
+
+## Signal Conditioning
+
+The pressure sensors are conductive-polymer force-sensitive resistors whose resistance falls (conductance rises) approximately linearly with applied normal force [@tekscan_a301]. Each sensor forms a voltage divider with a fixed 10 k$\Omega$ resistor, and the four divider nodes connect directly to analog inputs A0 through A3 of the XIAO nRF52840; no multiplexer is required.
+
+For a sensor of resistance $R_s$ in series with the fixed resistor $R_f$, the divider node sampled by the 12-bit analog-to-digital converter reads
+
+$$ \mathrm{ADC} = (2^{12}-1)\,\frac{R_f}{R_s + R_f}, \tag{1} $$
+
+so that the dimensionless ratio
+
+$$ G = \frac{\mathrm{ADC}}{4095 - \mathrm{ADC}} = \frac{R_f}{R_s} \tag{2} $$
+
+is proportional to sensor conductance $1/R_s$. Because conductance is approximately proportional to applied force, force is recovered as
+
+$$ F = c\,G = c\,\frac{\mathrm{ADC}}{4095 - \mathrm{ADC}}. \tag{3} $$
+
+The symbols are defined as follows. $F$ is the applied normal force in newtons (N). $\mathrm{ADC}$ is the raw converter output, a dimensionless integer in the range 0 to 4095 at 12-bit resolution. $R_s$ is the sensor resistance in ohms ($\Omega$), which decreases with applied force. $R_f$ is the fixed divider resistance, 10 k$\Omega$ ($\pm$1 percent, metal film). $G$ is the dimensionless conductance ratio defined in Equation (2). The coefficient $c$ is the per-sensor calibration factor, in newtons per unit conductance ratio (N), determined empirically by the least-squares procedure described in *Sensor Calibration*; it is denoted `calFactor` in the firmware and analysis code.
+
+Equation (3) is fit through the origin, on the physical grounds that zero applied force produces zero conductance. Raw $\mathrm{ADC}$ values are transmitted rather than converted force, so calibration is applied in post-processing and can be revised without re-collecting data. Two additional analog pins (A4, A5) remain unpopulated and available for future sensor expansion.
+
+## Microcontroller and Wireless Communication
+
+The Nordic Semiconductor nRF52840 serves as the central processing unit. This microcontroller was selected because it is the platform used by the closest commercial comparators: PitchLogic reports using the nRF52840 in its smart baseball [@nordic_pitchlogic], and the Kookaburra SmartBall uses it in its cricket ball [@nordic_smartball]. Adopting the same platform reduces technical risk, since the part is demonstrably capable of operating inside a thrown ball. Key specifications include a 64 MHz ARM Cortex-M4F processor with hardware floating-point unit, 256 KB SRAM, 1 MB flash, integrated BLE 5 radio (2 Mbps throughput), six analog input channels, and ultra-low-power sleep modes drawing less than 1 µA in system-off mode [@nordic_nrf52840].
+
+The deployed instrument uses the Seeed XIAO nRF52840 development board (21 x 17 mm, \$10), which provides Arduino-compatible programming and USB-C connectivity in a package small enough to embed.
+
+**Sampling rate and the acquisition/transmission decoupling.** The Bluetooth Low Energy link, not the sensor or the converter, sets the achievable sampling rate. A bench measurement established a ceiling near 151 Hz when 200 Hz was requested, because the link delivers approximately one notification per connection event. An initial firmware version therefore sampled at 120 Hz and transmitted one sample per notification in a 12-byte packet (a 32-bit millisecond timestamp followed by four 16-bit ADC values).
+
+That rate proved adequate for the grip build-up and peak, which develop over roughly 100 ms, but marginal for the release transient. Pilot captures showed the entire release transition spanned only three to four samples at 120 Hz, which is insufficient to resolve either the rate of force development or the order in which individual fingers lose contact. Because the constraint is the notification rate rather than the sampling rate, the two were decoupled: the deployed firmware samples all four channels at **480 Hz** into a buffer and transmits four samples per notification in a 36-byte packet, holding the notification rate at 120 s⁻¹ and leaving the measured link ceiling untouched. Each packet carries a 32-bit microsecond timestamp for the first sample in the batch; the remaining sample times follow from the fixed 2.083 ms interval.
+
+The microsecond timebase is a deliberate correction. An earlier batched version stamped each packet with a millisecond-resolution clock, which quantized an 8.33 ms batch to 1 ms and produced reconstructed sample times that overlapped across batch boundaries---measured at 2.9 percent of samples regressing by up to 4.25 ms, comparable in magnitude to the inter-finger release intervals being measured. Substituting the microsecond clock eliminated the effect; the verification capture reported zero non-monotonic samples across 21,140 records.
+
+The resulting rate resolves the features the reference literature describes. Kinoshita et al. report bimodal index and middle finger peaks separated by roughly 30 ms, with the second peak 6 to 7 ms before release [@kinoshita2017]; Yeh et al. sampled at 433 Hz [@yeh2024]. At 480 Hz a sample arrives every 2.083 ms, placing approximately twelve samples across the release transition and making the second pre-release peak resolvable.
+
+## Power System
+
+The power system consists of a 100 mAh lithium-polymer battery (3.7 V nominal) charged through the XIAO's on-board charge controller over USB-C. The ball runs on the battery during throwing, which gives it a floating ground and low noise. Measured runtime is approximately eight hours on a full charge---comfortably longer than a full data-collection session (stitching, transport, and throwing). The charge port is exposed through a small window in the leather cover so the sealed ball can be recharged without disassembly.
+
+## Wireless Data Acquisition
+
+A companion Python logger, built on the Bleak Bluetooth library, scans for the instrument, subscribes to the pressure notify characteristic, and writes every sample to a timestamped CSV. Raw ADC is logged as the source of truth. During capture the operator tags each pitch with a unique identifier recorded inline in the log, so that grip records can later be joined to their TrackMan counterparts. Because each packet carries the ball's own millisecond timestamp, an occasional dropped BLE packet widens the sample interval without corrupting timing; all downstream feature computation uses the actual per-sample interval rather than an assumed period.
+
+## Sensor Calibration
+
+**Procedure.** Each sensor was calibrated against a digital scale (1 g resolution) used as the force reference. Calibrated masses were applied to the sensing pad through a rigid flat platen in a monotonically increasing staircase, each level held for approximately five seconds before the next mass was added. The mass sequence was 300, 600, 900, 1200, 1500, 2000, and 2900 g, corresponding to 2.94, 5.89, 8.83, 11.77, 14.72, 19.62, and 28.45 N at $g = 9.81$ m·s⁻². Sensors S1 and S2 were characterized over the full seven-level sequence to 28.45 N. Sensors S3 and S4 were characterized over the first six levels, to 19.62 N; a single seven-level trial was recorded for each but was not sufficient to revise their fitted factors, so their calibrated ceiling is reported as 19.62 N and the asymmetry is carried into the limitations. Each sensor was read through the same analog channel and the same fixed 10 k$\Omega$ divider used in the deployed instrument, so that calibration and measurement share their signal conditioning.
+
+**Number of trials.** Twenty complete staircase trials were recorded per sensor. An earlier calibration, reported in intermediate project documentation, used four trials per sensor over a six-level sequence reaching 2000 g (19.62 N); those results are superseded by the twenty-trial protocol described here, and the figures below are the final values.
+
+**Fitting.** Within each trial, the loaded samples were partitioned into levels by one-dimensional $k$-means clustering with $k$ equal to the number of applied masses, and each level was summarized by its median ADC value. This replaces an earlier threshold-and-jump segmentation heuristic that proved sensitive to the loading transient at the start of each staircase. The calibration factor $c$ of Equation (3) was then fit through the origin by least squares over the pooled level medians. A separate factor was fit within each trial to quantify repeatability as the coefficient of variation across trials.
+
+**Results.** Table 1 reports the per-sensor calibration factors, coefficients of determination, and repeatability; Figure 2 shows the fitted curves.
+
+![Four scatter plots, one per sensor, of applied force in newtons against conductance ratio, each with a fitted line through the origin, its equation, coefficient of determination, root-mean-square error, trial count, and a dashed rule marking the calibrated ceiling.](figures/fig1_calibration_curves.png){width=6.5in}
+
+::: {custom-style="Figure Caption"}
+Figure 2. *Sensor calibration curves for the four deployed FlexiForce A301 sensors.* Applied force in newtons against the conductance ratio $G$ of Equation (2), with the fitted line through the origin for each sensor. Points are level medians pooled across twenty staircase trials per sensor. The reader should observe that all four sensors are well described by a single-parameter proportional model over the calibrated range, that they differ from one another in slope by up to a factor of 1.3---which is why per-sensor calibration is necessary---and that the calibrated range terminates at 28.45 N for two sensors and 19.62 N for the other two, above which the fitted relationship is extrapolated.
+:::
+
+::: {custom-style="Table Caption"}
+Table 1. *Sensor calibration and repeatability results.* Calibration factor $c$ is the fitted coefficient of Equation (3), in newtons per unit conductance ratio. $R^2$ is computed on the pooled level medians across all trials. Repeatability is the coefficient of variation of the per-trial factor. The calibrated ceiling is the largest force applied during calibration; forces above it are extrapolated. Sensor S5 was characterized but withheld from the instrument.
+:::
+
+| Sensor | Channel | Fastball position | $c$ (N) | $R^2$ | Repeatability CV | Trials | Calibrated ceiling |
+|:-----------|:-----------|:------------------|--------:|------:|-----------------:|-------:|-------------------:|
+| S1 | A0 | Index  | 119 | 0.986 | 2.6 % | 20 | 28.45 N |
+| S2 | A1 | Middle | 129 | 0.977 | 6.5 % | 20 | 28.45 N |
+| S3 | A2 | Thumb  | 148 | 0.995 | 1.3 % | 20 | 19.62 N |
+| S4 | A3 | Ring   | 157 | 0.961 | 7.8 % | 20 | 19.62 N |
+| S5 | --- | (withheld) | 331 | 0.973 | 7.1 % | 4 | 19.62 N |
+
+A larger calibration factor indicates a less sensitive sensor: more force is required to produce the same conductance. Sensor S5 required approximately 2.8 times the force of S1 for equivalent output and was withheld from the instrument on that basis, retained only as a spare. The four deployed sensors span a factor of 1.3 between the most and least sensitive, which per-sensor calibration accounts for. Because the fastball and curveball grips place different fingers on different sensors, the "fastball position" column identifies the finger for that grip only; the full per-grip mapping is given in Table 3.
+
+**Repeatability and its interpretation.** The trial-to-trial spread reflects the contact and seating consistency inherent to manually loading thin-film force-sensitive resistors, a documented characteristic of the sensor family [@tekscan_a301]. It is reported as a repeatability figure rather than treated as measurement error. A separate observation bears on interpretation: refitting two sensors from independent calibration sessions produced factors differing by approximately 20 percent from the earlier session. Session-to-session variability of this magnitude is consistent with the sensor family's documented sensitivity to load application and mounting, and it is the principal reason the analysis in this report emphasizes force *ratios* between fingers over absolute force values.
+
+## Feature Extraction
+
+For each segmented pitch, the analysis pipeline computes interpretable grip-force features per finger and in aggregate. Table 2 gives the full set with computational definitions. They fall into three groups.
+
+*Magnitude features* --- peak force, impulse (the time integral of force over the pitch), and inter-finger force balance (each finger's share of total force at the peak instant, and the coefficient of variation across fingers).
+
+*Rate features* --- rate of force development, defined as the maximum time derivative of force during build-up, and time to peak.
+
+*Release-phase features* --- force at release, release time, and inter-finger release order. Force at the instant of release is zero by definition, so *force at release* is operationalized as the mean force over the final 10 ms before contact is lost, where contact is considered lost when a channel falls below 10 percent of its own peak for that pitch. *Release time* is the instant of that crossing, and *release order* is the ranking of release times across fingers.
+
+The release-phase group is the reason for the 480 Hz sampling rate. These features are the ones most directly tied to the mechanics of ball departure, and they are not computable at rates that span the release transition in only a few samples. A resolution floor applies to release ordering: intervals shorter than two sample periods (4.17 ms at 480 Hz) are not resolvable within a single pitch and are reported only in aggregate across pitches.
+
+::: {custom-style="Table Caption"}
+Table 2. *Grip-force feature definitions and computational formulas.* For a single pitch, $F_i(t)$ denotes the calibrated force at finger $i$ in newtons, obtained from raw counts by Equation (3). $t_p$ is the pitch window and $P_i = \max_t F_i(t)$ is that finger's peak. Release is defined per finger as the last instant at which $F_i$ exceeds $0.10\,P_i$ after the peak.
+:::
+
+| Feature | Symbol | Definition | Unit |
+|:--------|:-------|:-----------|:-----|
+| Peak force | $P_i$ | $\max_t F_i(t)$ over the pitch window | N |
+| Time to peak | $t_{p,i}$ | $\arg\max_t F_i(t)$, referenced to pitch onset | ms |
+| Rate of force development | $\mathrm{RFD}_i$ | $\max_t \mathrm{d}F_i/\mathrm{d}t$ during build-up | N·s⁻¹ |
+| Impulse | $J_i$ | $\int_{t_p} F_i(t)\,\mathrm{d}t$ | N·s |
+| Release time | $t_{r,i}$ | last $t$ with $F_i(t) > 0.10\,P_i$ after peak | ms |
+| Force at release | $F_{r,i}$ | mean $F_i$ over $[t_{r,i}-10\ \mathrm{ms},\ t_{r,i}]$ | N |
+| Release lead | $\Delta t_{ij}$ | $t_{r,j} - t_{r,i}$ for finger pair $(i,j)$ | ms |
+| Force share | $s_i$ | $P_i / \sum_j P_j$ at the peak instant | --- |
+| Inter-finger discrepancy | $\mathrm{CV}_P$ | $\mathrm{SD}(P_i)/\mathrm{mean}(P_i)$ across fingers | --- |
+
+Force at release, release lead, and inter-finger discrepancy are the features of primary interest. Peak force and impulse are reported for comparability with the reference literature [@kinoshita2017; @yeh2024], but the release-phase measures are more closely tied to the instant at which the ball actually departs the hand.
+
+## Data Collection Protocol
+
+Paired data are collected at the Oral Roberts University TrackMan facility. Pitchers throw two pitch types---the four-seam fastball and the curveball---while the ball streams grip pressure to the logger and the external reference records ball flight. Pitch boundaries within the continuous pressure stream are located from the grip build-up and release drop-out.
+
+**Sensor-to-finger mapping.** The sensors occupy fixed positions on the ball, so which finger contacts which sensor depends on how the hand is oriented for each grip. Table 3 gives the mapping. The ring finger is not instrumented in the deployed configuration; three fingers are measured per grip.
+
+::: {custom-style="Table Caption"}
+Table 3. *Sensor-to-finger mapping by pitch type.* Sensor positions are fixed on the ball; the grip determines which finger contacts each sensor. Because a given finger is read by different sensors on different pitch types, absolute forces are not directly comparable across pitch types, and within-pitch-type force ratios are the preferred comparison.
+:::
+
+| Sensor | Channel | Four-seam fastball | Curveball / slider |
+|:-----------|:-----------|:-------------------|:-------------------|
+| S1 | A0 | Index  | Thumb  |
+| S2 | A1 | Middle | (not contacted) |
+| S3 | A2 | Thumb  | Index  |
+| S4 | A3 | (not contacted) | Middle |
+
+**Pitch tagging and record joining.** Each pitch is tagged during capture with an identifier typed into the logger and written inline to the pressure log. Where the external reference reports a per-pitch velocity, that value is entered into the same tag, so the outcome measure is embedded in the pressure record itself rather than joined afterward by sequence position. This design decision follows directly from an observed failure mode: during instrument shakedown the Doppler radar registered only one of five thrown pitches. Joining records by order under those conditions would have silently paired each grip record with the wrong outcome while producing a dataset with no visible defect. Pitches for which no outcome was captured are tagged explicitly as unpaired and excluded from outcome analyses rather than shifting the sequence.
+
+## Mechanical Integration
+
+The mechanical integration follows an approach informed by McGinnis and Perkins [@mcginnis2012] and Yeh et al. [@yeh2024]. A regulation baseball is opened along one figure-eight seam, and wound yarn and the cork-and-rubber pill are partially removed to create a central cavity sized for the XIAO nRF52840, the lithium-polymer cell, and the wiring harness. The four FlexiForce sensors are mounted under the leather cover at the mapped finger contact points, following Yeh et al.'s method: the 0.2 mm leather-covered sensor transmits finger force while preserving natural grip feel and protecting the sensor from abrasion. Contact points are marked on the outer cover as registration marks so that finger placement is repeatable between pitches and between pitchers, a control Yeh et al. identify as necessary given the 9.5 mm sensing area. Figure 3 shows the construction and sensor placement.
+
+![Three photographs of the instrumented baseball build: the ball with its cover removed showing sensor pads bonded to the wound yarn, the completed solderless harness, and the finished ball on a digital scale.](figures/fig3_construction.png){width=6.5in}
+
+::: {custom-style="Figure Caption"}
+Figure 3. *Instrumented baseball construction, harness, and weight verification.* Panel (a): the ball body with its leather cover removed, showing two of the four FlexiForce pads bonded to the wound yarn at marked finger contact points, with leads routed inward and the microcontroller held outside the ball during assembly. The cover is subsequently fitted over the pads, so that in use each pad lies between the finger and the leather rather than on the ball's surface. Panel (b): the completed solderless harness, in which every connection to the microcontroller is an insulated housed contact rather than a soldered joint. Panel (c): the finished ball on a digital scale.
+:::
+
+The reader should observe three things. First, the sensing pads sit on the ball body and are covered by leather, so the measured quantity is finger force transmitted through the cover rather than direct contact pressure. Second, no bare conductor is present at the microcontroller in panel (b); this is the construction change that resolved the channel-coupling failure described in the milestones, and it is shown schematically in Figure 5. Third, the finished mass reads 5.0 oz, at the lower bound of the regulation 5.0 to 5.25 oz range; note that this scale resolves to 0.1 oz, which is 40 percent of the entire regulation tolerance band, so it confirms the ball is approximately regulation but is too coarse to place it precisely within the range. No personally identifying information appears in any build photograph.
+
+**Interconnect.** The harness is the element of the build that was redesigned between instrument versions, for reasons documented in the milestones. Every connection is made either by a crimped ferrule or by a factory-terminated housed contact; the harness contains no soldered joints. Each of the six connections---the 3.3 V bus, the ground bus, and four sensor nodes---is formed by inserting the participating conductors into a single insulated ferrule and crimping once. Each node joins three conductors: the sensor signal lead, the corresponding divider resistor's upper leg, and a lead terminating in a housed contact that plugs onto the analog pin. The ground bus gathers the four resistors' lower legs with a lead to the ground pin. Every ferrule barrel and every resistor body is individually sleeved in heat-shrink tubing, leaving no exposed conductor anywhere in the assembly.
+
+This construction removes bare conductors and flux residue from the microcontroller's pin row, which is where the earlier instrument's channels failed. Channel independence is not assumed from the geometry; it is verified by instrumented test at each assembly stage, as described in the milestones.
+
+**Potting and mass.** The electronics are centered at the ball's center of mass and potted in two-part epoxy for shock protection---Yeh et al. demonstrated that epoxy encapsulation survives impacts at 100 km·h⁻¹ against a wall. Epoxy is poured in layers of approximately 15 g, each cured before the next, because the exotherm of a single large pour presents a thermal hazard to the enclosed lithium-polymer cell; the cell is additionally wrapped before potting so that the epoxy does not bond directly to the pouch. The sensing pads and the USB-C charge lead are kept clear of epoxy. Yarn is repacked and ballast added to reach the regulation range of 142 to 149 g (5.0 to 5.25 oz) [@mlb_rules], with ballast placed opposite the charge lead so the center of mass remains centered; balance is confirmed by a roll test. The leather cover is then re-fitted and re-stitched.
+
+# WORK BREAKDOWN STRUCTURE --- GANTT CHART
+
+The project is organized into five sequential phases with a total estimated duration of twenty-six weeks. Each phase depends on successful completion of the preceding phase, managing technical risk by confirming feasibility at each step before proceeding.
+
+## Phase Summary
+
+Table 4 summarizes the five phases. Each phase gates the next, so that feasibility is confirmed before the following phase's cost is committed. Table 4 states the plan as approved; the milestones section reports what was actually completed and where the plan changed.
+
+::: {custom-style="Table Caption"}
+Table 4. *Project phases, durations, and deliverables.* Phases are sequential; each depends on the completion of its predecessor.
+:::
+
+| Phase | Duration | Weeks | Deliverable |
+|:------|:---------|:------|:------------|
+| 1. Proof of Concept | 4 weeks | 1--4 | Working breadboard prototype with BLE data streaming |
+| 2. nRF52840 Migration + 4-Sensor Array | 6 weeks | 5--10 | 4-sensor prototype on XIAO nRF52840 with BLE |
+| 3. Instrument Fabrication | 6 weeks | 11--16 | Throwable XIAO-based instrument with calibrated four-sensor array |
+| 4. Baseball Integration | 3 weeks | 17--19 | Functional instrumented baseball |
+| 5. Software and Analysis | 7 weeks | 20--26 | Complete system with analysis and thesis documentation |
+
+## Detailed Activities by Phase
+
+**Phase 1: Proof of Concept (Weeks 1--4).** Ordered initial components (DFRobot Beetle ESP32, two FlexiForce A301 sensors, MPU-6050 breakout). Built breadboard prototype. Wrote firmware to read pressure sensors and IMU data. Tested BLE data transmission to smartphone via nRF Connect. Validated pressure readings against known weights. Documented baseline sensor characteristics. Actual cost: \$104.
+
+**Phase 2: nRF52840 Migration + 4-Sensor Array (Weeks 5--10).** Migrate from the ESP32 to the Seeed XIAO nRF52840 development board. Install Seeed nRF52840 board support in Arduino IDE. Wire four FlexiForce A301 sensors to analog pins A0 through A3 with 10 kΩ voltage dividers. Port BLE firmware from ESP32 BLE library to ArduinoBLE (nRF52840). Use ink/chalk method to map finger contact points for four-seam, two-seam, changeup, and curveball grips. Calibrate sensors with known weights. Estimated cost: \$60 (XIAO nRF52840 plus two additional FlexiForce sensors).
+
+**Phase 3: Instrument Fabrication (Weeks 11--16).** Build the throwable, self-contained instrument around the Seeed XIAO nRF52840, a 100 mAh lithium-polymer battery, and the four-sensor array on a compact wiring hub. Finalize the 120 Hz BLE 5 streaming firmware and the companion Python logger. Calibrate each FlexiForce sensor against a known-force reference and record per-sensor calibration factors. Verify battery runtime and confirm the electronics package meets the added-mass target for baseball embedding. Estimated cost: minimal (components already purchased).
+
+**Phase 4: Baseball Integration (Weeks 17--19).** Follow the hybrid McGinnis/Yeh construction method: unstitch half the leather cover, cut cork-rubber core, machine cavity for electronics, coat PCB and battery assembly in epoxy, position at center of mass, mount FlexiForce sensors under leather at mapped contact points, route 30 AWG wires through yarn channels, re-wind yarn for mass compensation, seal with styrene-acrylic polymer adhesive, and re-stitch leather. Verify final weight is within the regulation 142 to 149 gram range. Conduct throw tests to verify feel and flight characteristics. Estimated cost: minimal (components already purchased).
+
+**Phase 5: Software and Analysis (Weeks 20--26).** Develop Python data analysis pipeline. Implement pitch segmentation using grip-force build-up and release drop-out. Apply per-sensor calibration and extract grip-force features (peak force, rate of force development, impulse, inter-finger balance) for each pitch. Join each grip record to its TrackMan record and build correlation analysis between grip-pressure features and TrackMan release velocity. Test with multiple pitchers across multiple pitch types. Write thesis content and document findings. Estimated cost: minimal (software-only phase).
+
+## Timeline
+
+Figure 4 shows the phase schedule. The critical path runs through instrument fabrication: the analysis phase cannot begin until a working instrument exists, which is why the fabrication setback documented in the milestones consumed schedule margin that had been reserved for analysis.
+
+![Gantt chart of five sequential project phases plotted against project week, with phase three, instrument fabrication, highlighted as the critical path.](figures/fig4_gantt.png){width=6.5in}
+
+::: {custom-style="Figure Caption"}
+Figure 4. *Project timeline and Gantt chart.* Bars mark the weeks allocated to each phase. Phases do not overlap, so any slip in an earlier phase displaces all later phases.
+:::
+
+
+# APPROVED CHANGE PROPOSALS
+
+The following change proposals were adopted during project implementation. Each records a deviation from the approved plan, the evidence that prompted it, and its consequence for the deliverable.
+
+**CP-1: Initial Sensor Count Reduced from Six--Eight to Four (Approved 2026-02-16).** The original design specified six to eight pressure sensors requiring an analog multiplexer (CD74HC4067). During prototyping, it was determined that four sensors cover the four critical finger contact points (index finger, middle finger, thumb, and ring finger) while eliminating multiplexer complexity and reducing component count. The nRF52840 provides six analog input pins, of which four are used for pressure sensors with two reserved for future expansion.
+
+**CP-2: Phase 1 Budget Variance (Documented 2026-02-16).** The original Phase 1 budget estimate was \$64. Actual Phase 1 spending was \$104, driven by the addition of a soldering iron kit (\$20) and a resistor assortment (\$9) not included in the original estimate, plus higher-than-estimated sensor costs.
+
+**CP-3: Microcontroller Changed from ESP32 to nRF52840 (Approved 2026-03-04).** Research into prior art identified the nRF52840 as the platform used by the closest commercial comparators: PitchLogic reports using it in its smart baseball, and the Kookaburra SmartBall uses it in its cricket ball. The nRF52840 offers significantly lower power consumption (approximately 8 mA during BLE transmission [@nordic_nrf52840] versus roughly 130 mA for ESP32 Wi-Fi [@espressif_esp32]), integrated BLE 5 with 2 Mbps throughput, a hardware floating-point unit for on-board DFT computation, and ultra-low-power sleep modes drawing less than 1 µA. The Seeed XIAO nRF52840 (21 x 17 mm, \$10) serves as the development board, with the bare QFN-48 package (7 x 7 mm) on the final custom PCB. Implementation note: the Seeed nRF52 mbed-enabled Boards package is required in the Arduino IDE; the non-mbed package produces compilation errors related to the Adafruit USB CDC driver.
+
+**CP-4: Wireless Protocol Changed from Wi-Fi to BLE 5 Only (Approved 2026-03-04).** The original design included Wi-Fi capability via the ESP32. Analysis of PitchLogic's architecture showed that BLE 5 provides sufficient bandwidth for pitch data transmission while reducing active power draw from approximately 130 mA (Wi-Fi) [@espressif_esp32] to approximately 8 mA (BLE) [@nordic_nrf52840], extending estimated battery life from less than one hour to eight to ten hours on a 100 mAh cell. Wi-Fi capability is no longer included.
+
+**CP-13: Harness Rebuilt on a Solderless Ferrule Interconnect (Adopted 2026-08).** Analysis of the July data collection identified progressive inter-channel electrical bridging in the first instrument's wiring, which invalidated its per-finger results (see the milestones for the diagnosis). The harness was rebuilt with a solderless interconnect: crimped ferrules and factory-terminated housed contacts replace soldered joints at the microcontroller pin row, every conductor is individually insulated, and channel independence is verified by an instrumented crosstalk test at each assembly stage rather than assumed. This change affects fabrication method only; the measurement principle, sensor selection, and analysis pipeline are unchanged.
+
+**CP-14: Sampling Rate Raised to 480 Hz by Decoupling Acquisition from Transmission (Adopted 2026-08).** The original firmware transmitted one sample per Bluetooth notification, which capped the sampling rate near the measured link ceiling of approximately 151 Hz and left the release transient spanned by only three to four samples. Because the constraint was the notification rate rather than the sensor or converter, the firmware was changed to sample at 480 Hz into a buffer and transmit four samples per notification. The notification rate is unchanged at 120 s⁻¹, so the link operates within its measured capability. This change makes rate of force development and per-finger release ordering computable, both of which had been excluded from the earlier analysis plan as unresolvable. The packet timestamp was simultaneously changed from millisecond to microsecond resolution to remove a reconstruction artifact described in the design specification.
+
+**CP-12: Ball-Flight Metrics Sourced from TrackMan; On-Board Inertial Sensing Removed (Approved 2026-07).** Following fabrication of the custom PCB (see milestones), ball-flight metrics were sourced from the Oral Roberts University TrackMan Doppler radar rather than from on-board inertial sensors. This refinement removes the H3LIS331DL accelerometer, the LIS3MDL magnetometer, and the DFT spin-rate and integration-based velocity methods from the deployed instrument, which is built on the Seeed XIAO nRF52840. TrackMan provides release velocity for pitches it successfully tracks, letting the project concentrate on the grip-pressure measurement it uniquely provides while pairing it with an established external reference. Velocity is the only ball-flight quantity the analysis uses. The deployed instrument streams raw ADC over BLE 5; force calibration and pitch segmentation are performed in post-processing. Per-pitch grip records are joined to their TrackMan records by a shared identifier assigned during capture.
+
+# MILESTONES AND/OR DOCUMENTATION OF IMPLEMENTATION, OBSERVATIONS, AND EXPERIENCES
+
+This section documents implementation chronologically, including the two findings that most shaped the final instrument: the discovery that the first build's channels were not electrically independent, and the consequent redesign of the interconnect and verification procedure.
+
+Phase 1 (Proof of Concept) completed February 16, 2026, and Phase 2 (nRF52840 Migration and Sensor Integration) on March 23, 2026. The custom printed circuit board was fabricated but non-functional, and the instrument was rebuilt on the Seeed XIAO nRF52840 with ball-flight metrics sourced externally (CP-12). A first instrument was completed and used for data collection in July 2026. Analysis of that data identified inter-channel bridging, which invalidated its per-finger results; a second instrument was built in August 2026 with a solderless interconnect and a verified channel-isolation procedure (CP-13), and the sampling rate was raised to 480 Hz (CP-14).
+
+## Phase 1: Proof of Concept (2026-02-16)
+
+**Objective.** Validate the core data pipeline by building a breadboard prototype with pressure sensing, inertial measurement, and wireless data transmission.
+
+**Implementation Summary.** The DFRobot Beetle ESP32 microcontroller was configured with the Arduino IDE and ESP32 board support package. The Adafruit MPU-6050 IMU was soldered and connected via I2C (SDA/SCL pins), and three-axis accelerometer and gyroscope readings were verified. One FlexiForce A301 pressure sensor was wired to analog pin A0 (GPIO 36) through a 10 k$\Omega$ voltage divider circuit, producing a 12-bit ADC reading proportional to applied force. Firmware was developed to read the pressure sensor and IMU concurrently at 20 Hz and transmit the combined data string via BLE. The device advertises as "SmartBaseball" and was successfully connected and read using the nRF Connect mobile application. A real-time 3D baseball visualization was built in Processing to display IMU orientation and pressure data over a serial connection.
+
+**Key Technical Findings.**
+
+1. *Pin mapping.* The Beetle ESP32 analog pins do not respond to the standard Arduino A0--A3 macros. GPIO numbers must be used directly in firmware: A0 = GPIO 36, A1 = GPIO 39, A2 = GPIO 34, A3 = GPIO 35.
+2. *FlexiForce wiring.* The A301 sensor has three pins, but the center pin (Pin 2) is electrically inactive. Only the two outer pins are used, one connected to 3.3 V and the other to the ADC input through a 10 k$\Omega$ pull-down resistor.
+3. *Resistor requirement.* Each FlexiForce sensor requires its own voltage divider resistor. Without the resistor, the ADC input floats above 2,000 counts (of 4,095), producing unusable readings.
+4. *BLE compilation time.* The first build incorporating the ESP32 BLE library requires three to five minutes due to library compilation. Subsequent incremental builds are significantly faster.
+5. *Sensor direct-wiring feasibility.* With four analog pins available, four sensors can be read directly without a multiplexer, simplifying the Phase 2 circuit (see CP-1 above).
+
+**Phase 1 Actual Budget.** Table 5 itemizes Phase 1 spending. The variance against the \$64 estimate is documented in CP-2 and is attributable chiefly to tooling that the original estimate omitted.
+
+::: {custom-style="Table Caption"}
+Table 5. *Phase 1 actual budget.* Amounts are actual expenditure in U.S. dollars.
+:::
+
+| Component | Cost |
+|:----------|:-----|
+| DFRobot Beetle ESP32 | \$12 |
+| FlexiForce A301 (x2) | \$50 |
+| Adafruit MPU-6050 | \$7 |
+| Breadboard and wire bundle | \$6 |
+| Soldering iron kit | \$20 |
+| Resistor kit (assorted) | \$9 |
+| **Phase 1 Total** | **\$104** |
+
+**Deliverable.** A working breadboard prototype that reads one pressure sensor and a six-axis IMU, transmits the combined data wirelessly via BLE, and drives a real-time 3D baseball visualization. Phase 1 confirms the viability of the core sensor-to-display data pipeline and establishes the hardware and firmware foundation for Phase 2 expansion to a four-sensor array.
+
+## Phase 2: nRF52840 Migration + Sensor Integration (2026-03-23)
+
+**Objective.** Migrate from the Phase 1 ESP32 platform to the nRF52840, integrate the four FlexiForce A301 pressure sensors, and implement BLE 5 data streaming to a companion logger.
+
+**Hardware Setup.** The Seeed XIAO nRF52840 development board was configured with the Arduino IDE using the Seeed nRF52 mbed-enabled Boards package (the non-mbed package produced undefined reference errors related to the Adafruit USB CDC driver). The board was selected as "Seeed XIAO BLE - nRF52840" under the mbed-enabled boards menu. The XIAO's pin labeling was confirmed: silk screen labels 0 through 5 correspond to A0 through A5 in Arduino code.
+
+Four FlexiForce A301 pressure sensors (25 lb / 111 N range) were wired to analog pins A0 through A3 using 10 k$\Omega$ voltage divider circuits. Two breadboards were snapped together to provide adequate space: the first breadboard holds the XIAO and I2C sensor breakouts, while the second holds the four voltage divider circuits for the FlexiForce sensors. Power rails were bridged between breadboards with jumper wires from the XIAO's 3V3 and GND pins.
+
+Inertial breakouts were evaluated on the bench during this phase but were excluded from the deployed instrument, which sources ball-flight metrics from the ORU TrackMan system rather than on-board inertial sensing (see CP-12).
+
+**Firmware Development.** A BLE streaming firmware was developed using the ArduinoBLE library, advertising as "SmartBall" and exposing a pressure notify characteristic that carries a millisecond timestamp and the four raw pressure ADC values. The device was successfully discovered and connected using the nRF Connect application. Raw ADC is streamed rather than converted force, so that per-sensor calibration is applied in post-processing (see the calibration milestone) and can be refined without re-collecting data. A separate sketch captured single-sensor readings against known loads for calibration. Release is identified in analysis from the drop-out of grip force rather than by an on-board state machine, and the sampling rate was subsequently fixed at 120 Hz based on the measured Bluetooth notification throughput.
+
+**Grip Mapping.** Finger contact points were mapped for four pitch grips (four-seam fastball, two-seam fastball, changeup, and curveball) to determine optimal sensor placement for the index finger, middle finger, thumb, and ring finger positions.
+
+**Key Technical Findings.**
+
+1. *FlexiForce sensitivity.* The A301-25 sensor (111 N full range) produces low ADC readings for casual finger pressure (approximately 20 to 120 out of 4,095), which is expected given that a two-finger squeeze applies only 1 to 2 N of the sensor's 111 N range. Pitching forces of 40 to 100 N per finger will produce readings of approximately 1,000 to 2,500, utilizing a substantial portion of the measurement range.
+2. *Board package selection.* The Seeed nRF52 mbed-enabled Boards package is required for the XIAO BLE. Installing the non-mbed "Seeed nRF52 Boards" package produces linker errors referencing undefined Adafruit\_USBD\_CDC symbols.
+3. *USB reconnection.* After disconnecting and reconnecting the XIAO via USB-C, the device occasionally requires a double-tap of the reset button to re-enter bootloader mode and appear as a COM port.
+
+**Phase 2 Budget.** Table 6 itemizes Phase 2 spending, which was limited to the replacement microcontroller because the sensors and passives had been purchased in Phase 1.
+
+::: {custom-style="Table Caption"}
+Table 6. *Phase 2 budget.* Amounts are actual expenditure in U.S. dollars.
+:::
+
+| Component | Cost |
+|:----------|:-----|
+| Seeed XIAO nRF52840 | \$10 |
+| **Phase 2 Total** | **\$10** |
+
+**Status.** Phase 2 hardware integration and BLE streaming were completed on March 23, 2026. The four pressure channels streamed over BLE 5 to a host running the nRF Connect application, with each sample carrying the ball's own timestamp. Per-sensor calibration and pitch segmentation are performed in post-processing.
+
+**Observation carried forward.** Bench validation at this stage confirmed that each channel *responded* to pressure on its own sensor. It did not test whether a channel responded *only* to its own sensor. That distinction proved consequential and is the subject of the July findings below.
+
+## Instrument Fabrication --- (2026-07)
+
+A custom rigid PCB was designed and fabricated during this phase, but both assembled boards were non-functional---a hard 3.3 V-to-ground short that systematic isolation traced to an assembly defect rather than a design error, with the vendor's engineering review confirming that the submitted design files were correct. With the fabrication timeline exhausted, the deployed instrument was built on the Seeed XIAO nRF52840. Ball-flight metrics were sourced from the Oral Roberts University TrackMan system rather than on-board inertial sensors (see CP-12).
+
+## Grip-Pressure Instrument: Firmware, Calibration, and Build --- (2026-07)
+
+The firmware samples the four FlexiForce channels and streams raw ADC over BLE 5; a companion Python logger records the stream to timestamped CSV with per-pitch tagging. The first instrument sampled at 120 Hz, selected after a bench measurement showed a notification ceiling near 151 Hz when 200 Hz was requested. All four sensors were calibrated against a scale-referenced force standard using the conductance model of Equation (3). Measured battery runtime is approximately eight hours on a full charge, sufficient for a full data-collection session. The instrument was assembled into a regulation baseball with the electronics potted in epoxy and the charge lead exposed through a leather window.
+
+## First Data Collection --- (2026-07-15 and 2026-07-21)
+
+Two paired collection sessions were conducted at the ORU TrackMan facility across two pitchers, capturing fastballs and curveballs at graded effort. The instrument survived live pitching in both sessions at velocities above 80 mph, streamed continuously, and reported battery state through the sealed cover. Two results from these sessions are reported in this document; a third was subsequently withdrawn.
+
+**Flight validation (retained).** An A/B comparison threw the instrumented ball and a regulation ball in alternating blocks, with ball flight measured externally. This comparison uses no grip channels and is therefore unaffected by the wiring finding below. Velocity was substantially preserved (approximately 1.7 mph lower for the instrumented ball) and spin rate was consistently lower by approximately 168 rpm, negative in all four effort-by-pitcher cells and replicated across both pitchers. This establishes that the instrumented ball flies closely enough to a regulation ball for its grip measurements to be interpreted in a normal pitching context, while quantifying the spin penalty the added mass and altered interior impose.
+
+**Per-finger grip results (withdrawn).** Quality-control analysis of the raw channels identified that the sensor channels were not electrically independent, as described next. All per-finger results from these sessions---grip signatures, inter-finger correlations, and grip-to-outcome relationships---are therefore withdrawn and are not reported.
+
+## Channel-Independence Failure: Diagnosis and Method --- (2026-07-29)
+
+**Finding.** Cross-channel analysis of the raw ADC streams showed that channels 1 and 4 were correlated at $r = 0.999$ in every session, including the first, and that channel 3's coupling to them grew across sessions from $r = 0.49$ to $0.91$ to $0.99$. Three of four nominally independent channels were carrying substantially the same signal.
+
+**Cause.** The affected channels were wired to physically adjacent pads on the microcontroller header using bare conductors terminated by hand-soldered joints. Flux residue and unsleeved conductor at the pad row provided a progressive conduction path between adjacent channels, which explains both the immediate coupling of the closest pair and the growth of coupling over successive sessions.
+
+**Why bench testing did not catch it.** The pre-deployment check confirmed that each channel responded when its own sensor was pressed. Every channel passed that test, and continued to pass it, because a bridged channel still responds to its own sensor---it merely responds to others as well. A test of *responsiveness* cannot detect a loss of *independence*.
+
+**Diagnostic method.** Three checks were adopted, and together they constitute a transferable quality-control procedure for multi-channel embedded sensor arrays:
+
+1. *Cross-channel correlation of raw signals.* Independent channels driven by independent physical inputs should not correlate strongly. Correlation approaching unity is presumptive evidence of a shared path.
+2. *Fixed-ratio testing across force.* A resistive bridge produces a coupled response that is a fixed *fraction* of the driving channel, so the ratio holds constant as the driving force changes. Mechanical coupling transmitted through the ball produces a ratio that varies with force. The distinction separates an electrical fault from a physical one.
+3. *Single-channel isolation testing.* One sensor is loaded at a time and every other channel is observed. All non-driven channels must remain below 5 percent of the driven channel.
+
+The third check is the operational gate, and it is the check the first instrument never had. It is now performed after wiring, after coating, after potting, after stitching, and before every data session.
+
+## Second Instrument: Rebuild and Verification --- (2026-08)
+
+The instrument was rebuilt with the solderless ferrule interconnect described in the design specification (CP-13) and the 480 Hz firmware (CP-14). Figure 5 contrasts the two interconnect designs.
+
+![Two photographs comparing interconnect designs: the first instrument with hand-soldered joints and exposed conductor on adjacent pads, and the second with each lead in an insulated housed contact and the junction moved away from the board.](figures/fig6_interconnect.png){width=6.5in}
+
+::: {custom-style="Figure Caption"}
+Figure 5. *Interconnect design, first and second instruments.* Panel (a): sensor leads terminated by hand-soldered joints directly on the microcontroller's analog pad row, leaving bare conductor and flux residue spanning physically adjacent pads. Panel (b): each lead terminated in an insulated housed contact that seats on the pin, with the multi-conductor junction formed in a crimped ferrule positioned away from the board. The reader should observe that the failure mechanism is not the choice of adjacent pins but the presence of exposed conductor at the pad row: the second instrument uses the same four adjacent pins and achieves cross-channel response at the converter noise floor. Relocating the junction away from the board and insulating every conductor, rather than spacing the channels apart, is what eliminated the coupling.
+:::
+
+**Verification.** With the harness complete, the isolation test was run under controlled single-pad loading. Across all four channels, driving one channel to a peak of 596 to 691 ADC counts above baseline produced responses of 2 to 4 counts on every non-driven channel---**0.3 to 0.7 percent**, against the 5 percent requirement. Coupling was additionally shown to be independent of drive level: raising the driving channel from approximately 480 to 680 counts left the coupled response unchanged at under one count, which is the signature of converter noise rather than a shared electrical path. A bridge would have scaled proportionally.
+
+**Verification under load.** The isolation result was confirmed in live throwing rather than only on the bench. During a fastball, the three contacted channels rose to 373, 191, and 381 counts while the uncontacted fourth channel remained between 21 and 26 counts and did not follow. This is the condition the first instrument failed, tested in the configuration where it matters.
+
+**Instrument state.** The rebuilt instrument samples at 478 Hz measured, streams continuously on battery power, reports battery state through the sealed cover, and holds channel isolation at the noise floor. Table 3 gives the sensor-to-finger mapping; Table 1 gives the calibration.
+
+## Second Data Collection --- (2026-08)
+
+Paired grip-pressure and ball-flight data were collected using the rebuilt instrument across multiple pitchers for two pitch types. Participants, protocol, and analyzable sample size are reported in the Data Analysis and Results section, together with the fitted results.
+
+# DATA ANALYSIS AND RESULTS
+
+This section reports the empirical work in five parts: the participants and protocol, the instrument-validation results that do not depend on any grip--outcome relationship, the analysis plan specified before the outcome data were inspected, the grip-force results, and the interpretive limits within which all of it must be read.
+
+## Participants and Protocol
+
+**Participants.** Three pitchers were recruited from the Oral Roberts University baseball program and are identified in all data and reporting by anonymous codes (P1, P2, P3). Each was informed of what the instrument measures and how the data would be recorded and used, and each confirmed that they understood the data collection and agreed to their data being used in this study; participation was voluntary. Table 7 summarizes their characteristics and the pitches contributed.
+
+::: {custom-style="Table Caption"}
+Table 7. *Participant characteristics and pitch counts, by pitcher.* Anthropometrics are self-reported. Warm-up throws carry a velocity but were thrown outside the effort protocol and are excluded from every model; unpaired pitches are those for which the Doppler reference returned no reading. "Analyzable" is the count entering the grip--outcome analyses. The reader should observe that the three pitchers are closely matched in age and stature, that P2 contributes the largest raw count but the smallest analyzable count, and that the analyzable total of 63 is what every inferential $n$ in this section is drawn from.
+:::
+
+| Pitcher | Age (y) | Height (cm) | Mass (kg) | Fastballs | Curveballs | Warm-ups | Paired | Unpaired | Analyzable |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| P1 | 23 | 190.5 | 83.9 | 16 | 8 | 0 | 23 | 1 | 23 |
+| P2 | 20 | 182.9 | 77.1 | 20 | 14 | 7 | 24 | 10 | 17 |
+| P3 | 21 | 188.0 | 93.0 | 17 | 8 | 0 | 23 | 2 | 23 |
+| **All / mean** | **21.3** | **187.1** | **84.7** | **53** | **30** | **7** | **70** | **13** | **63** |
+
+Anthropometrics are reported to describe the sample and are used for nothing else. With three participants, any between-pitcher covariate is perfectly confounded with pitcher identity, so height, mass, and age cannot enter a model without the model simply relabeling the pitcher.
+
+Sessions ran 16 to 30 minutes each at a measured 475 to 477 Hz with zero non-monotonic samples. Eighty-three pitch events were segmented from the pressure records; 70 carried a tagged outcome, of which 7 were warm-up throws, leaving 63 analyzable pitches (41 fastballs, 22 curveballs).
+
+**Protocol.** Each pitcher threw from a mound at regulation distance after a self-directed warm-up, using the facility's normal throwing protocol. Fastballs were thrown across a graded effort ladder at approximately 60, 80, and 100 percent of maximum effort, and **all three pitchers completed the full ladder**. Curveballs were thrown at competitive effort. The ladder follows the submaximal design used by Kinoshita et al. [@kinoshita2017]: it induces the velocity range required to estimate a within-pitcher force--velocity relationship, and, as this section will show, it is also the only reason that relationship can be interrogated at all.
+
+Grip contact points were marked on the ball's cover, and each pitcher placed their fingers on those marks before each pitch. Pitches were tagged individually during capture.
+
+**Effort labeling.** Commanded effort was recorded in the marker typed at capture, by one of two conventions: an explicit percentage prefix on the pitch's own tag, or a state marker declaring the effort for the block that followed. Where a pitch carries neither, it was thrown at maximum effort and is labeled 100 percent. Of the 63 analyzable pitches, 19 carry an explicit prefix, 8 inherit an active state marker, and 36 take the maximum-effort default. **Effort was never inferred from velocity.** Doing so would be circular: it would guarantee that commanded effort predicted velocity and would manufacture the very confound this section exists to measure.
+
+**Inclusion and exclusion.** A pitch is analyzable if (a) the pressure record contains a complete pitch event with at least two fingers loaded above 2 N, (b) the record contains no data gap within the release window, (c) an outcome measurement was captured and tagged to that pitch, and (d) the throw was part of the effort protocol rather than a warm-up. Pitches failing (c) or (d) are retained for grip-only description and reported in Table 7, but are excluded from every grip--outcome analysis rather than shifted in sequence.
+
+**Data integrity checks applied before analysis.** Each session file was checked for monotonic sample timing, effective sampling rate within tolerance of 480 Hz, estimated packet loss, and channel isolation re-verified against the 0.3 to 0.7 percent baseline established at build. All three sessions passed. Separately, the marker parser was validated against every tag format present in the captures; two defects were found and corrected before analysis, described in the reproducibility appendix, one of which had been silently discarding the velocity of any pitch whose tag also carried movement data.
+
+## Instrument Validation
+
+**Channel independence.** The isolation results reported in the milestones---0.3 to 0.7 percent cross-channel response on the bench, and non-following of the uncontacted channel under live throwing---establish that the four channels measure independent physical inputs. This is a precondition for every per-finger result that follows, and it is stated as a result rather than assumed because the first instrument failed it.
+
+**Flight fidelity.** The A/B comparison reported in the milestones establishes that the instrumented ball's velocity is substantially preserved relative to a regulation ball and that its spin rate is consistently lower by approximately 168 rpm. Grip measurements are therefore obtained from a ball that flies close to, but not identically to, a regulation ball, and the spin offset is quantified rather than assumed negligible.
+
+**Temporal fidelity.** Figure 6 shows a representative pitch with its release window expanded.
+
+![Two-panel grip-force trace for one fastball. The left panel shows index, middle, and thumb force in newtons over the full pitch with each digit's peak marked; the right panel expands the final milliseconds, showing the thumb losing contact before the fingers.](figures/fig6_trace.png){width=6.5in}
+
+::: {custom-style="Figure Caption"}
+Figure 6. *Representative grip-pressure trace for a single fastball (P1).* Panel (a): the full pitch, all three instrumented digits, force in newtons against time, sampled at 480 Hz. Filled markers indicate each digit's peak. Panel (b): the final 60 ms expanded, with hollow markers at each digit's release point---the last sample above 10 percent of that digit's peak---and a dashed rule at each. The reader should observe three things: the three digits load together over roughly 200 ms and peak within a few milliseconds of one another; the middle finger carries far less force than the index and thumb on this grip; and the digits do not release simultaneously, the thumb clearing 16 ms before the fingers on this pitch. It is the second panel that the 480 Hz sampling rate exists to produce; at 120 Hz the entire expanded window spans about seven samples.
+:::
+
+**Grip configuration is recoverable from force alone.** The four-position array was justified on the grounds that it would capture information a two-sensor instrument could not. Figure 7 shows the distribution of peak force between digits for each pitcher and pitch type.
+
+![Horizontal stacked bars of the share of total peak grip force carried by index, middle, and thumb, for each pitcher on fastballs and curveballs. Thumb share falls from about forty percent on fastballs to under ten percent on curveballs while middle share rises correspondingly.](figures/fig7_pitch_type_shares.png){width=6.5in}
+
+::: {custom-style="Figure Caption"}
+Figure 7. *Share of total peak grip force carried by each digit, by pitcher and pitch type.* Each bar is the mean across that pitcher's pitches of the given type; segments sum to 100 percent. FA denotes fastball, CU curveball. The reader should observe that the pattern is nearly identical across the three pitchers, that the thumb's share collapses from roughly 40 percent on the fastball to between 6 and 9 percent on the curveball, and that the middle finger absorbs almost exactly what the thumb gives up while the index share barely moves. The curveball does not grip harder; it redistributes the same grip.
+:::
+
+That redistribution is large enough to be recovered by a classifier. A logistic regression on five grip features---the three digit force shares, inter-finger discrepancy, and thumb release lead---was evaluated by cross-validation over all 63 analyzable pitches, with no ball-flight measurement entering the model. All three pitchers threw curveballs, so leave-one-pitcher-out is a genuine three-fold test in which each fold is trained without the tested pitcher entirely.
+
+::: {custom-style="Table Caption"}
+Table 8. *Pitch-type classification from grip force alone.* Accuracies are means over cross-validation folds. The permutation test shuffled pitch-type labels within pitcher and re-ran the entire leave-one-pitcher-out procedure 5,000 times. The reader should observe that accuracy is essentially unchanged between the two validation schemes, which indicates the grip signature transfers to an unseen pitcher rather than encoding individual idiosyncrasy.
+:::
+
+| Validation scheme | Accuracy | What it tests |
+|:--|--:|:--|
+| Majority-class baseline | 0.651 | --- |
+| Leave-one-pitch-out | 0.984 | generalization to an unseen pitch |
+| **Leave-one-pitcher-out** | **0.986** | **generalization to an unseen pitcher** |
+| Permutation null | $p = 0.0002$ | that the accuracy is not an artifact of class imbalance |
+
+Two-way models with pitcher as a blocking factor confirm the contrast at the level of the underlying quantities: thumb share falls from 0.408 to 0.070 ($F = 242.8$, $p = 1.4 \times 10^{-22}$, partial $\eta^2 = 0.805$) and middle share rises from 0.184 to 0.515 ($F = 258.1$, $p = 3.3 \times 10^{-23}$, partial $\eta^2 = 0.814$), while index share is statistically unchanged ($p = 0.74$). Both effects replicate in all three pitchers individually.
+
+**This is validation of the instrument, not a finding about pitching.** The grip was deliberately changed between pitch types and the sensors are fixed to the ball, so a detectable change in which channels load is the expected consequence of the protocol rather than a discovery. What it establishes is a design decision: the discriminating signal is a thumb-to-middle trade-off, and an instrument reading only the index and middle fingers---the configuration of the closest prior work [@yeh2024]---would sample the least informative channel of the three and would have no thumb channel at all.
+
+**Release ordering.** Figure 8 reports the interval by which the thumb loses contact before the fingers. These measurements are instrument characterization rather than findings: the direction is mechanically obvious, since the ball must clear the thumb to roll off the fingertips, and the magnitude predicted nothing.
+
+![Box plots of thumb release lead in milliseconds for each pitcher on fastballs and curveballs, with individual pitches overlaid, a rule at simultaneous release and a rule at the 4.17 millisecond resolution floor. Fastball leads cluster near thirteen milliseconds; curveball leads are much shorter.](figures/fig8_release_order.png){width=5.6in}
+
+::: {custom-style="Figure Caption"}
+Figure 8. *Thumb release lead, by pitcher and pitch type.* Boxes show the median and interquartile range with individual pitches overlaid. The dashed rule marks simultaneous release; the dotted rule marks the 4.17 ms resolution floor, two sample periods, below which a single pitch cannot be ordered. The reader should observe that fastball leads cluster near 13 ms and lie almost entirely above the floor in all three pitchers, and that curveball leads are markedly shorter and frequently unresolvable---so the separation is a property of the grip rather than a fixed characteristic of the hand.
+:::
+
+Across all 83 segmented pitches the thumb led by 9.8 ms (SD 6.9, median 10.5), thumb-first in 84 percent of pitches and above the resolution floor in 71 percent, differing from zero at $t = 12.95$, $p = 1.6 \times 10^{-21}$ and by Wilcoxon signed-rank $p = 3.1 \times 10^{-13}$. On fastballs alone the lead is 12.5 to 13.9 ms across the three pitchers; on curveballs it falls to between 1.8 and 6.0 ms. The index and middle fingers cannot be separated in time: their release interval is $-0.75$ ms (SD 1.28), inside the resolution floor in 98 percent of pitches. That they release as a pair while the thumb does not is what the measurement establishes.
+
+## Statistical Analysis Plan
+
+The analysis was specified before the outcome data were inspected, and it addresses three problems that the raw correlations cannot address on their own.
+
+**Dependence.** Pitches are nested within pitchers, and absolute force is not comparable between pitchers because hand geometry, finger placement relative to the 9.5 mm sensing pad, and grip style all differ. Every grip--outcome estimate is therefore a repeated-measures correlation: a single slope common to all pitchers with a separate intercept for each, using the exact residual degrees of freedom $N - k - 1$ rather than the $N - 2$ that pooling centered scores would imply. Per-pitcher estimates are reported alongside the pooled estimate so consistency is visible rather than concealed.
+
+**Confounding.** The effort ladder deliberately moved delivery intensity, and effort raises grip force and velocity together. Any uncontrolled correlation between them is confounded by construction. The primary control removes the mean of every pitcher $\times$ commanded-effort cell, which holds effort exactly fixed and assumes nothing about its functional form. A linear mixed-effects model entering effort as a categorical fixed effect with a pitcher random intercept is reported as a secondary, weaker control.
+
+**Multiplicity.** Twenty grip features are tested against velocity. At $\alpha = 0.05$, one would be expected to reach significance by chance. Holm's procedure is reported to control the family-wise error rate and Benjamini--Hochberg to control the false-discovery rate, and no result is described as established unless it survives correction.
+
+**Primary hypothesis.** Within pitchers, index-finger force at release is positively associated with release velocity for four-seam fastballs, independently of commanded effort.
+
+**Secondary hypotheses.** (1) Index rate of force development is positively associated with release velocity, the strongest single relationship reported by Yeh et al. [@yeh2024]. (2) The thumb releases before the finger channels, and that lead differs between grips.
+
+**Everything else is exploratory** and is labeled as such wherever it appears. Inference is supported by within-pitcher permutation tests (20,000 permutations, velocity shuffled within each pitcher) and by a two-stage cluster bootstrap (10,000 resamples of pitchers, then of pitches within pitcher), so no conclusion rests on a distributional assumption. A fixed random seed makes every reported $p$-value reproducible.
+
+## Results
+
+### The effort manipulation worked
+
+Before any grip result can be interpreted, the manipulation must be shown to have done something. Table 9 and Figure 9 report the effort ladder.
+
+::: {custom-style="Table Caption"}
+Table 9. *Release velocity by commanded effort, within pitcher.* Cell entries are mean (SD) with the number of fastballs. The reader should observe that every pitcher separates cleanly across all three rungs, and that the induced velocity range of 15 to 21 mph is an order of magnitude larger than the pitch-to-pitch variation within any single rung.
+:::
+
+| Pitcher | 60 % | 80 % | 100 % | range (mph) | one-way $F$ | $p$ |
+|:--|:--|:--|:--|--:|--:|--:|
+| P1 | 67.9 (1.0), $n=4$ | 73.4 (0.8), $n=4$ | 78.1 (2.4), $n=7$ | 14.8 | 42.3 | $3.7 \times 10^{-6}$ |
+| P2 | 62.5 (0.9), $n=4$ | 71.7 (1.0), $n=4$ | 81.0 (1.3), $n=3$ | 20.9 | 263.9 | $5.0 \times 10^{-8}$ |
+| P3 | 59.2 (1.1), $n=4$ | 65.5 (2.2), $n=4$ | 73.9 (1.7), $n=7$ | 18.6 | 97.0 | $3.9 \times 10^{-8}$ |
+
+Within pitchers, commanded effort and release velocity move together at $r = 0.946$, 95 % CI [0.90, 0.97], $p = 1.2 \times 10^{-19}$, $n = 41$. The ladder produced the intended velocity spread in every participant.
+
+That success is also the problem. Figure 9 shows why.
+
+![Three scatter panels against commanded effort of sixty, eighty and one hundred percent. Release velocity rises steeply with effort, index plus middle peak force also rises, and thumb peak force shows no consistent direction.](figures/fig9_effort_ladder.png){width=6.5in}
+
+::: {custom-style="Figure Caption"}
+Figure 9. *Commanded effort against velocity and against grip force.* Each point is one fastball; marker shape identifies the pitcher and faint lines join that pitcher's cell means. Panel (a): commanded effort sets velocity. Panel (b): index and middle peak force, summed, rises with effort in every pitcher. Panel (c): thumb peak force does not, and the per-pitcher means cross rather than share a direction. The reader should observe that the quantity in panel (b) is confounded with velocity by construction---the ladder moved both---while the quantity in panel (c) is not, and that this difference, not any property of the correlations themselves, is what the rest of this section turns on.
+:::
+
+### Uncontrolled, almost every grip feature predicts velocity
+
+With only between-pitcher differences removed, the grip--velocity association is large, broad, and highly significant. Fifteen of the twenty features tested survive Holm correction, with the four strongest all involving the index and middle fingers: their summed impulse at $r = 0.630$, summed peak force at $r = 0.594$, summed force at release at $r = 0.590$, and middle-finger impulse at $r = 0.597$ (all $p < 10^{-4}$, $n = 41$). The pre-specified primary feature, index force at release, gives $r = 0.511$, 95 % CI [0.23, 0.71], $p = 0.00089$.
+
+Taken at face value this reproduces the published picture and appears to confirm the primary hypothesis. It does not survive the control the design was built to permit.
+
+### Controlled for effort, the finger associations disappear
+
+Table 10 reports every feature twice: once with only pitcher differences removed, and once with the mean of each pitcher $\times$ commanded-effort cell removed so that effort is held exactly fixed.
+
+::: {custom-style="Table Caption"}
+Table 10. *Grip features against release velocity, fastballs ($n = 41$), uncontrolled and with commanded effort held fixed.* Repeated-measures correlations. "Uncontrolled" removes between-pitcher differences only; "effort fixed" additionally removes the mean of each of the nine pitcher $\times$ effort cells, leaving 31 degrees of freedom. $q$ is the Benjamini--Hochberg false-discovery rate across the family of 20. Bold marks the three features surviving correction. The reader should observe that the ordering of the two columns is almost reversed: the features with the largest uncontrolled associations are the ones that lose the most, and the only features that survive are those whose uncontrolled association was among the weakest.
+:::
+
+| Feature | uncontrolled $r$ | $p$ | effort fixed, $r$ | $p$ | $q$ (BH) |
+|:--|--:|--:|--:|--:|--:|
+| Index+middle impulse | 0.630 | $1.8 \times 10^{-5}$ | 0.275 | 0.121 | 0.201 |
+| Middle impulse | 0.597 | $6.0 \times 10^{-5}$ | 0.326 | 0.064 | 0.161 |
+| Index+middle peak force | 0.594 | $6.8 \times 10^{-5}$ | 0.381 | 0.029 | 0.113 |
+| Index+middle force at release | 0.590 | $7.7 \times 10^{-5}$ | 0.326 | 0.064 | 0.161 |
+| Index impulse | 0.586 | $8.9 \times 10^{-5}$ | 0.198 | 0.269 | 0.358 |
+| Middle force at release | 0.526 | 0.00059 | 0.218 | 0.222 | 0.342 |
+| Index+middle RFD | 0.524 | 0.00062 | $-0.158$ | 0.381 | 0.477 |
+| Thumb impulse | 0.514 | 0.00081 | 0.370 | 0.034 | 0.113 |
+| Index force at release | 0.511 | 0.00089 | 0.302 | 0.088 | 0.173 |
+| Index peak force | 0.503 | 0.0011 | 0.305 | 0.085 | 0.173 |
+| Middle peak force | 0.496 | 0.0013 | 0.295 | 0.095 | 0.173 |
+| **Total peak force** | 0.481 | 0.0019 | **0.475** | **0.0053** | **0.035** |
+| Middle RFD | 0.479 | 0.0020 | $-0.014$ | 0.940 | 0.963 |
+| Index RFD | 0.479 | 0.0020 | $-0.210$ | 0.240 | 0.343 |
+| **Thumb force at release** | 0.450 | 0.0040 | **0.486** | **0.0042** | **0.035** |
+| Thumb RFD | 0.360 | 0.024 | $-0.030$ | 0.867 | 0.963 |
+| **Thumb peak force** | 0.351 | 0.028 | **0.484** | **0.0044** | **0.035** |
+| Inter-finger discrepancy | $-0.356$ | 0.026 | $-0.008$ | 0.963 | 0.963 |
+| Thumb release lead | 0.134 | 0.412 | 0.138 | 0.442 | 0.553 |
+| Thumb-to-finger force ratio | 0.072 | 0.660 | 0.420 | 0.015 | 0.075 |
+
+**The pre-specified primary hypothesis is not supported.** Index force at release falls from $r = 0.511$ to $r = 0.302$ ($p = 0.088$) once commanded effort is held fixed, and does not approach the corrected threshold. Combining the index and middle fingers---the two digits the ball actually rolls off, and therefore the mechanically complete driving channel---improves the estimate to $r = 0.381$ ($p = 0.029$) but still does not survive correction ($q = 0.113$).
+
+Figure 10 shows the collapse directly.
+
+![Four scatter panels of grip force against release velocity. The top row is index plus middle force, the bottom row thumb peak force; the left column removes pitcher differences only and the right column also holds commanded effort fixed. The finger association collapses from left to right while the thumb association strengthens.](figures/fig10_grip_velocity.png){width=6.5in}
+
+::: {custom-style="Figure Caption"}
+Figure 10. *Grip force against release velocity, fastballs, before and after holding commanded effort fixed.* Marker shape identifies the pitcher. Top row: index and middle force at release, summed. Bottom row: thumb peak force. Left column removes between-pitcher differences only; right column additionally removes each pitcher $\times$ effort cell mean. Solid fit lines mark significant associations, dashed a non-significant one. The reader should observe that the strong relationship in panel (a) is almost entirely gone in panel (b), while the weaker relationship in panel (c) is *stronger* in panel (d)---and that the vertical scale contracts by roughly a factor of four from left to right, because holding effort fixed removes most of the velocity variance there was to explain.
+:::
+
+Figure 11 shows where that variance goes.
+
+![Two panels. The left is a dumbbell chart showing, for each grip feature, its association with velocity before and after commanded effort is held fixed, against a shaded non-significant band. The right is a bar chart of the velocity variance each feature explains that effort does not, all values below 0.015.](figures/fig11_confound.png){width=6.5in}
+
+::: {custom-style="Figure Caption"}
+Figure 11. *The effort confound made visible.* Panel (a): for each feature, the open mark is its association with velocity once pitcher differences are removed, and the filled mark, coloured by digit, is the same association with commanded effort also held fixed; the shaded band is the non-significant region. Panel (b): the velocity variance each feature explains that commanded effort does not, as an increment over a pitcher-only model. The reader should observe that the finger features travel a long way leftward into the shaded band while the thumb features barely move or move right, and that the largest unique contribution of any feature in panel (b) is 0.013 against the 0.743 that commanded effort accounts for on its own---roughly one part in sixty.
+:::
+
+For index force at release the unique contribution is $0.000$: the feature explains no velocity variance whatsoever that commanded effort does not already account for. Its entire apparent association, $R^2 = 0.217$, is shared with effort. The mixed-effects model agrees; adding index force at release to a model already containing commanded effort gives $\chi^2(1) = 0.47$, $p = 0.49$.
+
+### Only thumb-dominated features survive, and they survive weakly
+
+With effort held exactly fixed, **no feature survives Holm correction, and three survive Benjamini--Hochberg correction**: thumb force at release ($r = 0.486$, $q = 0.035$), thumb peak force ($r = 0.484$, $q = 0.035$), and total peak force across all digits ($r = 0.475$, $q = 0.035$). The thumb-to-finger force ratio falls just outside ($r = 0.420$, $q = 0.075$). Total peak force contains the thumb, and its behaviour tracks the thumb's rather than the fingers'.
+
+The distinction between the two corrections is not a technicality and is not glossed here. Holm asks whether *any* false positive is likely among the twenty; Benjamini--Hochberg asks what proportion of the declared findings are false. At this sample size the honest summary is that these are the strongest surviving candidates, not established effects.
+
+Four checks were applied to the surviving associations.
+
+*Consistency across pitchers.* Estimated within each pitcher separately, with that pitcher's own effort levels removed, thumb peak force gives $r = 0.34$, $0.43$, and $0.68$ for P1, P2, and P3, and thumb force at release gives $0.23$, $0.41$, and $0.70$. The sign is the same in all three. These per-pitcher estimates are badly underpowered individually---P2 contributes 11 fastballs against three effort levels---and are reported to show the pooled estimate is not the product of one pitcher, not as independent tests.
+
+*Invariance to the calibration curve.* Two channels were calibrated only to 19.62 N while pitching peaks exceed that, so the top of the force scale is extrapolated. A rank-based partial correlation is invariant to any monotonic distortion of that scale. Thumb force at release holds on ranks ($\rho = 0.489$, $p = 0.0039$), as do thumb peak force ($\rho = 0.477$, $p = 0.0050$) and total peak force ($\rho = 0.466$, $p = 0.0063$). No error in the *shape* of the calibration curve can have produced them. Index force at release does not hold on ranks ($\rho = 0.318$, $p = 0.071$).
+
+*Mixed-effects agreement.* Entering effort additively with a pitcher random intercept, thumb peak force adds $+0.67$ mph per within-pitcher standard deviation, 95 % CI $[+0.02, +1.32]$, $\chi^2(1) = 3.89$, $p = 0.049$. This is a weaker control than the cell centering above and it agrees in direction.
+
+*Cluster bootstrap.* Resampling pitchers with replacement and then pitches within each resampled pitcher gives 95 % intervals of $[0.17, 0.68]$ for thumb force at release and $[0.05, 0.61]$ for thumb peak force. Every bootstrap interval is wider than its analytic counterpart, which is the honest cost of measuring three pitchers: a different three could have produced a noticeably different estimate, and no number of pitches per pitcher repairs that.
+
+### Why the thumb behaves differently
+
+The thumb is the only channel whose association with velocity is *stronger* after effort is controlled than before. That is a suppression pattern, and Table 11 gives its explanation.
+
+::: {custom-style="Table Caption"}
+Table 11. *How tightly each grip feature tracks commanded effort, against what it still says about velocity once effort is held fixed (fastballs, $n = 41$).* Sorted by the first column. The reader should observe that the finger channels sit at the top---they are substantially a readout of delivery intensity---and that the three features which survive effort control sit at the bottom, where the coupling to effort is weakest or absent.
+:::
+
+| Feature | $r$ with commanded effort | $p$ | $r$ with velocity, effort fixed | $p$ |
+|:--|--:|--:|--:|--:|
+| Index+middle impulse | 0.610 | $<0.0001$ | 0.275 | 0.121 |
+| Index+middle force at release | 0.607 | $<0.0001$ | 0.326 | 0.064 |
+| Index impulse | 0.581 | 0.0001 | 0.198 | 0.269 |
+| Index+middle peak force | 0.561 | 0.0002 | 0.381 | 0.029 |
+| Middle impulse | 0.560 | 0.0002 | 0.326 | 0.064 |
+| Index force at release | 0.528 | 0.0005 | 0.302 | 0.088 |
+| Index peak force | 0.458 | 0.0033 | 0.305 | 0.085 |
+| Thumb impulse | 0.445 | 0.0045 | 0.370 | 0.034 |
+| **Total peak force** | 0.400 | 0.012 | **0.475** | **0.0053** |
+| **Thumb force at release** | 0.384 | 0.016 | **0.486** | **0.0042** |
+| **Thumb peak force** | 0.245 | 0.133 | **0.484** | **0.0044** |
+| Thumb-to-finger force ratio | $-0.053$ | 0.750 | 0.420 | 0.015 |
+
+Figure 12 plots the same relationship.
+
+![Scatter plot with one mark per grip feature: how tightly it tracks commanded effort on the horizontal axis against what it still says about velocity once effort is fixed on the vertical. Thumb features sit upper left above the significance threshold and are ringed as surviving correction; index and middle features cluster lower right.](figures/fig12_effort_coupling.png){width=6.5in}
+
+::: {custom-style="Figure Caption"}
+Figure 12. *Effort coupling against what survives effort control.* One mark per grip feature. The horizontal axis is how tightly the feature tracks commanded effort within pitchers, as a magnitude; the vertical axis is its association with velocity once effort is held exactly fixed. The shaded band is non-significant even before correction, and ringed marks are the three features that survive false-discovery correction. The reader should observe that every surviving feature involves the thumb and sits in the left half of the plot, while the index and middle features cluster tightly at the right---high effort coupling, nothing left over. No trend line is drawn: across all twenty features the relationship between the two axes is $r = -0.17$, $p = 0.47$, so the figure asserts a contrast between two groups of features and not a smooth law.
+:::
+
+**Index and middle loading is close to a measure of delivery intensity.** It tracks commanded effort at $r = 0.46$ to $0.61$, and once effort is fixed it has little left to say about velocity. **Thumb peak force is the grip feature least coupled to commanded effort** ($r = 0.245$, not significant), and the thumb-to-finger ratio is uncoupled from it entirely ($r = -0.053$). Those are the features that retain an association with velocity.
+
+This reframes what the instrument measures. The finger channels report something the pitcher already knows---how hard they are trying. The thumb channel carries information that commanded effort does not, and it is the channel the closest prior work could not observe, having instrumented only the index and middle fingers [@yeh2024]. But the claim this supports is narrower than the one the project set out to test and concerns a different digit, so it is labeled exploratory throughout: the thumb was not the pre-specified primary, it does not clear family-wise correction, and it emerged from the same twenty-feature family that the multiplicity control exists to discipline.
+
+### Results that did not replicate
+
+Three negative results are reported because they bear directly on prior work and on this project's own design decisions.
+
+**Rate of force development did not replicate as a velocity correlate.** Uncontrolled it appears to: index RFD gives $r = 0.479$, $p = 0.0020$, which would have been read as confirming the strongest relationship Yeh et al. report [@yeh2024]. With effort held fixed it is $r = -0.210$, $p = 0.24$. RFD was tracking how hard the pitcher was throwing.
+
+**Inter-finger force discrepancy carries no velocity information.** Uncontrolled it is negatively associated with velocity ($r = -0.356$, $p = 0.026$), the opposite sign to the positive discrepancy--spin association Yeh et al. report. With effort fixed the association vanishes entirely ($r = -0.008$, $p = 0.96$). The uncontrolled result was an artifact of the effort manipulation and is withdrawn rather than offered as a contradiction of their finding.
+
+**Narrowing the release window does not improve prediction.** The release-window study compared mean force over the final 5, 10, 25, 50, and 100 ms against peak force taken anywhere in the pitch. For the thumb, every definition performs equivalently under effort control, from $r = 0.447$ at 100 ms to $r = 0.505$ at 5 ms, with peak force at $r = 0.484$; for the index and middle fingers none is significant at any width. The mechanically motivated expectation that force nearest release should carry more information than force earlier in the delivery is not borne out. This is a negative result about the project's own design rationale: the 480 Hz sampling rate was adopted to make release-phase features computable, and it succeeded in that---per-digit release timing and the release transient are measurable only at the higher rate---but those features did not improve velocity prediction over a measurement obtainable at 120 Hz.
+
+**Secondary ball-flight outcomes could not be analyzed.** Spin rate was captured for 1 of 63 analyzable pitches and movement for 4. Both are reported descriptively in the computed output and enter no model; with those counts, any correlation would be uninterpretable.
+
+## Discussion
+
+**What the effort control changes.** The central methodological result of this work is that the grip--velocity relationship reported without effort control is largely the effort manipulation reappearing in another variable. Fifteen of twenty features cross the significance threshold uncontrolled; three survive with effort held fixed, and none of them is a finger feature. Because a submaximal effort ladder is the standard way to induce the velocity range that makes a within-pitcher force--velocity relationship estimable [@kinoshita2017], this is not a defect peculiar to the present protocol. Any study using that design and reporting an uncontrolled grip--velocity correlation is exposed to the same confound. The practical recommendation that follows is concrete: an instrumented-ball study should record commanded effort per pitch and report the association both ways, because the two answers differ in kind rather than in degree.
+
+**Why the fingers and the thumb separate.** Index and middle force track commanded effort closely, which is mechanically unsurprising---they are the digits that accelerate the ball, and throwing harder means loading them harder. The thumb opposes rather than propels, and its loading appears to be governed by something other than intended intensity. That is what makes it the only channel carrying velocity information that commanded effort does not, and it is a testable hypothesis for a larger study rather than a conclusion from this one. It also has a direct instrumentation consequence: a two-sensor array on the index and middle fingers, which is where the field has concentrated, measures the two channels most contaminated by effort and omits the one that is not.
+
+**On inter-finger discrepancy.** The uncontrolled association between force discrepancy and velocity reported here ($r = -0.356$) disappears entirely when commanded effort is held fixed ($r = -0.008$), and that null is worth reading against the scale at which the reference result was obtained. Yeh et al. define discrepancy as the absolute difference between index and middle force and report it as 0.90 ± 0.70 N against per-finger peaks near 153 N [@yeh2024]---a signal amounting to roughly six tenths of one percent of the force it is computed from, on a sensor whose manufacturer-stated range is 0 to 110 N [@tekscan_a301]. The present instrument cannot adjudicate that measurement, and no claim is made here that their result is incorrect. What can be said is that a difference of that relative size is of the same order as the pad-registration error described in the limitations, that the discrepancy measured here is far larger and still carries no velocity information once effort is controlled, and that a replication attempt reporting the measurement uncertainty alongside the effect would be a useful contribution.
+
+**On rate of force development.** RFD is a derivative and therefore the noisiest feature computed, and the leather cover between finger and sensor acts as a compliant layer that low-pass filters exactly the sharp transitions RFD is meant to capture. Both remain plausible reasons for a weak estimate. But the pattern here is more specific than noise: RFD's uncontrolled association is substantial and its effort-controlled association is near zero and slightly negative, which is the signature of a confounded variable rather than a noisy one. Yeh et al. report a between-subject association, where RFD may index a stable athlete characteristic; the present analysis is within-subject, where it indexes pitch-to-pitch variation in one athlete under a manipulated effort protocol. These are different questions and the results are not necessarily in conflict.
+
+**What the classifier does and does not show.** Grip configuration is recoverable from force alone at 98.6 percent accuracy on an unseen pitcher. This is a strong validation of the four-position design and has a practical use---verifying that an instructed grip change was executed, or detecting grip drift within a session, with no external tracking. It is not a discovery about pitching. The grip was deliberately changed and the sensors are fixed, so different channels loading differently is the protocol working, not a finding.
+
+## Limitations
+
+**Absolute force magnitudes are not directly comparable to the reference literature.** The thin-film sensor measures the component of finger force normal to its 9.5 mm pad, transmitted through the leather cover. This is a smaller and physically different quantity than the resultant fingertip force reported by rigid, fingertip-mounted transducers. Kinoshita et al. measured peak resultant forces near 97 N for the index and middle fingers, and identified the release as shear-dominated---the shear components alone summed to roughly 102 N and are the kinetic source of backspin [@kinoshita2017]. A force-sensitive resistor is insensitive to that tangential shear, so a large share of the resultant force reported by those studies is invisible to the present instrument by design. In addition, the leather cover distributes finger load over an area larger than the sensing pad, and as the finger rolls off the ball at release the contact patch migrates off the pad, so the sensor captures only the portion of load directly above it at each instant. Per-finger peaks reached the low tens of newtons, which exceeds the calibrated ceiling of two of the four channels by a factor of 1.4 to 3.2, so the largest recorded forces are extrapolated rather than measured. Because that extrapolation is monotonic, it cannot reverse or create a rank ordering, and the surviving effort-controlled associations were therefore re-estimated on ranks within each pitcher $\times$ effort cell, where they hold at $\rho = 0.466$ to $0.489$. No error in the *shape* of the calibration curve can account for them. Consequently, the contribution of this work lies in the *relative* grip patterns and their statistical relationships to ball outcomes rather than in absolute force values.
+
+**Index and middle forces are asymmetric here and symmetric in both reference studies.** Across all three pitchers the index finger recorded roughly twice the peak force of the middle finger on fastballs---19.7 against 9.9 N for P1, 23.4 against 12.9 N for P2, and 15.9 against 6.5 N for P3. Neither reference study reports that asymmetry. Kinoshita et al. measured approximately 97 N at each of the two fingers with a rigid three-dimensional transducer [@kinoshita2017], and Yeh et al. report 153.20 ± 1.15 N at the index and 153.10 ± 0.81 N at the middle [@yeh2024]. The discrepancy cannot be attributed to the transduction principle, because Yeh et al. used the same FlexiForce A301 sensor and the same 9.5 mm sensing diameter deployed here and still recorded the two fingers as equal. Sensor registration is the more plausible explanation: their sensors were positioned where each pitcher placed the fingers on the seams, whereas the present instrument fixes the pads at marked contact points that every pitcher adapts to, and a fingertip displaced by a few millimetres across a 9.5 mm pad reads systematically low for every pitch. A middle channel that under-reads by a constant factor shifts that channel's mean without altering how it co-varies with effort or velocity, so the within-digit inference this report rests on is unaffected; the absolute per-finger magnitudes and any between-finger ratio are not, and are reported with that caveat.
+
+**Three pitchers.** Data were collected from three pitchers drawn from a single college program. The within-pitcher analysis supports statements about how grip covaries with outcome *within* a pitcher; it does not support statements about differences *between* pitchers, for which the number of participants is far too small, nor does it support generalization to a population. The cluster bootstrap reported with the primary results is the only interval here that propagates the uncertainty of *which* three pitchers were measured, and it is materially wider than its analytic counterpart in every case---which is the correct reading of what three participants can support.
+
+**The effort control is exact but expensive.** Holding commanded effort fixed by removing each pitcher $\times$ effort cell mean makes no assumption about the functional form of effort, but it spends nine degrees of freedom on nine cells of three to seven pitches each and discards all between-cell variance, leaving 31 residual degrees of freedom and a minimum detectable correlation of $r = 0.34$. An association weaker than that could not have been detected in this design whatever its true value, so the finger-force results are bounded rather than refuted: the honest statement is that finger force contributes no *detectable* velocity information beyond commanded effort at this sample size, not that it contributes none.
+
+**Calibration transfers imperfectly from bench to pitching.** Calibration applies static, normally directed load through a rigid platen to a bare sensor. In use, the sensor is loaded dynamically, through leather, by a curved and moving fingertip. Two sensors were also characterized only to 19.62 N, below the forces recorded in pitching, so their factors are extrapolated at the top of the range. Independent recalibration of two sensors in a later session produced factors differing by approximately 20 percent, which bounds the confidence that should be attached to any absolute force value and is the principal reason force ratios are preferred to absolute magnitudes throughout.
+
+**Contact area and placement variability.** The sensing pad is 9.5 mm across. A fingertip displaced by a few millimetres covers a different fraction of that pad and reads a substantially different force for the same applied load. Registration marks on the cover mitigate but do not eliminate this, and the effect differs systematically between the broad flat contact of a thumb and the smaller curved contact of a fingertip. Comparisons between fingers are therefore affected by contact geometry as well as by applied force.
+
+**Signal conditioning favors simplicity over absolute accuracy.** The analog front end uses a single fixed-resistor voltage divider with software linearization rather than the manufacturer's recommended inverting op-amp driver, which produces a directly linear force output [@tekscan_a301]. This is adequate for relative measurement and is the source of some nonlinearity at the extremes of the range.
+
+**Wireless transport imposes loss and timing constraints.** Packets are occasionally lost over Bluetooth Low Energy; because each packet carries the ball's own timestamp, loss widens the sample interval rather than corrupting timing, and all feature computation uses actual per-sample intervals. Sample timing within a transmitted batch is reconstructed from a fixed interval rather than individually stamped, so a stalled firmware loop can perturb intra-batch timing; the logger detects and reports this condition, and affected sessions are identified rather than silently analyzed.
+
+**Release ordering has a resolution floor.** At 480 Hz one sample is 2.083 ms, so inter-finger release intervals shorter than two sample periods (4.17 ms) cannot be resolved within a single pitch. Such intervals are reported only in aggregate across pitches, where a consistent ordering can be detected statistically even when no individual pitch resolves it.
+
+**Release time is bounded by the pitch window for the driving fingers.** Release is defined per digit as the last instant at which a channel exceeds 10 percent of its own peak after that peak, while the pitch window itself closes when *total* force falls below the segmentation threshold. For the index and middle fingers those two conditions interact: neither channel decays below a tenth of its own peak before the window closes, so the detected release time is the final sample of the window on 63 of 63 analyzable pitches for the index and 60 of 63 for the middle. The thumb, which unloads completely, crosses its own threshold inside the window on all but 7. The inter-finger release lead reported here is therefore measured from a genuine thumb crossing to a window boundary rather than to a second independently detected crossing, and it is numerically almost identical to the interval between the thumb's crossing and the end of the window ($r = 0.977$; the two agree to within one sample on 60 of 63 pitches). Release lead should accordingly be read as a characterization of how much earlier the thumb unloads relative to the end of ball contact, not as an ordering of two separately resolved release events, and the release-order result in Figure 8 and the release-lead term in the pitch-type classifier carry that caveat. The velocity results do not depend on it: the release-window study compares thirteen operational definitions of release-phase force, including peak force taken anywhere in the pitch, and the effort-controlled index and middle association is non-significant under every one of them.
+
+**Ball flight was only partially observed.** Doppler tracking of the instrumented ball proved less reliable than for a regulation ball: the altered interior produced a shortened, intermittent radar track, and during instrument shakedown only one of five thrown pitches was registered. Where fitted movement could not be recovered, movement is not reported. This is the reason the outcome measure is embedded in the pressure record at capture time rather than joined afterward by sequence position.
+
+**Human-subjects scope.** Data were collected during ordinary training activity using the facility's normal throwing protocol, and no intervention beyond substituting the instrumented ball was introduced.
+
+## Future Work
+
+**Higher sampling rate still.** Decoupling acquisition from transmission raised the rate from 120 Hz to 480 Hz within the existing link budget, which resolved the release transient. Logging to the microcontroller's on-board flash for download after each session would remove the wireless link from the acquisition path entirely and support rates of a kilohertz or more, at the cost of live monitoring. That would allow the shear-driven release dynamics described by Kinoshita et al. to be sampled at a rate comparable to laboratory force transducers [@kinoshita2017].
+
+**Improved force accuracy.** Replacing the voltage-divider front end with the manufacturer's op-amp driver circuit for linear force output [@tekscan_a301], and calibrating each channel against a reference load cell across the full pitching force range rather than a scale-referenced staircase, would improve absolute accuracy and remove the extrapolation noted in the limitations. Adding a shear-sensitive or multi-axis contact sensor would allow measured forces to be compared directly with the resultant-force literature rather than only in relative terms.
+
+**Larger, multi-pitcher study.** Extending collection across more pitchers and more pitches per condition would allow the within-pitcher findings to be tested for generality, would support between-pitcher comparison that the present sample cannot, and would provide the sample size required for pitch-type classification from grip alone.
+
+**Recovering movement metrics.** Pairing the instrument with a camera-based tracking system, whose optical measurement is unaffected by the ball's altered interior, would recover the movement metrics that Doppler tracking could not reliably fit for this ball, and would strengthen the instrumented-versus-regulation flight comparison.
+
+**Inductive charging and a fully sealed cover.** The present instrument exposes a charge lead through a leather flap, which is a mechanical weak point. A wireless charging receiver would allow a fully sealed cover. This was evaluated and deliberately deferred: the coil's proximity to the microcontroller's trace antenna risks degrading the wireless link on which the measurement depends, and sealing the ball removes the ability to update firmware, which proved necessary repeatedly during development. It is the correct direction for a productized instrument rather than a research prototype.
+
+# PROFESSIONAL RESPONSIBILITY ASSESSMENT
+
+This project raised professional and ethical considerations spanning physical safety, human-subjects data, intellectual property, and honest reporting.
+
+## Safety
+
+The instrument places a lithium-polymer cell and rigid electronics inside a ball thrown at speed, so electrical and mechanical safety were design constraints rather than afterthoughts.
+
+**Electrical.** The cell is charged through the microcontroller's regulated on-board charger rather than an ad-hoc circuit. Battery leads are individually insulated along their full length; an incident during assembly in which lead insulation was stripped further than intended, leaving bare conductors on a live cell, established insulation of the battery leads as the highest-consequence insulation task in the build. Cell voltage is monitored through the sealed cover by firmware telemetry, because the charge indicator is not visible once the ball is closed.
+
+**Thermal.** Epoxy potting is poured in layers of approximately 15 g with each layer cured before the next. The exotherm of a single large pour presents a genuine thermal hazard to an enclosed lithium-polymer cell, and the cell is wrapped before potting so that epoxy does not bond directly to the pouch and so that the cell retains a compliant layer to expand into as it ages.
+
+**Mechanical and operational.** The ball is ballasted to regulation weight and balance-checked by roll test so that it behaves predictably in flight. Before each session the ball is inspected for cover damage, lace integrity, and any deformation of the cover over the potted block, and cell voltage is confirmed. The ball is retired from use if the cover is breached, if the potted block becomes loose within the cavity, if the cell shows swelling or fails to hold charge, or if the channel-isolation test fails after an impact and cannot be recovered. Because the cell cannot be removed once potted, retirement means disposal of the whole assembly through appropriate lithium-battery disposal rather than repair.
+
+## Human Subjects and Data
+
+**Consent and participation.** Before throwing, each participant was told what the instrument measures, how the measurements would be recorded, that the ball contains a lithium-polymer cell and electronics, and that participation was voluntary and could be ended at any point without consequence. **Each participant confirmed that they understood the data collection and agreed to their data being used in this study.** Data collection occurred during ordinary training activity using the facility's normal warm-up and throwing protocols; no intervention beyond substituting the instrumented ball for a regulation ball was introduced, and no pitcher was asked to throw more or harder than their normal session.
+
+**Privacy and retention.** Grip-pressure and pitch-performance records are identifiable performance information. Participants are identified in all files, figures, and reporting by anonymous codes; no roster, name, or other identifier is stored alongside the performance data. The data are used solely for the analysis described in this report. Any build photograph reproduced here is checked for incidental identifiers before inclusion. Identifiable performance data are not published without participant authorization, and the reproducibility materials described below exclude participant data on that basis.
+
+## Intellectual Property and Licensing
+
+**Student-authored work.** The firmware, the printed-circuit-board design files, the Python acquisition and analysis code, the build documentation, and the photographs in this report are the author's original work. The released code and firmware are licensed under the MIT License, and the accompanying documentation, figures, and build records under Creative Commons Attribution 4.0 International (CC BY 4.0). Both are permissive licences that allow reuse with attribution, which is the intent for a reproducibility release: a reader should be able to rebuild the instrument and re-run the analysis without seeking further permission.
+
+**Third-party software.** The system depends on third-party libraries used in accordance with their licenses, none of which impose copyleft obligations on this project's own code:
+
+| Component | Role | License |
+|:----------|:-----|:--------|
+| ArduinoBLE | BLE peripheral stack on the nRF52840 | GNU LGPL v2.1 |
+| Arduino core (Seeed nRF52 mbed-enabled) | Board support and toolchain | LGPL / Apache 2.0 |
+| Bleak | Host-side BLE client (Python) | MIT |
+| NumPy | Numerical computation | Modified BSD (3-clause) |
+| pandas | Tabular data handling | BSD (3-clause) |
+| Matplotlib | Figure generation | Matplotlib (PSF-based) |
+
+ArduinoBLE's LGPL terms are satisfied by dynamic use of the library without modification; no library source was altered.
+
+**Third-party trademarks and reproduced material.** TrackMan, PitchLogic, Kookaburra, FlexiForce, Tekscan, Seeed, and Nordic Semiconductor are trademarks of their respective owners and are used here nominatively, to identify the products actually used or discussed. No endorsement is implied or claimed. No figure, photograph, or table from a third-party publication is reproduced in this report; all figures are original to this project. Where a numerical result from published work is cited for comparison, it is cited to its source and used as fact rather than reproduced as expression. Manufacturer specifications are cited to datasheets and official documentation rather than to marketing material wherever such documentation is available.
+
+**Public-use utility.** The measurement approach, the calibration procedure, the failure diagnosis described in the milestones, and the analysis code are of use beyond this project. The channel-isolation procedure in particular applies to any multi-channel embedded sensor array, and the intent is to release the firmware, analysis code, and documentation publicly so that the method can be reused and checked.
+
+## Honesty in Reporting
+
+The printed-circuit-board failure, the channel-bridging failure in the first instrument, and the withdrawal of that instrument's per-finger results are documented plainly rather than omitted. Calibration is reported with its full trial-to-trial variability and with the observed 20 percent session-to-session shift, rather than a single best-case figure. Results that the instrument cannot support---absolute force comparison against the rigid-transducer literature, between-pitcher inference from a small participant pool, movement metrics that could not be reliably fitted---are identified as such rather than presented with unwarranted confidence.
+
+The decision to withdraw the first instrument's grip results was a matter of professional obligation. Those results were internally coherent and would have been publishable in appearance; they were invalid, and reporting them would have placed conclusions in the literature that the instrument did not support.
+
+## Responsible Engineering Practice
+
+The work relied on documented prior art, version-controlled firmware and analysis code, a written methods record maintained alongside the build, and design decisions justified against measured evidence rather than assumption---setting the sampling rate from a measured throughput ceiling, revising the timestamp resolution after quantifying a reconstruction artifact, and verifying channel isolation by test at each assembly stage rather than inferring it from the wiring topology.
+
+The central lesson concerns verification design. The first instrument passed every test it was given; the tests were the wrong tests. Confirming that each channel *responded* was mistaken for confirming that each channel responded *only* to its own input, and that gap persisted undetected through two data-collection sessions. The remedy was not more careful assembly but a test that could fail for the right reason.
+
+## Artificial-Intelligence Use Disclosure
+
+Generative artificial-intelligence assistance was used during this project in the following capacities: drafting and revising portions of this report; assisting with the development and debugging of firmware and Python analysis code; and assisting with the construction of figures and build documentation. Grammarly was additionally used for grammar, spelling, and clarity editing.
+
+The author reviewed, revised, and verified all generated material. The system design, hardware construction, calibration procedure, data collection, choice of analysis, interpretation of results, and conclusions are the author's own. All citations were verified against the original sources, and all reported numerical results were computed from the project's own data. No participant data, credentials, or confidential material were entered into any such tool. No AI tool is cited as an authority for any scientific, technical, or factual claim in this report.
+
+# PROJECT ASSESSMENT OF APPLICABLE THEORY AND SOFTWARE DEVELOPMENT
+
+This project applied concepts from across the MSCS curriculum, with an emphasis on data science, signal processing, and embedded software.
+
+**Signal processing and sensor calibration.** Recovering force from the sensors required a physical transduction model (the conductance relationship of a force-sensitive resistor in a voltage divider) fitted by least-squares regression, with model quality assessed by coefficient of determination and repeatability quantified by the coefficient of variation across trials. Pitch segmentation treats the continuous pressure stream as a time series, locating events from the build-up and drop-out of grip force, and all timing computations use the true per-sample interval to remain robust to dropped packets---an applied lesson in handling non-uniformly sampled data.
+
+**Data science and analysis.** The analysis pipeline follows a standard data-science workflow: raw signal to calibrated features to statistical modeling. Interpretable features (peak force, rate of force development, impulse, inter-finger balance, and the release-phase measures of Table 2) are engineered per pitch, then related to independently measured outcomes by regression on within-pitcher centered variables, stratified by pitch type. Pairing an on-board measurement with an independent external reference is itself a data-fusion and validation design. The decision to center within pitcher rather than pool raw values is a direct application of the statistical principle that nested observations violate independence---and, equally, a recognition that the instrument's absolute calibration is not stable enough across sessions to support between-subject comparison.
+
+**Real-time and embedded systems.** The firmware is a fixed-rate soft-real-time sampler whose period is maintained by accumulating a constant interval rather than by measuring elapsed time each cycle, so that scheduling jitter does not accumulate into drift. The final design separates the acquisition rate from the transmission rate through buffering---a direct application of producer-consumer decoupling---which raised the effective sampling rate fourfold without exceeding the link's measured capability. Recognizing that the binding constraint was the notification rate rather than the converter was the key analytical step, and it converted an apparently hard ceiling into a design parameter.
+
+**Software engineering.** The system spans embedded firmware and host-side software (an asynchronous Python BLE logger and a NumPy-based analysis pipeline). Practices applied include version control, a schema-stable data format, modular separation between capture and analysis, and validation of analysis code against synthetic data before real data existed. The wire protocol was designed to be self-describing in one respect that proved valuable: because the host derives the batch size from the packet length, a single logger works unmodified against both firmware versions, so reverting to the slower firmware in the field required no host-side change. Backward compatibility of a data-acquisition protocol is a design property worth paying for when the acquisition hardware cannot be re-run.
+
+**Measurement, verification, and test design.** The most transferable lesson is about verification rather than implementation. The first instrument's channels were tested for responsiveness and passed; they were never tested for independence, which was the property the analysis actually depended on. The corrective was a test constructed so that the specific failure mode would produce a specific observable signature---and, further, a discriminating test that separates an electrical fault from a mechanical one by whether the coupled response scales with the driving input. Designing a test around the fault you must exclude, rather than around the behavior you expect to see, is the practice this project would carry forward.
+
+# CONCLUSION
+
+This project set out to build a throwable, regulation-form-factor baseball that measures grip pressure at multiple finger positions during live pitching, to pair each pitch's grip record with an independently measured ball-flight outcome, and to develop the analysis pipeline that relates the two. This section states what was achieved against those objectives, what the data showed, what did not work, and what should follow.
+
+## What Was Built
+
+A self-contained instrumented baseball was designed, fabricated, and used to collect data in live pitching. It embeds four thin-film force-sensitive resistors beneath the leather cover at finger contact points, samples all four channels at 480 Hz with 12-bit resolution, and streams raw counts over Bluetooth Low Energy to a Python logger, running on internal battery power for approximately eight hours. The assembly is within the regulation weight range of 142 to 149 g, is balance-checked, and survives live pitching. Calibration is applied downstream in analysis rather than on the ball, so archived data can be re-derived under revised calibration without re-collection.
+
+Against the stated requirements: grip pressure is measured at four positions; the sampling rate exceeds the 400 Hz target derived from the reference literature; data are transmitted wirelessly and tagged per pitch; release is delimited from the pressure signal itself and resolved per finger; the ball recharges and reflashes without disassembly; and channel independence is verified rather than assumed. The weight, balance, sensor-profile, resolution, and battery-life requirements are met.
+
+## What the Instrument Established
+
+**The instrumented ball flies close to a regulation ball, and the difference is quantified.** The A/B flight comparison found velocity substantially preserved and spin rate consistently lower by approximately 168 rpm, negative in all four effort-by-pitcher cells and replicated across two pitchers. Grip measurements are therefore obtained under near-normal flight conditions, with a known and stated spin penalty rather than an assumed negligible one.
+
+**The four channels measure independent inputs.** Cross-channel response is 0.3 to 0.7 percent against a 5 percent requirement, is independent of drive level in the manner that distinguishes converter noise from a resistive path, and holds under live throwing. This is reported as a result because the first instrument failed it.
+
+**Grip configuration is recoverable from force alone, and the signature transfers between pitchers.** A classifier using only grip-force shares and release timing---no ball-flight input---identified fastball from curveball at 98.6 percent accuracy on a pitcher held out of training entirely, against a 65.1 percent majority baseline and a permutation null of $p = 0.0002$. The discriminating signal is a thumb-to-middle force trade-off: thumb share falls from 0.41 to 0.07 between grips while middle share nearly triples, with index share statistically unchanged. The curveball redistributes grip force rather than increasing it. This validates the four-position array against the two-sensor configuration used in prior work, and it has an immediate application, since it allows a grip change to be verified, or grip drift detected, without external tracking.
+
+**Release-phase grip mechanics are resolvable.** At 480 Hz the release transition is spanned by roughly twelve samples rather than three, which makes per-digit release timing computable. The thumb loses contact 9.8 ms (SD 6.9) before the fingers across all pitches, and that lead is grip-dependent---about 13 ms on fastballs against 2 to 6 ms on curveballs---while the index and middle fingers release as an inseparable pair. The direction is mechanically expected and the measurement predicted no outcome; its value is as instrument characterization and as an input to the pitch-type classifier.
+
+## What the Data Showed About Grip and Velocity
+
+**The principal empirical finding is negative, and it is the most useful thing in this work.**
+
+Measured without controlling for delivery effort, grip force predicts release velocity strongly and broadly: fifteen of twenty grip features cross the corrected significance threshold, the strongest being index and middle summed impulse at $r = 0.630$. The pre-specified primary feature, index force at release, gives $r = 0.511$. That is the result the project expected, and it agrees with the published literature in direction and magnitude.
+
+It does not survive the control the effort ladder was built to permit. With commanded effort held exactly fixed, index force at release falls to $r = 0.302$ ($p = 0.088$) and contributes $\Delta R^2 = 0.000$ over a model already containing effort---no velocity variance at all that effort does not already account for. Combining the index and middle fingers into the complete driving channel improves the estimate but does not rescue it ($r = 0.381$, $q = 0.113$). No feature survives family-wise correction under effort control.
+
+The reason is visible in the data. Index and middle loading tracks commanded effort at $r = 0.46$ to $0.61$: **it is substantially a readout of how hard the pitcher is trying**, and once that is held fixed there is little left over. Three features do survive false-discovery correction, and all involve the thumb---thumb force at release ($r = 0.486$, $q = 0.035$), thumb peak force ($r = 0.484$, $q = 0.035$), and total peak force ($r = 0.475$, $q = 0.035$). Thumb peak force is the grip feature least coupled to commanded effort ($r = 0.245$, not significant), and it is the one that retains an association with velocity. These associations hold on ranks, so no error in the shape of the calibration curve can have produced them, and they carry the same sign in all three pitchers. They are nonetheless reported as exploratory: the thumb was not the pre-specified primary, the associations do not clear family-wise correction, and they emerged from the same twenty-feature family the multiplicity control exists to discipline.
+
+Two results that appeared to replicate prior work did not survive the same control. Rate of force development---the strongest velocity correlate Yeh et al. report---gives $r = 0.479$ uncontrolled and $r = -0.210$ with effort fixed. Inter-finger force discrepancy gives $r = -0.356$ uncontrolled and $r = -0.008$ with effort fixed. Both were tracking the effort manipulation.
+
+## What Did Not Work
+
+The custom printed circuit board was fabricated but non-functional, and the schedule reserve it consumed was not recovered; the instrument was built on a development board instead, which met every requirement.
+
+More consequentially, the first instrument's sensor channels were not electrically independent. Bare conductors and hand-soldered joints on adjacent microcontroller pads provided a progressive conduction path, and by the second session three of four nominally independent channels carried substantially the same signal. All per-finger results from that instrument were withdrawn. The failure was detectable only by a test the project did not initially possess, and its diagnosis---cross-channel correlation, fixed-ratio discrimination between electrical and mechanical coupling, and single-channel isolation gating---is a transferable quality-control procedure for multi-channel embedded sensor arrays.
+
+A third failure belongs to the analysis rather than the hardware. The narrowing of the release window, for which the 480 Hz sampling rate was specifically adopted, did not improve velocity prediction over peak force taken anywhere in the pitch. The higher rate earns its place by making release timing and the release transient measurable at all, not by improving the velocity model.
+
+Doppler tracking of the instrumented ball also proved less reliable than for a regulation ball, which is why the outcome measure is embedded in the pressure record at capture rather than joined afterward by sequence position. Spin and movement were recovered for too few pitches to analyze.
+
+## What Constrains Interpretation
+
+Absolute forces measured here are not directly comparable to the rigid-transducer literature: a thin-film sensor reads the normal component of load on a 9.5 mm pad through leather, whereas the reference values are resultant fingertip forces including the shear that dominates at release. The contribution lies in relative grip patterns and their statistical relationships to outcomes. Three participants support within-pitcher inference only, and the cluster bootstrap---which is the only interval reported here that propagates the uncertainty of *which* three pitchers were measured---is materially wider than its analytic counterpart in every case. Session-to-session calibration variability of approximately 20 percent bounds confidence in any absolute value, and inter-finger release intervals below 4.17 ms are not resolvable within a single pitch.
+
+## What Should Happen Next
+
+The highest-value next step is a larger multi-pitcher study with the effort ladder retained and commanded effort recorded per pitch, which the instrument is now capable of supporting. Two specific hypotheses are ready to be tested rather than generated: that thumb loading predicts release velocity independently of delivery effort, and that finger loading does not. Beyond that: on-board flash logging to remove the wireless link from the acquisition path; the manufacturer's op-amp front end with load-cell calibration across the full pitching range to make absolute forces defensible; and camera-based tracking to recover the movement metrics Doppler tracking could not fit for this ball.
+
+## Contribution
+
+The contribution is a measurement capability, together with a demonstration of what that capability reveals about the measurements the field has been making.
+
+The instrument records per-finger grip force through the release event, at a rate sufficient to resolve that event, paired with independently measured ball flight, for under three hundred dollars in components. It is accompanied by the verification procedure that establishes its channels can be trusted, and by an honest account of what happens when that verification is absent.
+
+What the measurement yields is twofold. **Grip configuration is identifiable from four sensors at 98.6 percent accuracy on an unseen pitcher**, with no external tracking, which makes grip execution independently checkable. And---the substantive result---**per-finger grip force during a pitch is largely a readout of delivery effort rather than an independent determinant of velocity.** The association between finger force and velocity that survives in the absence of effort control does not survive its presence, and the only channel that retains an association is the thumb, which prior instrumented-ball work does not measure.
+
+That is a smaller claim than the project set out to make. It is also a more useful one, because it identifies a confound that any study pairing a submaximal effort protocol with grip measurement is exposed to, and it names the measurement---thumb loading---most likely to reward the larger study that this one cannot substitute for.
+
+{{< pagebreak >}}
+
+# APPENDIX A: REPRODUCIBILITY MATERIALS
+
+The following materials are provided so that the instrument can be rebuilt, the firmware reflashed, and the analysis reproduced from the archived data.
+
+**Repository.** A public repository containing the firmware, analysis code, and build documentation is to follow; the URL and the commit hash corresponding to this submission will be provided with the final deposit. Until then the materials described below are available from the author on request.
+
+**Firmware.** `pressure_logger_480/` is the deployed acquisition firmware (480 Hz, four samples per packet). `pressure_logger/` is the earlier 120 Hz single-sample version, retained because the host logger supports both. `isolation_test/` implements the channel-isolation gate. `sensor_test/` and `single_sensor/` are bench-check sketches. Built with the Arduino IDE and the Seeed nRF52 mbed-enabled board package; the non-mbed package fails to link.
+
+**Acquisition.** `analysis/ble_logger/ble_logger.py` connects to the instrument, subscribes to the pressure characteristic, and writes CSV. It derives the batch size from the packet length and so operates against either firmware version without modification. Requires `bleak`; see `requirements.txt`.
+
+**Wire protocol.** The pressure characteristic carries a 36-byte packet: a 32-bit unsigned microsecond timestamp for the first sample in the batch, followed by four sample groups of four 16-bit unsigned ADC values each, little-endian, in channel order S1 through S4. Sample $k$ within a batch occurs at the batch timestamp plus $k \times 2083$ µs. The earlier firmware sends a 12-byte packet: a 32-bit millisecond timestamp followed by one four-channel sample group. A separate characteristic carries battery voltage as a 16-bit unsigned value in millivolts, notified every 2 s.
+
+**Data dictionary.** Each logged CSV row contains: `wall_iso` (host wall-clock time, ISO 8601, UTC); `wall_unix_ms` (host wall-clock time, integer milliseconds since the Unix epoch); `ball_t_ms` (the instrument's own timebase in milliseconds, the authoritative timing column); `s1` through `s4` (raw ADC counts, 0 to 4095, in channel order); `s1_N` through `s4_N` (convenience force values in newtons, derived from the raw counts by Equation (3) with the calibration factors of Table 1---these are a readout convenience and are recomputed in analysis rather than trusted as archived); `pitch_type`; `battery_mV`; and `marker` (the per-pitch tag entered during capture).
+
+**Calibration.** `analysis/calibration/` contains the raw serial captures for each sensor, the fitting script `fit_v3_calibration.py`, and the resulting factors in `calfactors_v3.csv`. The fitting script parses the applied-mass sequence from each capture's header, partitions loaded samples into levels by one-dimensional $k$-means, and fits Equation (3) through the origin by least squares, reporting $R^2$ and the across-trial coefficient of variation.
+
+**Analysis.** `analysis/plot_pitch_traces.py` detects pitch events, converts raw counts to newtons, computes the release-phase features of Table 2, and generates the per-pitch trace figures. Requires `numpy`, `pandas`, and `matplotlib`.
+
+**Build documentation.** `instrumented-baseball/docs/` contains the illustrated build guides, including the ferrule-interconnect procedure used for the deployed harness and the staged isolation-test gates.
+
+**Participant data.** Raw per-pitch performance data are not included in the public materials, in accordance with the participant-privacy commitments described in the professional responsibility assessment. Derived, de-identified summary data sufficient to reproduce the reported figures and models are provided.
+
+{{< pagebreak >}}
+
+# REFERENCES
+
+::: {#refs}
+:::
